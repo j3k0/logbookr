@@ -146,7 +146,8 @@ define(function (require) {
 
         deleteProcedure: function(ev) {
             ev.preventDefault();
-            this.model.destroy();
+            if (this.model.collection)
+                this.model.destroy();
             this.goBack();
             return false;
         },
