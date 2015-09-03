@@ -1,0 +1,71 @@
+<div class="content">
+  <div class="procedure procedure-field">
+    <div class="procedure-description">
+      <span>Intervention</span>
+    </div>
+    <input readonly type="text" class="procedure-type procedure-input" value="<%-procedure.type%>">
+  </div>
+  <div class="date procedure-field">
+    <div class="procedure-description">
+      <span>Date</span>
+    </div>
+    <input readonly type="datetime" class="procedure-datetime procedure-input datetime-input" id="datetime" data-field="datetime" name="datetime" type="text" value="<%-procedure.date%>" readonly />
+  </div>
+  <div class="patient-name procedure-field">
+    <div class="procedure-description">
+      <span>Nom du patient</span>
+    </div>
+    <input type="text" class="procedure-patient procedure-input" value="<%-procedure.patient%>">
+  </div>
+  <div class="diagnostic procedure-field">
+    <div class="procedure-description">
+      <span>Diagnostic</span>
+    </div>
+    <input type="text" class="procedure-diagnostic procedure-input" value="<%-procedure.diagnostic%>">
+  </div>
+  <div class="supervision procedure-field">
+    <div class="procedure-description">
+      <span>Supervision</span>
+    </div>
+    <input readonly type="text" class="procedure-supervision procedure-input" value="<%-procedure.supervision%>">
+  </div>
+  <div class="senior procedure-field">
+    <div class="procedure-description">
+      <span>Senior</span>
+    </div>
+    <input readonly type="text" class="procedure-senior procedure-input" value="<%-procedure.senior%>">
+  </div>
+  <div class="stage procedure-field">
+    <div class="procedure-description">
+      <span>Stage</span>
+    </div>
+    <input readonly type="text" class="procedure-stage procedure-input" value="<%-procedure.stage%>">
+  </div>
+  <div class="picture procedure-field">
+    <div class="procedure-description">
+      <span>Photos</span>
+    </div>
+    <% if (procedure.picture) { %>
+        <img src="<%-documentRoot %><%-procedure.picture %>" image-url="<%-procedure.picture %>" class="procedure-picture-thumbnail" width="64" height="64">
+    <% } else { %>
+          <div pictureId="5" class="one-picture one-picture-editable">
+            <img class="delete-icon delete-picture" src="app/styles/img/delete.svg">
+            <img src="" class="procedure-picture-thumbnail" width="64" height="64">
+          </div>
+    <% } %>
+    <div class="take-procedure-picture-btn btn">+ Ajouter une photo</div>
+  </div>
+  <div class="comment procedure-field">
+    <div class="procedure-description">
+      <span>Commentaire</span>
+    </div>
+    <textarea type="text" class="procedure-comment procedure-input" value="<%-procedure.comment%>"><%-procedure.comment%></textarea>
+  </div>  <!--input type="submit" class="save-button btn procedure-btn" value="Sauvegarder"-->
+  <div class="parent">
+    <div class="delete-procedure btn procedure-btn">Supprimer</div>
+    <div class="save-button btn procedure-btn">Sauvegarder</div>
+  </div>
+</div>
+<div class="procedure-picture-container hidden">
+  <img src="<%-documentRoot %><%-procedure.picture %>" class="responsive-procedure-picture">
+</div>

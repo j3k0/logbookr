@@ -1,0 +1,21 @@
+<div class="content">
+  <div class="new-procedure">
+      <div class="btn procedure-btn add-procedure">+ Ajouter une intervention</div>
+  </div>
+  <div class="list">
+    <ul class="list-ul">
+      <% _.each(procedures, function(procedure){ %>
+        <% if (procedure.type != undefined) {%>
+        <li class="list-li procedure" procedure-id=<%-procedure.id%>>
+          <div class="procedure-instance">
+            <%= procedure.type %>
+            <div class="procedure-patient"><%= procedure.patient %></div>
+            <div class="procedure-date"><%= procedure.date %></div>
+          </div>
+          <img class="child-icon" src="app/styles/img/child.svg">
+        </li>
+        <%}%> 
+      <% }); %>
+    </ul>
+  </div>
+</div>
