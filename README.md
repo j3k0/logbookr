@@ -1,14 +1,13 @@
 # LogbookR
 
-This module handle the logbook feature.
+This module handle a logbook feature, easy to integrate into a cordova/html5 application.
 
-A Logbook is a collection of procedures entered by the user, describing operations he performed.
+A Logbook is a collection of procedures entered by the user, describing some tasks he performed.
 
-Each entries have a number of fields (see procedureModel). Some of those fields can be selected in a tree structure of possibilities (ChoiceTree). The tree can be edited by the user.
+Each entries have a number of fields (see `procedureModel`). Some of those fields are free, some can be selected in a tree structure of possibilities (ChoiceTree). The tree can be edited by the user.
 
 ## Run the test app
 
- 1. `./test/prepare.sh`
- 2. `http-server .`
- 3. browse to `http://localhost:8080/test`
+ 1. `http-server .`
+ 1. browse to `http://localhost:8080/test`
 
