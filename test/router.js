@@ -6,9 +6,16 @@ define(function(require, exports, module) {
   var $ = require('jquery');
   var HomeView = require("./home");
   var LogbookR = require('logbookr/index');
+  var LogbookData = require('./logbookData');
 
   // Defining the application router.
   module.exports = Backbone.Router.extend({
+
+    initialize: function(options) {
+        // Load logbook initial data
+        LogbookData.choices.initialize(LogbookR.ChoiceTree.getInstance());
+    },
+
     routes: {
       "": "home",
       "home": "home",

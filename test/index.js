@@ -7,10 +7,6 @@ require(["config"], function() {
 
   require(["router", "logbookr/index"], function(Router, LogbookR) {
 
-    //var LogbookData = require('./logbookData');
-    // Load logbook initial data
-    //LogbookData.choices.initialize(LogbookR.ChoiceTree.getInstance());
-
     // Define your master router on the application namespace and trigger all
     // navigation from this instance.
     var router = new Router();
