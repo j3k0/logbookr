@@ -14,6 +14,7 @@ define(function(require, exports, module) {
     initialize: function(options) {
         // Load logbook initial data
         LogbookData.choices.initialize(LogbookR.ChoiceTree.getInstance());
+        $("#back").on("click", _.bind(function () { this.view.goBack(); }, this));
     },
 
     routes: {
@@ -23,22 +24,22 @@ define(function(require, exports, module) {
     },
 
     home: function() {
-      this.openInMain(new HomeView(), $("#main"));
+      this.openInMain(new HomeView(), $("#tab-content"));
     },
 
     logbook: function() {
         this.openInMain(new LogbookR.Navigation({
-            goHome: _.bind(Backbone.history.navigate, Backbone.history, "home"),
+            goHome: _.bind(Backbone.history.navigate, Backbone.history, "home", { trigger: true }),
             updateTitle: _.bind(this.updateTitle, this),
             openInMain: _.bind(this.openInMain, this),
-            mainEl: "#main",
+            mainEl: "#tab-content",
             openInPopover: _.bind(this.openInPopover, this),
             popoverEl: "#popover"
-        }).mainView(), $("#main"));
+        }).mainView(), $("#tab-content"));
     },
 
     openInMain: function(view, $el) {
-        this.mainView = view.render();
+        this.mainView = this.view = view.render();
         if ($el)
             $el.html(this.mainView.$el);
         // $("#main").html(this.mainView.$el);
@@ -48,7 +49,7 @@ define(function(require, exports, module) {
             this.popoverView.undelegateEvents();
         }
         view.render().$el.show();
-        this.popoverView = view;
+        this.popoverView = this.view = view;
     },
     updateTitle: function(text) {
         $("#title").html(text);

@@ -1,6 +1,7 @@
 define(function (require) {
     var Backbone = require('backbone');
     var HomeView = Backbone.View.extend({
+        goBack: function() {},
         render: function() {
             this.$el.html('Hello!<a href="#">Logbook</a>');
             return this;
