@@ -127,7 +127,7 @@ define(function (require) {
     };
     var c = new Choice(null, dummyData);
     */
-    
+
     var ChoiceModel = Backbone.Model.extend({
         tree: function() {
             return new Choice(null, this.attributes, this);
