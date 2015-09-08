@@ -1,7 +1,7 @@
 define(function (require) {
 
     var Backbone = require('backbone');
-    var BackboneLS = require('backbone.localStorage');
+    var BackboneLS = require('backbone.localstorage');
     var ProcedureModel = require('./procedureModel');
 
     var ProceduresCollection = Backbone.Collection.extend({

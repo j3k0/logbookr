@@ -1,7 +1,7 @@
 define(function (require) {
 
     var Backbone = require('backbone');
-    var BackboneLS = require('backbone.localStorage');
+    var BackboneLS = require('backbone.localstorage');
     var uuid = require('./uuid');
     var ChoiceModel = require('./choiceModel');
     // var ChoiceData = require('./choiceData');
