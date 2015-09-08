@@ -1,7 +1,6 @@
 var expect = require('expect.js');
 var ProcedureModel = require('../src/models/procedureModel');
 var FieldModel = require('../src/models/fieldModel');
-var FieldsCollection = require('../src/models/fieldsCollection');
 
 describe('FieldModel', function () {
   it('exports available field types', function () {
@@ -35,29 +34,22 @@ describe('FieldModel', function () {
 
 describe('ProcedureModel', function () {
   describe('defaults() / initialize()', function () {
-    it('defines minimal set of properties: `id`, `name`, `procedure`, `date`', function () {
+    it('defines minimal set of properties: `id`, `date`, `patient`, `procedure`', function () {
       var procedure = new ProcedureModel();
       expect(procedure.attributes).to.have.keys(
-        'id', 'name', 'procedure', 'date'
+        'id', 'date', 'patient', 'procedure'
       );
     });
 
-    it('copies description of additional fields into `fields` attribute' +
-       'as a backbone.Collection of FieldModel instances.', function () {
+    it('copies description of additional fields into `fields` attribute ' +
+       'as an Array of FieldModel instances.', function () {
       var procedure = new ProcedureModel();
-      expect(procedure.get('fields')).to.be.a(FieldsCollection);
-    });
+      var fields = procedure.get('fields');
 
-    it('initialize() does not overwrite attributes provided to ctor', function () {
-      var procedure = new ProcedureModel({comment: 'some comment'});
-      expect(procedure.get('comment')).to.be('some comment');
+      expect(fields).to.be.an(Array);
+      expect(fields.every(function (field) {
+        return field instanceof FieldModel;
+      })).to.be(true);
     });
-  });
-
-  it('has every field mentioned in model.fields as an attribute', function () {
-    var procedure = new ProcedureModel();
-    expect(procedure.get('fields').every(function (field) {
-      return procedure.has(field.get('name'));
-    })).to.be(true);
   });
 });

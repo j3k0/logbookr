@@ -2,45 +2,40 @@
   var definition = function (require) {
     var Backbone = require('backbone');
     var FieldModel = require('./fieldModel');
-    var FieldsCollection = require('./fieldsCollection');
     var uuid = require('./uuid');
 
     return Backbone.Model.extend({
       defaults: function () {
         return {
           id: uuid(),
-          name: '',
-          procedure: '',
-          date: new Date()
+          date: new Date(),
+          patient: '',
+          procedure: ''
         };
       },
 
       initialize: function () {
-        // Copy over template.
+        // Copy over fields from template.
         //
         // TODO:
         // For now it is faked with some predefined fields, and random values.
-        var self = this;
-        var fields = [ 'type',
-          'patient',
+        var fields = [
+          'type',
           'diagnostic',
           'supervision',
           'senior',
           'stage',
           'comment'
         ].map(function (name) {
-          if (!self.has(name))
-            self.set(name, 'Hardcoded `' + name + '` value');
-
           return new FieldModel({
             name: name,
             type: FieldModel.types.TEXT,
-            description: 'Hardcoded `' + name + '` field.'
+            description: 'Hardcoded `' + name + '` field description.'
           });
         });
 
-        var collection = new FieldsCollection(fields);
-        self.set('fields', collection);
+        // Do we need backbone.Collection here? Just array will do.
+        this.set('fields', fields);
       }
     });
   };
