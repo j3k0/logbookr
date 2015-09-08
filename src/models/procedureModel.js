@@ -1,6 +1,7 @@
 (function (root, isBrowser) {
   var definition = function (require) {
     var backbone = require('backbone');
+    var moment = require('moment');
     var TemplateModel = require('./templateModel');
     var uuid = require('./uuid');
 
@@ -8,7 +9,7 @@
       defaults: function () {
         return {
           id: uuid(),
-          date: new Date(),
+          date: moment().format('DD-MM-YYYY HH:MM'),
           patient: '',
           procedure: ''
         };
