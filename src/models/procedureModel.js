@@ -1,17 +1,16 @@
 (function (root, isBrowser) {
   var definition = function (require) {
     var backbone = require('backbone');
-    var moment = require('moment');
     var TemplateModel = require('./templateModel');
-    var uuid = require('./uuid');
 
     return backbone.Model.extend({
       defaults: function () {
         return {
-          id: uuid(),
-          date: moment().format('DD-MM-YYYY HH:MM'),
+          id: '',
+          date: '',
           patient: '',
-          procedure: ''
+          procedure: '',
+          fields: []
         };
       },
 

@@ -1,0 +1,12 @@
+<!-- TODO:
+     render specific input based on field type
+ -->
+<div class="procedure-field <%-field.name%>">
+  <div class="procedure-description"><span>
+    <%-field.description%>
+  </span></div>
+
+  <input type="<%-field.type%>" data-attribute-name="<%-field.name%>"
+         class="procedure-input procedure-<%-field.name%>"
+         value="<%-value%>">
+</div>

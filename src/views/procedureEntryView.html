@@ -1,34 +1,83 @@
 <div class="content">
-  <div class="procedure procedure-field">
+  <!-- TODO:
+       Render them with FieldView, instead of manually.
+
+       Render fields that are always there: id, date, patient and procedure
+  -->
+  <% _.each(['date', 'patient', 'procedure'], function (attr) { %>
+    <div class="procedure-field <%-attr%>">
+      <div class="procedure-description"><span>
+        <%-'attribute `' + attr + '` description'%>
+      </span></div>
+      <input type="text", data-attribute-name="<%-attr%>"
+             class="procedure-input procedure-<%-attr%>"
+             value="<%-procedure[attr]%>">
+    </div>
+  <% }); %>
+
+  <!-- Optional fields based on model's .fields property -->
+  <div> Here's <%= procedure.fields ? procedure.fields.length : 'no' %> optional fields:
+    <%= fieldsHtml %>
+  </div>
+
+  <!-- TODO:
+       Picture?
+  -->
+
+  <!-- Controls -->
+
+  <!--input type="submit" class="save-button btn procedure-btn" value="Sauvegarder"-->
+  <div class="parent">
+      <div class="delete-procedure btn procedure-btn">Supprimer</div>
+      <div class="save-button btn procedure-btn">Sauvegarder</div>
+    </div>
+  </div>
+
+
+
+
+<!--   <div class="procedure procedure-field">
     <div class="procedure-description">
       <span>Intervention</span>
     </div>
-    <input readonly type="text" class="procedure-type procedure-input" value="<%-procedure.type%>">
+    <input readonly type="text" class="procedure-type procedure-input" value="<%-procedure.type%>"
+           data-attribute-name="type">
   </div>
+
   <div class="date procedure-field">
     <div class="procedure-description">
       <span>Date</span>
     </div>
     <input readonly type="datetime" class="procedure-datetime procedure-input datetime-input" id="datetime" data-field="datetime" name="datetime" type="text" value="<%-procedure.date%>" readonly />
   </div>
+
   <div class="patient-name procedure-field">
     <div class="procedure-description">
       <span>Nom du patient</span>
     </div>
     <input type="text" class="procedure-patient procedure-input" value="<%-procedure.patient%>">
   </div>
+
   <div class="diagnostic procedure-field">
     <div class="procedure-description">
       <span>Diagnostic</span>
     </div>
     <input type="text" class="procedure-diagnostic procedure-input" value="<%-procedure.diagnostic%>">
-  </div>
-  <div class="supervision procedure-field">
+  </div> -->
+
+
+<!--   <div class="procedure-picture-container hidden">
+    <img src="<%-documentRoot %><%-procedure.picture %>" class="responsive-procedure-picture">
+  </div> -->
+
+
+<!--   <div class="supervision procedure-field">
     <div class="procedure-description">
       <span>Supervision</span>
     </div>
     <input readonly type="text" class="procedure-supervision procedure-input" value="<%-procedure.supervision%>">
   </div>
+
   <div class="senior procedure-field">
     <div class="procedure-description">
       <span>Senior</span>
@@ -60,12 +109,4 @@
       <span>Commentaire</span>
     </div>
     <textarea type="text" class="procedure-comment procedure-input" value="<%-procedure.comment%>"><%-procedure.comment%></textarea>
-  </div>  <!--input type="submit" class="save-button btn procedure-btn" value="Sauvegarder"-->
-  <div class="parent">
-    <div class="delete-procedure btn procedure-btn">Supprimer</div>
-    <div class="save-button btn procedure-btn">Sauvegarder</div>
-  </div>
-</div>
-<div class="procedure-picture-container hidden">
-  <img src="<%-documentRoot %><%-procedure.picture %>" class="responsive-procedure-picture">
-</div>
+  </div>  -->

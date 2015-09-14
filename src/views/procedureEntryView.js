@@ -5,7 +5,8 @@ define(function (require) {
     var Backbone = require("backbone");
     var template = require("./text!./procedureEntryView.html");
     var DateTimePicker = require("datetimepicker");
-    
+    var FieldView = require('./fieldView');
+
     var ProcedureEntryView = Backbone.View.extend({
 
         template: _.template(template),
@@ -21,44 +22,59 @@ define(function (require) {
             this.updateTitle = options.updateTitle;
             this.goBack = options.goBack;
         },
-        
+
+        fieldHtml: function (field) {
+            var view = new FieldView({
+                model: field,
+                value: this.get(field.get('name'))
+            });
+
+            return view.html();
+        },
+
         render: function() {
             var that = this;
-            if (window.requestFileSystem) {
-                window.requestFileSystem(window.PERSISTENT, 0, function(fileSys) {
-                    that.$el.html(that.template({
-                        procedure: that.model.toJSON(),
-                        documentRoot: fileSys.root.nativeURL
-                    }));
-                    that.titleView = "Nouvelle intervention";
-                    that.updateTitle(that.titleView);
-                    that.addDateTimePicker();
-                });
-            }
-            else {
+
+            var done = function (documentRoot) {
+                var fieldsHtml = that.model.get('fields')
+                    .map(that.fieldHtml.bind(that.model))
+                    .join('\n');
+
                 that.$el.html(that.template({
                     procedure: that.model.toJSON(),
-                    documentRoot: "."
+                    fieldsHtml: fieldsHtml,
+                    documentRoot: documentRoot
                 }));
+
                 that.titleView = "Nouvelle intervention";
                 that.updateTitle(that.titleView);
                 that.addDateTimePicker();
+            };
+
+            if (window.requestFileSystem) {
+                window.requestFileSystem(window.PERSISTENT, 0, function (fs) {
+                    done(fs.root.nativeURL);
+                });
             }
-            return this;
+            else {
+                done('.')
+            }
+
+            return that;
         },
 
         events:{
             'click .save-button': 'saveProcedure',
             'click .delete-procedure': 'deleteProcedure',
-            'click .procedure input': 'pickProcedure',
-            'click .supervision input': 'pickSupervision',
-            'click .senior input': 'pickSenior',
-            'click .stage input': 'pickStage',
-            'click .take-procedure-picture-btn': 'takePicture',
-            'click .delete-picture': 'confirmDeletePicture',
-            'click .procedure-picture-container': 'hidePicture',
-            'click .procedure-picture-thumbnail': 'showPicture',
-            'click .edit-button': 'edit'
+            // 'click .procedure input': 'pickProcedure',
+            // 'click .supervision input': 'pickSupervision',
+            // 'click .senior input': 'pickSenior',
+            // 'click .stage input': 'pickStage',
+            // 'click .take-procedure-picture-btn': 'takePicture',
+            // 'click .delete-picture': 'confirmDeletePicture',
+            // 'click .procedure-picture-container': 'hidePicture',
+            // 'click .procedure-picture-thumbnail': 'showPicture',
+            // 'click .edit-button': 'edit'
         },
 
         addDateTimePicker: function() {
@@ -154,40 +170,56 @@ define(function (require) {
 
         saveProcedure: function(ev) {
             ev.preventDefault();
-            var attrs = {
-                type: this.$('.procedure-type').val(),
-                date: this.$('.procedure-datetime').val(),
-                patient: this.$('.procedure-patient').val(),
-                diagnostic: this.$('.procedure-diagnostic').val(),
-                supervision: this.$('.procedure-supervision').val(),
-                senior: this.$('.procedure-senior').val(),
-                stage: this.$('.procedure-stage').val(),
-                comment: this.$('.procedure-comment').val(),
-                picture: this.$('.procedure-picture-thumbnail').attr("image-url")
-            };
-            if (!attrs.type) {
-                if (navigator.notification && navigator.notification.alert) {
-                    navigator.notification.alert(
-                        'Veuillez sélectionner le type de l\'intervention',  // message
-                        function (){
-                        },                              // callback to invoke with index of button pressed
-                        'Sauvegarde Impossible',            // title
-                        'Fermer'                        // buttonName
-                    );
-                }
-                else {
-                    /*alert('Veuillez sélectionner le type de procédure');*/
-                }
-                return false;
-            }
+
+            // TODO:
+            // Okay, somehow it triggers multiple times without this.
+            // Should check it out later.
+            // ev.stopPropagation();
+
+            var attrs = $('.procedure-input')
+                .get()
+                .reduce(function (prev, current) {
+                    var el = $(current);
+                    prev[el.data('attribute-name')] = el.val();
+                    return prev;
+                }, {});
+
+            // {
+            //     type: this.$('.procedure-type').val(),
+            //     date: this.$('.procedure-datetime').val(),
+            //     patient: this.$('.procedure-patient').val(),
+            //     diagnostic: this.$('.procedure-diagnostic').val(),
+            //     supervision: this.$('.procedure-supervision').val(),
+            //     senior: this.$('.procedure-senior').val(),
+            //     stage: this.$('.procedure-stage').val(),
+            //     comment: this.$('.procedure-comment').val(),
+            //     picture: this.$('.procedure-picture-thumbnail').attr("image-url")
+            // };
+
+            // TODO:
+            // Validate!
+            // if (!attrs.type) {
+            //     if (navigator.notification && navigator.notification.alert) {
+            //         navigator.notification.alert(
+            //             'Veuillez sélectionner le type de l\'intervention',  // message
+            //             function (){
+            //             },                              // callback to invoke with index of button pressed
+            //             'Sauvegarde Impossible',            // title
+            //             'Fermer'                        // buttonName
+            //         );
+            //     }
+            //     else {
+            //         /*alert('Veuillez sélectionner le type de procédure');*/
+            //     }
+            //     return false;
+            // }
+
+            // Actual save.
             this.model.set(attrs);
             this.collection.unshift(this.model);
             this.model.save();
-            /*this.model.save(attrs, {
-                success: function(response){
-                },
-                error: function (model, response) {}
-            });*/
+
+            console.log('saved model with attrs', attrs, '\n', this.model);
             this.goBack();
             return false;
         },
@@ -312,14 +344,14 @@ define(function (require) {
             }
         },
 
-        movePic: function(file){ 
+        movePic: function(file){
             window.resolveLocalFileSystemURL(file,
                 _(this.resolveOnSuccess).bind(this),
-                _(this.resOnError).bind(this)); 
+                _(this.resOnError).bind(this));
         },
 
         //Callback function when the file system uri has been resolved
-        resolveOnSuccess: function(entry){ 
+        resolveOnSuccess: function(entry){
             var that = this;
             console.log("resolve success");
             var n = +new Date();

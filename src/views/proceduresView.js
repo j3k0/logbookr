@@ -5,6 +5,7 @@ define(function (require) {
     var Backbone = require("backbone");
     var template = require("./text!./proceduresView.html");
     var ProcedureModel = require('../models/procedureModel');
+    var TemplateModel = require('../models/templateModel');
     var uuid = require('../models/uuid');
 
     var ProceduresView = Backbone.View.extend({
@@ -32,9 +33,11 @@ define(function (require) {
         },
 
         newProcedure: function() {
-            var procedure = new ProcedureModel({
-                id: uuid()
-            });
+            var procedure = new ProcedureModel(
+                {id: uuid()},
+                {template: new TemplateModel()}
+            );
+
             this.openProcedure(procedure);
         },
 
