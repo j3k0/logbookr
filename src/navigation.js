@@ -6,6 +6,7 @@ define(function (require) {
     var ProceduresCollection = require('./models/proceduresCollection');
     var ChoiceTree = require('./models/choiceTree');
     var $ = require('jquery');
+    var _ = require('underscore');
 
     var Navigation = function(options) {
 
@@ -20,16 +21,21 @@ define(function (require) {
     }
 
     Navigation.prototype.proceduresView = function() {
-        return new ProceduresView({
+        this.loadedViews = this.loadedViews || {};
+        this.loadedViews.proceduresView = this.loadedViews.proceduresView || new ProceduresView({
+            el: this.mainEl,
             collection: ProceduresCollection.getInstance(),
             updateTitle: this.updateTitle,
             openProcedure: _.bind(this.openProcedure, this),
             goBack: this.goHome
         });
+
+        return this.loadedViews.proceduresView;
     };
 
     Navigation.prototype.procedureView = function(procedure) {
-        return new ProcedureEntryView({
+        this.loadedViews = this.loadedViews || {};
+        this.loadedViews.procedureView = this.loadedViews.procedureView || new ProcedureEntryView({
             el: this.mainEl,
             collection: ProceduresCollection.getInstance(),
             model: procedure,
@@ -40,6 +46,9 @@ define(function (require) {
             openSenior: _.bind(this.pickChoiceTreeOf, this, 'senior'),
             goBack: _.bind(this.openProcedures, this)
         });
+
+        this.loadedViews.procedureView.model.set(procedure.toJSON());
+        return this.loadedViews.procedureView;
     };
 
     Navigation.prototype.pickChoiceTree = function(choiceTree, cb) {
@@ -60,7 +69,7 @@ define(function (require) {
     };
 
     Navigation.prototype.openProcedures = function() {
-        this.openInMain(this.proceduresView(), $(this.mainEl));
+        this.openInMain(this.proceduresView()/*, $(this.mainEl)*/);
     };
 
     Navigation.prototype.mainView = Navigation.prototype.proceduresView;

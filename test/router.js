@@ -40,8 +40,8 @@ define(function(require, exports, module) {
 
     openInMain: function(view, $el) {
         this.mainView = this.view = view.render();
-        if ($el)
-            $el.html(this.mainView.$el);
+        // if ($el)
+        //     $el.html(this.mainView.$el);
         // $("#main").html(this.mainView.$el);
     },
     openInPopover: function(view) {

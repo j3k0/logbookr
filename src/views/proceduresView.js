@@ -21,7 +21,11 @@ define(function (require) {
         },
 
         render: function() {
-            this.$el.html(this.template({procedures: this.collection.toJSON()}));
+            this.$el.html(this.template({
+                collection: this.collection,
+                procedures: this.collection.toJSON()
+            }));
+
             this.titleView = "Interventions";
             this.updateTitle(this.titleView);
             return this;

@@ -14,8 +14,13 @@
           </div>
           <img class="child-icon" src="app/styles/img/child.svg">
         </li>
-        <%}%> 
+        <%}%>
       <% }); %>
     </ul>
   </div>
+
+  <div style="font-family: monospace;">
+    <pre><%= JSON.stringify(_.pluck(this.collection.models, 'id'), null, 2) %></pre>
+  </div>
+
 </div>
