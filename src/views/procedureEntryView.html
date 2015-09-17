@@ -1,22 +1,13 @@
 <div class="content">
-  <!-- TODO:
-       Render them with FieldView, instead of manually.
-
-       Render fields that are always there: id, date, patient and procedure
-  -->
-  <% _.each(['date', 'patient', 'procedure'], function (attr) { %>
-    <div class="procedure-field <%-attr%>">
-      <div class="procedure-description"><span>
-        <%-'attribute `' + attr + '` description'%>
-      </span></div>
-      <input type="text", data-attribute-name="<%-attr%>"
-             class="procedure-input procedure-<%-attr%>"
-             value="<%-procedure[attr]%>">
-    </div>
-  <% }); %>
+  <!-- Required fields -->
+  <div>Required fields:
+    <pre><%= JSON.stringify(_.pluck(procedure.requiredFields, 'name')) %></pre>
+    <%= requiredFieldsHtml %>
+  </div>
 
   <!-- Optional fields based on model's .fields property -->
-  <div> Here's <%= procedure.fields ? procedure.fields.length : 'no' %> optional fields:
+  <div>Optional fields:
+    <pre><%= JSON.stringify(_.pluck(procedure.fields, 'name')) %></pre>
     <%= fieldsHtml %>
   </div>
 
@@ -31,6 +22,11 @@
       <div class="delete-procedure btn procedure-btn">Supprimer</div>
       <div class="save-button btn procedure-btn">Sauvegarder</div>
     </div>
+  </div>
+
+    <!-- Some meta -->
+  <div>Procedure:
+    <pre><%= JSON.stringify(procedure, null, 2) %></pre>
   </div>
 
 

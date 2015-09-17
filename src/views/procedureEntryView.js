@@ -17,10 +17,14 @@ define(function (require) {
             this.options = options || {};
             this.options.viewName = "ProcedureEntryView";
 
+            this.openChoiceTree = options.openChoiceTree;
+            // TODO:
+            // remove; this should not needed, better delegate to FieldView.
             this.openSupervision = options.openSupervision;
             this.openProcedure = options.openProcedure;
             this.openSenior = options.openSenior;
             this.openStage = options.openStage;
+
             this.updateTitle = options.updateTitle;
             this.goBack = options.goBack;
         },
@@ -34,6 +38,12 @@ define(function (require) {
             return view.html();
         },
 
+        fieldsHtml: function (key) {
+            return this.model.get(key)
+                .map(this.fieldHtml.bind(this.model))
+                .join('\n');
+        },
+
         swapModel: function (procedure) {
             this.model = procedure;
         },
@@ -42,12 +52,11 @@ define(function (require) {
             var that = this;
 
             var done = function (documentRoot) {
-                var fieldsHtml = that.model.get('fields')
-                    .map(that.fieldHtml.bind(that.model))
-                    .join('\n');
-
+                var requiredFieldsHtml = that.fieldsHtml('requiredFields');
+                var fieldsHtml = that.fieldsHtml('fields');
                 that.$el.html(that.template({
                     procedure: that.model.toJSON(),
+                    requiredFieldsHtml: requiredFieldsHtml,
                     fieldsHtml: fieldsHtml,
                     documentRoot: documentRoot
                 }));
@@ -72,6 +81,13 @@ define(function (require) {
         events:{
             'click .save-button': 'saveProcedure',
             'click .delete-procedure': 'deleteProcedure',
+            // TODO:
+            // we can be more specific and don't bind clicks for every input,
+            // but w/ever for now.
+            'click .procedure-input': 'inputClicked'
+
+            // TODO:
+            // remove most of this stuff that are tree-related.
             // 'click .procedure input': 'pickProcedure',
             // 'click .supervision input': 'pickSupervision',
             // 'click .senior input': 'pickSenior',
@@ -81,6 +97,19 @@ define(function (require) {
             // 'click .procedure-picture-container': 'hidePicture',
             // 'click .procedure-picture-thumbnail': 'showPicture',
             // 'click .edit-button': 'edit'
+        },
+
+        inputClicked: function (event) {
+            var $input = $(event.target);
+            var isTree = $input.data('attribute-type') === FieldModel.types.CHOICETREE;
+            debug(`input ${event.target} clicked: which ${isTree ? 'is' : 'is NOT'} CHOICETREE.`);
+
+            if (!isTree)
+                return;
+
+            event.preventDefault();
+            this.openChoiceTree($input.data('attribute-name'), $input.val.bind($input));
+            return false;
         },
 
         addDateTimePicker: function() {

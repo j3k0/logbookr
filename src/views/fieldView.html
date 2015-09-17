@@ -3,10 +3,15 @@
  -->
 <div class="procedure-field <%-field.name%>">
   <div class="procedure-description"><span>
-    <%-field.description%>
+    <%- field.description %>
   </span></div>
 
-  <input type="<%-field.type%>" data-attribute-name="<%-field.name%>"
-         class="procedure-input procedure-<%-field.name%>"
-         value="<%-value%>">
+  <input type="text" class="procedure-input procedure-<%-field.name%>"
+         value="<%-value%>"
+         data-attribute-name="<%-field.name%>"
+         data-attribute-type="<%-field.type%>"
+    <% if (field.type === FieldModel.types.CHOICETREE) { %>
+         readonly
+    <% } %>
+  >
 </div>

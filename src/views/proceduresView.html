@@ -19,8 +19,11 @@
     </ul>
   </div>
 
-  <div style="font-family: monospace;">
+  <!-- Some meta -->
+  <div>
+    Model IDs:
     <pre><%= JSON.stringify(_.pluck(this.collection.models, 'id'), null, 2) %></pre>
+    Collection itself:
+    <pre><%= JSON.stringify(this.collection, null, 2) %></pre>
   </div>
-
 </div>

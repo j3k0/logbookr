@@ -22,7 +22,7 @@
         ].map(function (name) {
           return new FieldModel({
             name: name,
-            type: FieldModel.types.TEXT,
+            type: name === 'type' ? FieldModel.types.CHOICETREE : FieldModel.types.TEXT,
             description: 'Hardcoded `' + name + '` field description.'
           });
         })

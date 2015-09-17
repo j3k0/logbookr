@@ -39,6 +39,7 @@ define(function (require) {
             el: this.mainEl,
             collection: ProceduresCollection.getInstance(),
             updateTitle: this.updateTitle,
+            openChoiceTree: this.pickChoiceTreeOf.bind(this),
             openSupervision: _.bind(this.pickChoiceTreeOf, this, 'supervision'),
             openProcedure: _.bind(this.pickChoiceTreeOf, this, 'procedure'),
             openStage: _.bind(this.pickChoiceTreeOf, this, 'stage'),
