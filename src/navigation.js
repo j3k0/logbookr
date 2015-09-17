@@ -68,7 +68,7 @@ define(function (require) {
     };
 
     Navigation.prototype.openProcedures = function() {
-        this.openInMain(this.proceduresView()/*, $(this.mainEl)*/);
+        this.openInMain(this.proceduresView());
     };
 
     Navigation.prototype.mainView = Navigation.prototype.proceduresView;

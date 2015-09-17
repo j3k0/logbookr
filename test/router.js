@@ -4,6 +4,7 @@ define(function(require, exports, module) {
   // External dependencies.
   var Backbone = require("backbone");
   var $ = require('jquery');
+  var _ = require('underscore');
   var HomeView = require("./home");
   var LogbookR = require('logbookr/index');
   var LogbookData = require('./logbookData');
@@ -11,7 +12,7 @@ define(function(require, exports, module) {
   // Defining the application router.
   module.exports = Backbone.Router.extend({
 
-    initialize: function(options) {
+    initialize: function() {
         // Load logbook initial data
         LogbookData.choices.initialize(LogbookR.ChoiceTree.getInstance());
         $("#back").on("click", _.bind(function () { this.view.goBack(); }, this));
@@ -24,7 +25,7 @@ define(function(require, exports, module) {
     },
 
     home: function() {
-      this.openInMain(new HomeView(), $("#tab-content"));
+      this.openInMain(new HomeView({el: '#tab-content'}));
     },
 
     logbook: function() {
@@ -35,14 +36,16 @@ define(function(require, exports, module) {
             mainEl: "#tab-content",
             openInPopover: _.bind(this.openInPopover, this),
             popoverEl: "#popover"
-        }).mainView(), $("#tab-content"));
+        }).mainView());
     },
 
-    openInMain: function(view, $el) {
-        this.mainView = this.view = view.render();
-        // if ($el)
-        //     $el.html(this.mainView.$el);
-        // $("#main").html(this.mainView.$el);
+    openInMain: function(view) {
+      // TODO:
+      // remove this later, for now it'll help look for places that rely on $el.
+      if (arguments.length > 1)
+        throw new Error('Looks like you are trying to .html() in the wrong place.');
+
+      this.mainView = this.view = view.render();
     },
     openInPopover: function(view) {
         if (this.popoverView) {
