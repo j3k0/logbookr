@@ -2,12 +2,12 @@
   var definition = function (require) {
     var backbone = require('backbone');
     var TemplateModel = require('./templateModel');
-    var FieldModel = require('./fieldModel');
 
     return backbone.Model.extend({
       defaults: function () {
         return {
           id: '',
+          createdAt: Date.now(),
           date: '',
           patient: '',
           procedure: '',
