@@ -32,6 +32,10 @@ define(function (require) {
             return view.html();
         },
 
+        swapModel: function (procedure) {
+            this.model = procedure;
+        },
+
         render: function() {
             var that = this;
 

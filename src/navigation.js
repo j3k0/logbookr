@@ -38,7 +38,6 @@ define(function (require) {
         this.loadedViews.procedureView = this.loadedViews.procedureView || new ProcedureEntryView({
             el: this.mainEl,
             collection: ProceduresCollection.getInstance(),
-            model: procedure,
             updateTitle: this.updateTitle,
             openSupervision: _.bind(this.pickChoiceTreeOf, this, 'supervision'),
             openProcedure: _.bind(this.pickChoiceTreeOf, this, 'procedure'),
@@ -47,7 +46,7 @@ define(function (require) {
             goBack: _.bind(this.openProcedures, this)
         });
 
-        this.loadedViews.procedureView.model.set(procedure.toJSON());
+        this.loadedViews.procedureView.swapModel(procedure);
         return this.loadedViews.procedureView;
     };
 
