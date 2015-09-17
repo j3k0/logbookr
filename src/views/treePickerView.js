@@ -1,7 +1,7 @@
 define(function (require) {
 
-    var $ = require("jquery");
     var _ = require("underscore");
+    var debug = require('../debug');
     var Backbone = require("backbone");
     var sweetAlert = require("sweetalert");
     var template = require("./text!./treePickerView.html");
@@ -36,26 +36,26 @@ define(function (require) {
         },
 
         select: function(ev) {
-            console.log("select");
+            debug("select");
             ev.preventDefault();
 
             var el = ev.target;
             var itemId;
-            while (true) {
-                console.log("checking ", el);
+            while (true) { // eslint-disable-line no-constant-condition
+                debug("checking ", el);
                 if (!el || el.tagName === 'ul') {
-                    console.log("nop " + el);
+                    debug("nop " + el);
                     return false;
                 }
                 itemId = el.getAttribute("item-id");
                 if (itemId) {
-                    console.log("found " + itemId);
+                    debug("found " + itemId);
                     break;
                 }
                 el = el.parentElement;
             }
 
-            console.log("select " + itemId);
+            debug("select " + itemId);
 
             // The "delete" button was clicked, delete the item.
             if (ev.target.className.indexOf('delete') >= 0) {
@@ -83,7 +83,7 @@ define(function (require) {
                 }
             });
         },
-        
+
         add: function(ev) {
             ev.preventDefault();
             var that = this;

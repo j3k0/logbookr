@@ -7,6 +7,7 @@ define(function (require) {
     var DateTimePicker = require("datetimepicker");
     var FieldView = require('./fieldView');
     var FieldModel = require('../models/fieldModel');
+    var debug = require('../debug');
 
     var ProcedureEntryView = Backbone.View.extend({
 
@@ -176,11 +177,6 @@ define(function (require) {
         saveProcedure: function(ev) {
             ev.preventDefault();
 
-            // TODO:
-            // Okay, somehow it triggers multiple times without this.
-            // Should check it out later.
-            // ev.stopPropagation();
-
             var attrs = $('.procedure-input')
                 .get()
                 .reduce(function (prev, current) {
@@ -188,18 +184,6 @@ define(function (require) {
                     prev[el.data('attribute-name')] = el.val();
                     return prev;
                 }, {});
-
-            // {
-            //     type: this.$('.procedure-type').val(),
-            //     date: this.$('.procedure-datetime').val(),
-            //     patient: this.$('.procedure-patient').val(),
-            //     diagnostic: this.$('.procedure-diagnostic').val(),
-            //     supervision: this.$('.procedure-supervision').val(),
-            //     senior: this.$('.procedure-senior').val(),
-            //     stage: this.$('.procedure-stage').val(),
-            //     comment: this.$('.procedure-comment').val(),
-            //     picture: this.$('.procedure-picture-thumbnail').attr("image-url")
-            // };
 
             // TODO:
             // Validate!
@@ -224,7 +208,7 @@ define(function (require) {
             this.collection.unshift(this.model);
             this.model.save();
 
-            console.log('saved model with attrs', attrs, '\n', this.model);
+            debug('saved model with attrs', attrs, '\n', this.model);
             this.goBack();
             return false;
         },
@@ -325,7 +309,7 @@ define(function (require) {
         },
 
         deletePicture: function(pictureId) {
-            console.log(pictureId);
+            debug(pictureId);
             this.$(".one-picture[pictureId='"+pictureId+"']" ).remove();
         },
 
@@ -358,21 +342,21 @@ define(function (require) {
         //Callback function when the file system uri has been resolved
         resolveOnSuccess: function(entry){
             var that = this;
-            console.log("resolve success");
+            debug("resolve success");
             var n = +new Date();
             //new file name
             var newFileName = n + ".jpg";
             var myFolderApp = "AJCR";
 
             setTimeout(function() {
-                console.log("requesting a file system.");
+                debug("requesting a file system.");
                 window.requestFileSystem(window.PERSISTENT, 0, function(fileSys) {
-                    console.log("requestFileSystem success: URL=" + fileSys.root.nativeURL);
+                    debug("requestFileSystem success: URL=" + fileSys.root.nativeURL);
                     //The folder is created if doesn't exist
                     fileSys.root.getDirectory(myFolderApp, {
                         create:true, exclusive: false
                     }, function(directory) {
-                        console.log("getDirectory success: URL=" + directory.nativeURL);
+                        debug("getDirectory success: URL=" + directory.nativeURL);
                         entry.moveTo(directory, newFileName,
                             _.bind(that.successMove, that),
                             _.bind(that.resOnError, that));
@@ -385,7 +369,7 @@ define(function (require) {
 
         //Callback function when the file has been moved successfully - inserting the complete path
         successMove: function(entry) {
-            console.log("move success: URL=" + entry.nativeURL);
+            debug("move success: URL=" + entry.nativeURL);
             var imgNativeURL = "" + entry.nativeURL;
             this.$(".responsive-procedure-picture")[0].src = imgNativeURL;
             this.$(".procedure-picture-thumbnail")[0].src = imgNativeURL;
@@ -393,8 +377,8 @@ define(function (require) {
         },
 
         resOnError: function(error) {
-            console.log("Error");
-            console.log(error.code);
+            debug("Error");
+            debug(error.code);
         },
 
         edit: function(ev) {
