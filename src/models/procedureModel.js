@@ -16,23 +16,12 @@
       },
 
       initialize: function (attributes, options) {
-        var fields = this.get('fields');
-
+        // If options.template is present, copy fields over.
         if (options && options.template instanceof TemplateModel) {
-          // We've been passed a template which means we are creating new procedure.
-          // Copy over template fields so we can save them later.
-          fields = options.template.get('fields').slice();
+          this.set('fields', options.template.get('fields').map(function (field) {
+            return field.toJSON();
+          }));
         }
-        else {
-          // We could also be creating model from existing JSON, in this case
-          // we will need to transform existing fields array's elements
-          // into FieldModel instances.
-          fields = fields.map(function (attrs) {
-            return new FieldModel(attrs);
-          });
-        }
-
-        this.set('fields', fields);
       }
     });
   };

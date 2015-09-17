@@ -67,7 +67,9 @@ describe('ProcedureModel', function () {
 
       // Make sure it is copy and not the same reference.
       expect(procedure.get('fields')).to.not.be(template.get('fields'));
-      expect(procedure.get('fields')).to.eql(template.get('fields'));
+      expect(procedure.get('fields')).to.eql(template.get('fields').map(function (f) {
+        return f.toJSON();
+      }));
 
       // TODO:
       // remove this later, for now just make sure that there are fields.

@@ -6,6 +6,7 @@ define(function (require) {
     var template = require("./text!./procedureEntryView.html");
     var DateTimePicker = require("datetimepicker");
     var FieldView = require('./fieldView');
+    var FieldModel = require('../models/fieldModel');
 
     var ProcedureEntryView = Backbone.View.extend({
 
@@ -25,8 +26,8 @@ define(function (require) {
 
         fieldHtml: function (field) {
             var view = new FieldView({
-                model: field,
-                value: this.get(field.get('name'))
+                model: new FieldModel(field),
+                value: this.get(field.name)
             });
 
             return view.html();
