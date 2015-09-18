@@ -39,14 +39,23 @@ define(function(require, exports, module) {
         }).mainView());
     },
 
-    openInMain: function(view) {
-      // TODO:
-      // remove this later, for now it'll help look for places that rely on $el.
-      if (arguments.length > 1)
-        throw new Error('Looks like you are trying to .html() in the wrong place.');
-
+    openInMain: function(view, $el) {
       this.mainView = this.view = view.render();
+
+      // TODO:
+      // Reconsider this before merge.
+      if ($el) {
+        // Let's make sure we are not trying to do view's job here.
+        if ($el.length !== 1 || $el[0] === view.el)
+          throw new Error('Some fishy .html() stuff, this probably won\'t work!')
+
+        // TODO:
+        // not sure whether it is correct .html() argument…
+        console.warn('Make sure you are not trying to .html() wrong thing in the wrong place.');
+        $el.html(this.mainView.$el);
+      }
     },
+
     openInPopover: function(view) {
         if (this.popoverView) {
             this.popoverView.undelegateEvents();
