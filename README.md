@@ -8,6 +8,7 @@ Each entries have a number of fields (see `procedureModel`). Some of those field
 
 ## Run the test app
 
+ 1. `npm install`
  1. `http-server .`
  1. browse to `http://localhost:8080/test`
 
