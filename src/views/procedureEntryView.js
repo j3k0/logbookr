@@ -82,8 +82,9 @@ define(function (require) {
             'click .save-button': 'saveProcedure',
             'click .delete-procedure': 'deleteProcedure',
             // TODO:
-            // we can be more specific and don't bind clicks for every input,
-            // but w/ever for now.
+            // we can be more specific and don't bind clicks for every input;
+            // probably can be moved to FieldView, not sure how, though;
+            // w/ever for now.
             'click .procedure-input': 'inputClicked'
 
             // TODO:
@@ -101,15 +102,24 @@ define(function (require) {
 
         inputClicked: function (event) {
             var $input = $(event.target);
-            var isTree = $input.data('attribute-type') === FieldModel.types.CHOICETREE;
-            debug(`input ${event.target} clicked: which ${isTree ? 'is' : 'is NOT'} CHOICETREE.`);
+            var fieldType = $input.data('attribute-type');
+            var processedHere = true;
+            var updateInputValue = $input.val.bind($input);
+            debug(`input ${event.target} (\`${fieldType}\`) clicked.`);
 
-            if (!isTree)
-                return;
+            switch (fieldType) {
+                case FieldModel.types.CHOICETREE:
+                    this.openChoiceTree($input.data('attribute-name'), updateInputValue);
+                    break;
+                default:
+                    processedHere = false;
+                    break;
+            }
 
-            event.preventDefault();
-            this.openChoiceTree($input.data('attribute-name'), $input.val.bind($input));
-            return false;
+            if (processedHere) {
+                event.preventDefault();
+                return false;
+            }
         },
 
         addDateTimePicker: function() {
@@ -124,6 +134,7 @@ define(function (require) {
           var $dtBox = $('<div />');
           this.$el.append($dtBox);
           var options = _.extend({
+            mode: 'datetime',
             parentElement: this.el,
             animationDuration: 0,
             shortDayNames: ["Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"],
@@ -140,20 +151,24 @@ define(function (require) {
             defaultDate: defaultDate,
             addEventHandlers: function() {
               that.dtPickerObj = this;
-              that.$(".datetime-input").off("click");
-              that.$(".datetime-input").off("focus");
-              that.$(".datetime-input").click(function(e) {
-                if (e.preventDefault) {
-                  e.preventDefault();
-                }
-                if (e.stopPropagation) {
-                  e.stopPropagation();
-                }
-                $("#main").scrollTop(0);
-                setTimeout(function() {
-                  that.dtPickerObj.showDateTimePicker(that.$(".datetime-input"));
-                }, 30);
-              });
+              that.$('.procedure-input[data-attribute-type="' + FieldModel.types.DATE + '"]')
+                // TODO:
+                // not sure if `off` is required, since we might do stuff
+                // when date input is clicked within .inputClicked event handler.
+                .off("click")
+                .off("focus")
+                .click(function(e) {
+                    if (e.preventDefault) {
+                      e.preventDefault();
+                    }
+                    if (e.stopPropagation) {
+                      e.stopPropagation();
+                    }
+                    $("#main").scrollTop(0);
+                    setTimeout(function() {
+                      that.dtPickerObj.showDateTimePicker($(e.target));
+                    }, 30);
+                  });
             }
           });
           $dtBox.DateTimePicker(options);

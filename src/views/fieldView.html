@@ -10,7 +10,7 @@
          value="<%-value%>"
          data-attribute-name="<%-field.name%>"
          data-attribute-type="<%-field.type%>"
-    <% if (field.type === FieldModel.types.CHOICETREE) { %>
+    <% if (field.type === FieldModel.types.CHOICETREE || field.type === FieldModel.types.DATE) { %>
          readonly
     <% } %>
   >

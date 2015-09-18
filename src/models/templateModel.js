@@ -21,7 +21,7 @@
         ].map(function (name) {
           return new FieldModel({
             name: name,
-            type: FieldModel.types.TEXT,
+            type: (name == 'comment') ? FieldModel.types.DATE : FieldModel.types.TEXT,
             description: 'Hardcoded `' + name + '` field description.'
           });
         })
