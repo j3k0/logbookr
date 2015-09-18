@@ -13,7 +13,6 @@
         // TODO:
         // This should be [] by default and fetched in an actual app.
         fields: [
-          'type',
           'diagnostic',
           'supervision',
           'senior',
@@ -22,7 +21,7 @@
         ].map(function (name) {
           return new FieldModel({
             name: name,
-            type: name === 'type' ? FieldModel.types.CHOICETREE : FieldModel.types.TEXT,
+            type: FieldModel.types.TEXT,
             description: 'Hardcoded `' + name + '` field description.'
           });
         })

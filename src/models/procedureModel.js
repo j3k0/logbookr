@@ -7,12 +7,17 @@
     return backbone.Model.extend({
       defaults: function () {
         return {
+          // ID and creation timestamp for sorting.
           id: '',
           createdAt: Date.now(),
+          // Required fields and their values.
+          date: '',
+          type: '',
+          patient: '',
           requiredFields: [
             {name: 'date', description: 'Date performed', type: FieldModel.types.DATE},
-            {name: 'patient', description: 'Patient\'s full name', type: FieldModel.types.TEXT},
-            {name: 'procedure', description: 'Type of procedure', type: FieldModel.types.CHOICETREE}
+            {name: 'type', description: 'Type of procedure', type: FieldModel.types.CHOICETREE},
+            {name: 'patient', description: 'Patient\'s full name', type: FieldModel.types.TEXT}
           ].map(function (field) {
             return new FieldModel(field).toJSON();
           }),

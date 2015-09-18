@@ -5,7 +5,7 @@ define(function (require) {
 
     var procedure = function() {
         return new ChoiceModel({
-            id: "procedure",
+            id: "type",
             name: "Procédure",
             subtree: [{
                 id: uuid(),
