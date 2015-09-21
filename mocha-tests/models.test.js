@@ -47,11 +47,17 @@ describe('TemplateModel', function () {
 
 describe('ProcedureModel', function () {
   describe('defaults() / initialize()', function () {
-    it('defines minimal set of properties: `id`, `date`, `patient`, `procedure`', function () {
+    it('defines meta info: `id`, `createdAt`, `requiredFields` and `fields`', function () {
       var procedure = new ProcedureModel();
       expect(procedure.attributes).to.have.keys(
-        'id', 'date', 'patient', 'procedure'
+        'id', 'createdAt', 'requiredFields', 'fields'
       );
+    });
+
+    it('each required field has an according model attribute', function () {
+      var procedure = new ProcedureModel();
+      var names = procedure.get('requiredFields').map(function (field) { return field.name; });
+      expect(procedure.attributes).to.have.keys(names);
     });
 
     it('when no options.template is specified, attribute `fields` is an emtpy array', function () {
