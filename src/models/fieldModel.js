@@ -5,11 +5,13 @@
     var Backbone = require('backbone');
     var types = ['date', 'text', 'textarea', 'choicetree'];
 
-    return Backbone.Model.extend({
+    var FieldModel = Backbone.Model.extend({
+      idAttribute: 'name',
+
       defaults: function () {
         return {
           name: '',
-          type: '',
+          type: FieldModel.types.TEXT,
           description: ''
         };
       },
@@ -30,6 +32,8 @@
         return prev;
       }, {})
     });
+
+    return FieldModel;
   };
 
   return isBrowser

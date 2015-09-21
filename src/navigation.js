@@ -3,9 +3,10 @@ define(function (require) {
     var ProcedureEntryView = require('./views/procedureEntryView');
     var ProceduresView = require('./views/proceduresView');
     var TreePickerView = require('./views/treePickerView');
+    var TemplateView = require('./views/templateView');
+    var template = require('./models/template');
     var ProceduresCollection = require('./models/proceduresCollection');
     var ChoiceTree = require('./models/choiceTree');
-    var $ = require('jquery');
     var _ = require('underscore');
 
     var Navigation = function(options) {
@@ -27,6 +28,7 @@ define(function (require) {
             collection: ProceduresCollection.getInstance(),
             updateTitle: this.updateTitle,
             openProcedure: _.bind(this.openProcedure, this),
+            openTemplate: _.bind(this.openTemplate, this),
             goBack: this.goHome
         });
 
@@ -40,11 +42,13 @@ define(function (require) {
             collection: ProceduresCollection.getInstance(),
             updateTitle: this.updateTitle,
             openChoiceTree: this.pickChoiceTreeOf.bind(this),
+            goBack: _.bind(this.openProcedures, this),
+            // TODO:
+            // remove, no longer required.
             openSupervision: _.bind(this.pickChoiceTreeOf, this, 'supervision'),
             openProcedure: _.bind(this.pickChoiceTreeOf, this, 'procedure'),
             openStage: _.bind(this.pickChoiceTreeOf, this, 'stage'),
-            openSenior: _.bind(this.pickChoiceTreeOf, this, 'senior'),
-            goBack: _.bind(this.openProcedures, this)
+            openSenior: _.bind(this.pickChoiceTreeOf, this, 'senior')
         });
 
         this.loadedViews.procedureView.swapModel(procedure);
@@ -62,6 +66,18 @@ define(function (require) {
 
     Navigation.prototype.pickChoiceTreeOf = function(name, cb) {
         this.pickChoiceTree(ChoiceTree.getInstance().get(name).tree(), cb);
+    };
+
+    Navigation.prototype.openTemplate = function () {
+        this.loadedViews = this.loadedViews || {};
+        this.loadedViews.templateView = this.loadedViews.templateView || new TemplateView({
+            el: this.mainEl,
+            collection: template.getInstance(),
+            updateTitle: this.updateTitle,
+            goBack: _.bind(this.openProcedures, this)
+        });
+
+        this.openInMain(this.loadedViews.templateView);
     };
 
     Navigation.prototype.openProcedure = function(procedure) {

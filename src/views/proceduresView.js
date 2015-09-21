@@ -3,20 +3,21 @@ define(function (require) {
     var $ = require("jquery");
     var _ = require("underscore");
     var Backbone = require("backbone");
-    var template = require("./text!./proceduresView.html");
+    var templateText = require("./text!./proceduresView.html");
     var ProcedureModel = require('../models/procedureModel');
-    var TemplateModel = require('../models/templateModel');
+    var template = require('../models/template');
     var uuid = require('../models/uuid');
 
     var ProceduresView = Backbone.View.extend({
 
-        template: _.template(template),
+        template: _.template(templateText),
 
         initialize: function(options) {
             this.options = options || {};
             this.options.viewName = "ProceduresView";
             this.updateTitle = options.updateTitle;
             this.openProcedure = options.openProcedure;
+            this.openTemplate = options.openTemplate;
             this.goBack = options.goBack;
         },
 
@@ -33,16 +34,14 @@ define(function (require) {
 
         events:{
             'click .procedure': 'goToProcedure',
-            'click .add-procedure': 'newProcedure'
+            'click .add-procedure': 'newProcedure',
+            'click .edit-template': 'editTemplate'
         },
 
         newProcedure: function() {
-            var procedure = new ProcedureModel(
-                {id: uuid()},
-                {template: new TemplateModel()}
-            );
-
-            this.openProcedure(procedure);
+            var attrs = {id: uuid()};
+            var options = {template: template.getInstance().toJSON()};
+            this.openProcedure(new ProcedureModel(attrs, options));
         },
 
         goToProcedure: function(ev) {
@@ -53,6 +52,12 @@ define(function (require) {
             if (procedure !== undefined){
                 this.openProcedure(procedure);
             }
+            return false;
+        },
+
+        editTemplate: function (event) {
+            event.preventDefault();
+            this.openTemplate();
             return false;
         }
     });

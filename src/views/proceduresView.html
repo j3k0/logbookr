@@ -1,5 +1,7 @@
 <div class="content">
+
   <div class="new-procedure">
+      <div class="btn edit-template">Edit Template</div>
       <div class="btn procedure-btn add-procedure">+ Ajouter une intervention</div>
   </div>
   <div class="list">
@@ -22,8 +24,8 @@
   <!-- Some meta -->
   <div>
     Model IDs:
-    <pre><%= JSON.stringify(_.pluck(this.collection.models, 'id'), null, 2) %></pre>
+    <pre><%= JSON.stringify(_.pluck(collection.models, 'id'), null, 2) %></pre>
     Collection itself:
-    <pre><%= JSON.stringify(this.collection, null, 2) %></pre>
+    <pre><%= JSON.stringify(collection, null, 2) %></pre>
   </div>
 </div>
