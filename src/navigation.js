@@ -43,25 +43,19 @@ define(function (require) {
             collection: ProceduresCollection.getInstance(),
             updateTitle: this.updateTitle,
             openChoiceTree: this.pickChoiceTreeOf.bind(this),
-            goBack: _.bind(this.openProcedures, this),
-            // TODO:
-            // remove, no longer required.
-            openSupervision: _.bind(this.pickChoiceTreeOf, this, 'supervision'),
-            openProcedure: _.bind(this.pickChoiceTreeOf, this, 'procedure'),
-            openStage: _.bind(this.pickChoiceTreeOf, this, 'stage'),
-            openSenior: _.bind(this.pickChoiceTreeOf, this, 'senior')
+            goBack: _.bind(this.openProcedures, this)
         });
 
         this.loadedViews.procedureView.swapModel(procedure);
         return this.loadedViews.procedureView;
     };
 
-    Navigation.prototype.pickChoiceTree = function(choiceTree, cb) {
+    Navigation.prototype._pickChoiceTree = function(choiceTree, cb) {
         this.openInPopover(new TreePickerView({
             el: this.popoverEl,
             items: choiceTree,
             onSelect: cb,
-            openChoiceTree: _.bind(this.pickChoiceTree, this)
+            openChoiceTree: _.bind(this._pickChoiceTree, this)
         }));
     };
 
@@ -78,7 +72,7 @@ define(function (require) {
             choice.save();
         }
 
-        this.pickChoiceTree(choice.tree(), cb);
+        this._pickChoiceTree(choice.tree(), cb);
     };
 
     Navigation.prototype.openTemplate = function () {

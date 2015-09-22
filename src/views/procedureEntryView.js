@@ -18,13 +18,6 @@ define(function (require) {
             this.options.viewName = "ProcedureEntryView";
 
             this.openChoiceTree = options.openChoiceTree;
-            // TODO:
-            // remove; this should not needed, better delegate to FieldView.
-            this.openSupervision = options.openSupervision;
-            this.openProcedure = options.openProcedure;
-            this.openSenior = options.openSenior;
-            this.openStage = options.openStage;
-
             this.updateTitle = options.updateTitle;
             this.goBack = options.goBack;
         },
@@ -88,11 +81,7 @@ define(function (require) {
             'click .procedure-input': 'inputClicked'
 
             // TODO:
-            // remove most of this stuff that are tree-related.
-            // 'click .procedure input': 'pickProcedure',
-            // 'click .supervision input': 'pickSupervision',
-            // 'click .senior input': 'pickSenior',
-            // 'click .stage input': 'pickStage',
+            // Bring pictures back.
             // 'click .take-procedure-picture-btn': 'takePicture',
             // 'click .delete-picture': 'confirmDeletePicture',
             // 'click .procedure-picture-container': 'hidePicture',
@@ -172,42 +161,6 @@ define(function (require) {
             }
           });
           $dtBox.DateTimePicker(options);
-        },
-
-        pickProcedure: function(ev) {
-            ev.preventDefault();
-            var that = this;
-            this.openProcedure(function(value) {
-                that.$(".procedure-type").val(value);
-            });
-            return false;
-        },
-
-        pickSupervision: function(ev) {
-            ev.preventDefault();
-            var that = this;
-            this.openSupervision(function(value) {
-                that.$(".procedure-supervision").val(value);
-            });
-            return false;
-        },
-
-        pickSenior: function(ev) {
-            ev.preventDefault();
-            var that = this;
-            this.openSenior(function(value) {
-                that.$(".procedure-senior").val(value);
-            });
-            return false;
-        },
-
-        pickStage: function(ev) {
-            ev.preventDefault();
-            var that = this;
-            this.openStage(function(value) {
-                that.$(".procedure-stage").val(value);
-            });
-            return false;
         },
 
         deleteProcedure: function(ev) {
