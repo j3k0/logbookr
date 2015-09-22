@@ -8,8 +8,10 @@
     <ul class="list-ul">
       <% _.each(fields, function (field) { %>
         <li class="list-li item template-field" data-id="<%-field.name%>">
-          <input type="text" class="field-name" value="<%-field.name%>">
-          <input type="text" class="field-description" value="<%-field.description%>">
+          <input type="text" class="field-description" value="<%-field.description%>"
+                 placeholder="Type in field's description…"
+          >
+
           <select class="field-type" value="<%-field.type%>">
             <% _.each(FieldModel.types, function (val, key) { %>
               <option value="<%-FieldModel.types[key]%>"

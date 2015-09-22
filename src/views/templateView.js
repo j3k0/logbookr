@@ -7,6 +7,7 @@
     var underscore = require('underscore');
     var templateText = require('./text!./templateView.html');
     var FieldModel = require('../models/FieldModel');
+    var uuid = require('../models/uuid');
 
     return backbone.View.extend({
       template: underscore.template(templateText),
@@ -57,8 +58,7 @@
       addField: function (event) {
         event.preventDefault();
         var field = new FieldModel({
-          name: 'name-' + String(Date.now()).slice(-5),
-          description: 'desc-' + String(Date.now()).slice(-5)
+          name: ['template-field', Date.now(), uuid()].join('.')
         });
         this.collection.add(field);
         field.save();
@@ -69,7 +69,7 @@
         var $li = this._fieldBlock(event);
 
         this._field(event).save({
-          name: $li.find(".field-name").val(),
+          name: this._fieldId(event),
           description: $li.find(".field-description").val(),
           type: $li.find('.field-type').val()
         });
