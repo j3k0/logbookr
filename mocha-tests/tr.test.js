@@ -22,11 +22,11 @@ describe('tr()', function () {
 
   it('warns about missing locales', function () {
     tr.locale = 'missing';
-    expect(tr('_test')).to.match(/^\[No Locale\]/);
+    expect(tr('_test')).to.match(/^\[No Locale\] /);
   });
 
   it('warns about missing keys', function () {
     tr.locale = 'en';
-    expect(tr('missing')).to.match(/^\[No Translation\]/);
+    expect(tr('missing')).to.match(/^\[No Translation\] /);
   });
 });

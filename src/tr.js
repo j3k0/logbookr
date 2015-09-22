@@ -18,7 +18,16 @@
       'en': {
         '_test': 'test string',
 
-        'template.edit': 'Edit Template',
+        // FieldModel types
+        'FieldModel.DATE': 'Date',
+        'FieldModel.TEXT': 'Text',
+        'FieldModel.TEXTAREA': 'Text Area',
+        'FieldModel.CHOICETREE': 'Choice Tree',
+
+        // proceduresView
+        'procedures.edit-template': 'Edit Template',
+
+        // templateView
         'template.add-new-field': 'Add new field',
         'template.save-field': 'Save Changes',
         'template.remove-field': 'Remove Field',
@@ -27,7 +36,7 @@
     };
 
     var errorMessage = function (type, key) {
-      return '[' + type + ']' + tr.locale + ' -> ' + key
+      return '[' + type + '] ' + tr.locale + ' -> ' + key
     };
 
     var tr = function (key) {
