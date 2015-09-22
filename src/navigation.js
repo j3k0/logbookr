@@ -6,6 +6,7 @@ define(function (require) {
     var TemplateView = require('./views/templateView');
     var template = require('./models/template');
     var ProceduresCollection = require('./models/proceduresCollection');
+    var ChoiceModel = require('./models/choiceModel');
     var ChoiceTree = require('./models/choiceTree');
     var _ = require('underscore');
 
@@ -65,7 +66,19 @@ define(function (require) {
     };
 
     Navigation.prototype.pickChoiceTreeOf = function(name, cb) {
-        this.pickChoiceTree(ChoiceTree.getInstance().get(name).tree(), cb);
+        var choice = ChoiceTree.getInstance().get(name);
+        if (choice === undefined) {
+            choice = new ChoiceModel({
+                id: name,
+                name: 'Custom Tree??',
+                subtree: []
+            });
+
+            ChoiceTree.getInstance().add(choice);
+            choice.save();
+        }
+
+        this.pickChoiceTree(choice.tree(), cb);
     };
 
     Navigation.prototype.openTemplate = function () {
