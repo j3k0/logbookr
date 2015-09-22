@@ -25,8 +25,8 @@
 
       events: {
         'click .add-field': 'addField',
-        'click .save-field': 'saveField',
-        'click .remove-field': 'removeField'
+        'click .remove-field': 'removeField',
+        'change .template-input': 'fieldChanged'
       },
 
       html: function () {
@@ -66,20 +66,18 @@
         field.save();
       },
 
-      saveField: function (event) {
-        event.preventDefault();
-        var $li = this._fieldBlock(event);
-
-        this._field(event).save({
-          name: this._fieldId(event),
-          description: $li.find(".field-description").val(),
-          type: $li.find('.field-type').val()
-        });
-      },
-
       removeField: function (event) {
         event.preventDefault();
         this._field(event).destroy();
+      },
+
+      fieldChanged: function (event) {
+        event.preventDefault();
+        var $li = this._fieldBlock(event);
+        this._field(event).save({
+          description: $li.find(".field-description").val(),
+          type: $li.find('.field-type').val()
+        });
       }
     });
   };

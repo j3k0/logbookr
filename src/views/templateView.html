@@ -8,11 +8,11 @@
     <ul class="list-ul">
       <% _.each(fields, function (field) { %>
         <li class="list-li item template-field" data-id="<%-field.name%>">
-          <input type="text" class="field-description" value="<%-field.description%>"
+          <input type="text" class="template-input field-description" value="<%-field.description%>"
                  placeholder="<%-tr('tempalte.description-placehodler')%>"
           >
 
-          <select class="field-type" value="<%-field.type%>">
+          <select class="template-input field-type" value="<%-field.type%>">
             <% _.each(FieldModel.types, function (val, key) { %>
               <option value="<%-FieldModel.types[key]%>"
                 <% if (field.type === val) { %>
@@ -23,7 +23,6 @@
           </select>
 
           <span class="template-field-controls">
-            <a href="#" class="save-field"><%-tr('template.save-field')%></a>
             <a href="#" class="remove-field"><%-tr('template.remove-field')%></a>
           </span>
         </li>
