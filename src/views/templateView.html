@@ -3,13 +3,13 @@
 
 <div class="content">
   <div class="list">
-    <div class="btn add-field">Add new field</div>
+    <div class="btn add-field"><%-tr('template.add-new-field')%></div>
 
     <ul class="list-ul">
       <% _.each(fields, function (field) { %>
         <li class="list-li item template-field" data-id="<%-field.name%>">
           <input type="text" class="field-description" value="<%-field.description%>"
-                 placeholder="Type in field's description…"
+                 placeholder="<%-tr('tempalte.description-placehodler')%>"
           >
 
           <select class="field-type" value="<%-field.type%>">
@@ -23,8 +23,8 @@
           </select>
 
           <span class="template-field-controls">
-            <a href="#" class="save-field">Save changes</a>
-            <a href="#" class="remove-field">Remove</a>
+            <a href="#" class="save-field"><%-tr('template.save-field')%></a>
+            <a href="#" class="remove-field"><%-tr('template.remove-field')%></a>
           </span>
         </li>
       <% }); %>

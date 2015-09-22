@@ -8,6 +8,7 @@
     var templateText = require('./text!./templateView.html');
     var FieldModel = require('../models/FieldModel');
     var uuid = require('../models/uuid');
+    var tr = require('../tr');
 
     return backbone.View.extend({
       template: underscore.template(templateText),
@@ -32,7 +33,8 @@
         return this.template({
           FieldModel: FieldModel,
           fields: this.collection.toJSON(),
-          collection: this.collection
+          collection: this.collection,
+          tr: tr
         });
       },
 

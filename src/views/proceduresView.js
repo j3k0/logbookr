@@ -7,6 +7,7 @@ define(function (require) {
     var ProcedureModel = require('../models/procedureModel');
     var template = require('../models/template');
     var uuid = require('../models/uuid');
+    var tr = require('../tr');
 
     var ProceduresView = Backbone.View.extend({
 
@@ -24,7 +25,8 @@ define(function (require) {
         render: function() {
             this.$el.html(this.template({
                 collection: this.collection,
-                procedures: this.collection.toJSON()
+                procedures: this.collection.toJSON(),
+                tr: tr
             }));
 
             this.titleView = "Interventions";
