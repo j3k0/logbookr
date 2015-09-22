@@ -28,6 +28,7 @@
         'procedures.edit-template': 'Edit Template',
 
         // templateView
+        'template.title': 'Template Editor',
         'template.add-new-field': 'Add new field',
         'template.save-field': 'Save Changes',
         'template.remove-field': 'Remove Field',

@@ -39,7 +39,7 @@
       },
 
       render: function () {
-        this.titleView = "Template Editor";
+        this.titleView = tr('template.title');
         this.updateTitle(this.titleView);
         this.$el.html(this.html());
         return this;
