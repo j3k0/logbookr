@@ -48,19 +48,20 @@ define(function (require) {
 
         goToProcedure: function(ev) {
             ev.preventDefault();
+            ev.stopPropagation();
+
             var chosenProcedure = $(ev.currentTarget);
             var procedureId = chosenProcedure.attr("procedure-id");
             var procedure = this.collection.get(procedureId);
-            if (procedure !== undefined){
+            if (procedure !== undefined)
                 this.openProcedure(procedure);
-            }
-            return false;
         },
 
         editTemplate: function (event) {
             event.preventDefault();
+            event.stopPropagation();
+
             this.openTemplate();
-            return false;
         }
     });
 

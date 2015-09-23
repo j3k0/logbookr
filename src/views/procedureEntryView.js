@@ -108,7 +108,7 @@ define(function (require) {
 
             if (processedHere) {
                 event.preventDefault();
-                return false;
+                event.stopPropagation();
             }
         },
 
@@ -166,14 +166,17 @@ define(function (require) {
 
         deleteProcedure: function(ev) {
             ev.preventDefault();
+            ev.stopPropagation();
+
             if (this.model.collection)
                 this.model.destroy();
+
             this.goBack();
-            return false;
         },
 
         saveProcedure: function(ev) {
             ev.preventDefault();
+            ev.stopPropagation();
 
             var attrs = $('.procedure-input')
                 .get()
@@ -195,12 +198,12 @@ define(function (require) {
                 debug('failed to update model', this.model.validationError);
                 errors.display(this.model.validationError);
             }
-
-            return false;
         },
 
         takePicture: function(ev) {
             ev.preventDefault();
+            ev.stopPropagation();
+
             this.devicePixelRatio = window.devicePixelRatio || 1;
             var that = this;
             if (window.navigator.camera) {
@@ -231,7 +234,6 @@ define(function (require) {
                     );
                 }
             }
-            return false;
         },
 
          // Called when a photo is successfully retrieved
@@ -369,6 +371,8 @@ define(function (require) {
 
         edit: function(ev) {
             ev.preventDefault();
+            ev.stopPropagation();
+
             var editButton = this.$(".nav-bar .edit-button");
             if(editButton.hasClass("edit-mode")){
                 editButton.removeClass("edit-mode");
@@ -384,7 +388,6 @@ define(function (require) {
                 this.$(".procedure-description .delete-icon").addClass("hidden");
                 this.$(".procedure-description").removeClass("procedure-description-editable");
             }
-            return false;
         }
     });
 

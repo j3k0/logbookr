@@ -38,6 +38,7 @@ define(function (require) {
         select: function(ev) {
             debug("select");
             ev.preventDefault();
+            ev.stopPropagation();
 
             var el = ev.target;
             var itemId;
@@ -45,7 +46,7 @@ define(function (require) {
                 debug("checking ", el);
                 if (!el || el.tagName === 'ul') {
                     debug("nop " + el);
-                    return false;
+                    return;
                 }
                 itemId = el.getAttribute("item-id");
                 if (itemId) {
@@ -60,7 +61,7 @@ define(function (require) {
             // The "delete" button was clicked, delete the item.
             if (ev.target.className.indexOf('delete') >= 0) {
                 this.deleteItem(itemId);
-                return false;
+                return;
             }
 
             var child = this.items.subtree.get(itemId);
@@ -71,7 +72,6 @@ define(function (require) {
                 this.onSelect(child.getName());
                 this.$el.hide();
             }
-            return false;
         },
 
         deleteItem: function(id) {
@@ -100,6 +100,8 @@ define(function (require) {
 
         edit: function(ev) {
             ev.preventDefault();
+            ev.stopPropagation();
+
             var editButton = this.$(".treepicker-header .edit-button");
             if(editButton.hasClass("edit-mode")){
                 editButton.removeClass("edit-mode");
@@ -115,13 +117,12 @@ define(function (require) {
                 this.$(".item-list-name .delete-icon").addClass("hidden");
                 this.$(".item-list-name").removeClass("item-list-name-editable");
             }
-            return false;
         },
 
         back: function(ev) {
             ev.preventDefault();
+            ev.stopPropagation();
             this.goBack();
-            return false;
         },
 
         goBack: function(){
