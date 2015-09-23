@@ -22,7 +22,7 @@ describe('FieldModel', function () {
     it('returns error message on invalid type', function () {
       var invalidType = new FieldModel({type: 'not-a-type'});
       expect(invalidType.isValid()).to.be(false);
-      expect(invalidType.validationError).to.match(/^InvalidAttribute:/);
+      expect(invalidType.validationError).to.match(/^ValidationError:/);
     });
 
     it('returns undefined on well-formed fields', function () {

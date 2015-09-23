@@ -3,6 +3,8 @@
 
   var definition = function (require) {
     var Backbone = require('backbone');
+    var errors = require('../errors');
+
     var types = ['date', 'text', 'textarea', 'choicetree'];
 
     var FieldModel = Backbone.Model.extend({
@@ -19,8 +21,8 @@
       validate: function (attrs) {
         // type must be one of `FieldModel.types`.
         if (-1 === types.indexOf(attrs.type)) {
-          return 'InvalidAttribute: `type` must be one of `'
-            + JSON.stringify(types) + '`; got `' + attrs.type + '`.'
+          return errors.validationError('`type` must be one of `'
+            + JSON.stringify(types) + '`; got `' + attrs.type + '`.');
         }
       }
     },
