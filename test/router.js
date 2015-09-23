@@ -15,7 +15,7 @@ define(function(require, exports, module) {
     initialize: function() {
         // Load logbook initial data
         LogbookData.choices.initialize(LogbookR.ChoiceTree.getInstance());
-        $("#back").on("click", _.bind(function () { this.view.goBack(); }, this));
+        $("#back").on("click", _.bind(function () { this.mainView.goBack(); }, this));
     },
 
     routes: {
@@ -40,7 +40,7 @@ define(function(require, exports, module) {
     },
 
     openInMain: function(view, $el) {
-      this.mainView = this.view = view.render();
+      this.mainView = view.render();
 
       // TODO:
       // Reconsider this before merge.
@@ -61,7 +61,7 @@ define(function(require, exports, module) {
             this.popoverView.undelegateEvents();
         }
         view.render().$el.show();
-        this.popoverView = this.view = view;
+        this.popoverView = view;
     },
     updateTitle: function(text) {
         $("#title").html(text);
