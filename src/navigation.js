@@ -1,5 +1,4 @@
 define(function (require) {
-
     var ProcedureEntryView = require('./views/procedureEntryView');
     var ProceduresView = require('./views/proceduresView');
     var TreePickerView = require('./views/treePickerView');
@@ -11,44 +10,40 @@ define(function (require) {
     var _ = require('underscore');
 
     var Navigation = function(options) {
-
         this.updateTitle = options.updateTitle;
         this.goHome = options.goHome;
-
         this.openInMain = options.openInMain,
         this.mainEl = options.mainEl;
-
         this.openInPopover = options.openInPopover;
         this.popoverEl = options.popoverEl;
+
+        // Initialize views
+        this.views = {
+            procedures: new ProceduresView({
+                el: this.mainEl,
+                collection: ProceduresCollection.getInstance(),
+                updateTitle: this.updateTitle,
+                openProcedure: _.bind(this.openProcedure, this),
+                openTemplate: _.bind(this.openTemplate, this),
+                goBack: this.goHome
+            }),
+
+            procedure: new ProcedureEntryView({
+                el: this.mainEl,
+                collection: ProceduresCollection.getInstance(),
+                updateTitle: this.updateTitle,
+                openChoiceTree: this.pickChoiceTreeOf.bind(this),
+                goBack: _.bind(this.openProcedures, this)
+            }),
+
+            template: new TemplateView({
+                el: this.mainEl,
+                collection: template.getInstance(),
+                updateTitle: this.updateTitle,
+                goBack: _.bind(this.openProcedures, this)
+            })
+        }
     }
-
-    Navigation.prototype.proceduresView = function() {
-        this.loadedViews = this.loadedViews || {};
-        this.loadedViews.proceduresView = this.loadedViews.proceduresView || new ProceduresView({
-            el: this.mainEl,
-            collection: ProceduresCollection.getInstance(),
-            updateTitle: this.updateTitle,
-            openProcedure: _.bind(this.openProcedure, this),
-            openTemplate: _.bind(this.openTemplate, this),
-            goBack: this.goHome
-        });
-
-        return this.loadedViews.proceduresView;
-    };
-
-    Navigation.prototype.procedureView = function(procedure) {
-        this.loadedViews = this.loadedViews || {};
-        this.loadedViews.procedureView = this.loadedViews.procedureView || new ProcedureEntryView({
-            el: this.mainEl,
-            collection: ProceduresCollection.getInstance(),
-            updateTitle: this.updateTitle,
-            openChoiceTree: this.pickChoiceTreeOf.bind(this),
-            goBack: _.bind(this.openProcedures, this)
-        });
-
-        this.loadedViews.procedureView.swapModel(procedure);
-        return this.loadedViews.procedureView;
-    };
 
     Navigation.prototype._pickChoiceTree = function(choiceTree, cb) {
         this.openInPopover(new TreePickerView({
@@ -76,26 +71,21 @@ define(function (require) {
     };
 
     Navigation.prototype.openTemplate = function () {
-        this.loadedViews = this.loadedViews || {};
-        this.loadedViews.templateView = this.loadedViews.templateView || new TemplateView({
-            el: this.mainEl,
-            collection: template.getInstance(),
-            updateTitle: this.updateTitle,
-            goBack: _.bind(this.openProcedures, this)
-        });
-
-        this.openInMain(this.loadedViews.templateView);
+        this.openInMain(this.views.template);
     };
 
-    Navigation.prototype.openProcedure = function(procedure) {
-        this.openInMain(this.procedureView(procedure));
+    Navigation.prototype.openProcedure = function (procedure) {
+        this.views.procedure.swapModel(procedure);
+        this.openInMain(this.views.procedure);
     };
 
-    Navigation.prototype.openProcedures = function() {
-        this.openInMain(this.proceduresView());
+    Navigation.prototype.openProcedures = function () {
+        this.openInMain(this.views.procedures);
     };
 
-    Navigation.prototype.mainView = Navigation.prototype.proceduresView;
+    Navigation.prototype.mainView = function () {
+        return this.views.procedures;
+    };
 
     return Navigation;
 });
