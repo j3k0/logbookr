@@ -94,7 +94,7 @@ define(function (require) {
             var fieldType = $input.data('attribute-type');
             var processedHere = true;
             var updateInputValue = $input.val.bind($input);
-            debug(`input ${event.target} (\`${fieldType}\`) clicked.`);
+            debug('input ' + event.target + ' (`' + fieldType + '`) clicked.');
 
             switch (fieldType) {
                 case FieldModel.types.CHOICETREE:
