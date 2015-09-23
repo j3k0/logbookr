@@ -9,6 +9,7 @@ define(function (require) {
     var FieldModel = require('../models/fieldModel');
     var debug = require('../debug');
     var errors = require('../errors');
+    var tr = require('../tr');
 
     var ProcedureEntryView = Backbone.View.extend({
 
@@ -52,10 +53,11 @@ define(function (require) {
                     procedure: that.model.toJSON(),
                     requiredFieldsHtml: requiredFieldsHtml,
                     fieldsHtml: fieldsHtml,
-                    documentRoot: documentRoot
+                    documentRoot: documentRoot,
+                    tr: tr
                 }));
 
-                that.titleView = "Nouvelle intervention";
+                that.titleView = tr('procedure.title');
                 that.updateTitle(that.titleView);
                 that.addDateTimePicker();
             };

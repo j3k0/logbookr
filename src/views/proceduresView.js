@@ -29,7 +29,7 @@ define(function (require) {
                 tr: tr
             }));
 
-            this.titleView = "Interventions";
+            this.titleView = tr('procedures.title');
             this.updateTitle(this.titleView);
             return this;
         },

@@ -9,10 +9,18 @@
     // For now let's pass in english strings, and in case we are in production,
     // turn them into french ones. It would be better to pass in string keys, though,
     // (and nesting and stuff... Not needed for now, app is small, so whatever).
-
     var locales = {
       'fr': {
-        '_test': 'fr test string'
+        '_test': 'fr test string',
+
+        // proceduresView
+        'procedures.title': 'Interventions',
+        'procedures.add-procedure': '+ Ajouter une intervention',
+
+        // procedureView
+        'procedure.title': 'Nouvelle intervention',
+        'procedure.save-button': 'Sauvegarder',
+        'procedure.delete-button': 'Supprimer'
       },
 
       'en': {
@@ -24,8 +32,20 @@
         'FieldModel.TEXTAREA': 'Text Area',
         'FieldModel.CHOICETREE': 'Choice Tree',
 
+        // FieldModel required fields descriptions
+        'FieldModel.required.date': 'Date Performed',
+        'FieldModel.required.type': 'Type of Procedure',
+        'FieldModel.required.patient': 'Patient\'s Full Name',
+
         // proceduresView
+        'procedures.title': 'The Interventions',
+        'procedures.add-procedure': '+ Add new Procedure',
         'procedures.edit-template': 'Edit Template',
+
+        // procedureView
+        'procedure.title': 'New Intervention',
+        'procedure.save-button': 'Save Procedure',
+        'procedure.delete-button': 'Delete Procedure',
 
         // templateView
         'template.title': 'Template Editor',

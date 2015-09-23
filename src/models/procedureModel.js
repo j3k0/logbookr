@@ -3,6 +3,7 @@
     var backbone = require('backbone');
     var FieldModel = require('./fieldModel');
     var errors = require('../errors');
+    var tr = require('../tr');
 
     // The reason for this is that we do not want to store FieldModel isntances,
     // but we'd like some sanity check and default values.
@@ -27,9 +28,9 @@
           type: '',
           patient: '',
           requiredFields: toFields([
-            {name: 'date', description: 'Date performed', type: FieldModel.types.DATE},
-            {name: 'type', description: 'Type of procedure', type: FieldModel.types.CHOICETREE},
-            {name: 'patient', description: 'Patient\'s full name', type: FieldModel.types.TEXT}
+            {name: 'date', description: tr('FieldModel.required.date'), type: FieldModel.types.DATE},
+            {name: 'type', description: tr('FieldModel.required.type'), type: FieldModel.types.CHOICETREE},
+            {name: 'patient', description: tr('FieldModel.required.patient'), type: FieldModel.types.TEXT}
           ]),
           // TODO:
           // rename requiredFields to fields and fields to additionalField.
