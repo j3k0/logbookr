@@ -1,4 +1,5 @@
 var expect = require('expect.js');
+var underscore = require('underscore');
 var ProcedureModel = require('../src/models/procedureModel');
 var FieldModel = require('../src/models/fieldModel');
 
@@ -33,6 +34,18 @@ describe('FieldModel', function () {
 });
 
 describe('ProcedureModel', function () {
+  var createProcedure = function (customAttributes) {
+    var defaults = {
+      id: 'id',
+      date: 'date',
+      type: 'type',
+      patient: 'patient'
+    };
+
+    return new ProcedureModel(underscore.extend(defaults, customAttributes || {}));
+  };
+
+
   describe('defaults() / initialize()', function () {
     it('defines meta info: `id`, `createdAt`, `requiredFields` and `fields`', function () {
       var procedure = new ProcedureModel();
@@ -69,6 +82,70 @@ describe('ProcedureModel', function () {
       // Make sure it is copy and not the same reference.
       expect(procedure.get('fields')).to.not.be(template);
       expect(procedure.get('fields')).to.eql(template);
+    });
+
+    describe('#diff()', function () {
+      it('returns object with previous attributes that were changed', function () {
+        var procedure = new ProcedureModel();
+        var changes = {
+          patient: 'someone',  // change field
+          new: 'attr'          // add field
+        };
+
+        procedure.set(changes)
+        var expectedDiff = underscore.pick(procedure.previousAttributes(), Object.keys(changes));
+        expect(procedure.diff()).to.eql(expectedDiff);
+      });
+
+      it('returns `false` when model is unchagned', function () {
+        var procedure = new ProcedureModel();
+        expect(procedure.diff()).to.eql(false);
+      });
+    });
+
+    describe('#revert()', function () {
+      it('returns model to its previous state (before latest `set()`)', function () {
+        var procedure = new ProcedureModel();
+        var original = procedure.toJSON();
+
+        procedure.set('patient', 'must be reverted');
+        procedure.revert();
+
+        expect(original).to.eql(procedure.toJSON());
+      });
+
+      it('does nothing if model was not changed', function () {
+        var ts = Date.now();
+        var procedure = createProcedure({createdAt: ts});
+        procedure.revert();
+
+        expect(procedure.diff()).to.be(false);
+        expect(procedure.toJSON()).to.eql(createProcedure({createdAt: ts}).toJSON());
+      });
+    });
+
+    describe('#safeSet()', function () {
+      it('applies changes and returns true', function () {
+        var procedure = createProcedure();
+        expect(procedure.safeSet({patient: 'someone else'})).to.be(true);
+        expect(procedure.get('patient')).to.be('someone else');
+      });
+
+      it('returns false and reverts changes if, when applied, resulted in invalid model', function () {
+        var procedure = createProcedure();
+        expect(procedure.safeSet({patient: ''})).to.be(false);
+        expect(procedure.get('patient')).to.be(createProcedure().get('patient'));
+      });
+
+      it('throws Error if changes argument is incorrect', function () {
+        var procedure = createProcedure();
+        var fn = procedure.safeSet.bind(procedure);
+        expect(fn).withArgs().to.throwError(/^InvalidChanges$/);
+        expect(fn).withArgs(undefined).to.throwError(/^InvalidChanges$/);
+        expect(fn).withArgs(null).to.throwError(/^InvalidChanges$/);
+        expect(fn).withArgs(new Number(42)).to.throwError(/^InvalidChanges$/);
+        expect(fn).withArgs({}).to.throwError(/^InvalidChanges$/);
+      });
     });
   });
 });

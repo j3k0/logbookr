@@ -2,6 +2,7 @@
   var definition = function (require) {
     var backbone = require('backbone');
     var FieldModel = require('./fieldModel');
+    var errors = require('../errors');
 
     // The reason for this is that we do not want to store FieldModel isntances,
     // but we'd like some sanity check and default values.
@@ -42,6 +43,51 @@
         if (options && Array.isArray(options.template)) {
           this.set('fields', toFields(options.template));
         }
+      },
+
+      validate: function () {
+        // First of all, all the requiredFields and meta fields
+        // must be set as attributes. They can not be empty strings.
+        var expectedAttributes = this.get('requiredFields')
+          .map(function (field) {return field.name;})
+          .concat('id', 'createdAt')
+          .every(function (attributeName) {
+            // Since we only deal with strings, we can just cast value to Boolean.
+            // Values like 0 won't work, though.
+            return !!this.get(attributeName);
+          }, this);
+
+        if (!expectedAttributes)
+          return errors.validationError('Required attributes missing.');
+      },
+
+      // Returns difference between current model state and the state before
+      // previous `set()`. Effectively, set of attribute changes
+      // that will return model into its previous state, if applied.
+      diff: function () {
+        return this.changedAttributes(this.previousAttributes());
+      },
+
+      // Sets model to its previous state (before last `set()` call).
+      revert: function () {
+        var diff = this.diff();
+        if (diff)
+          this.set(this.diff());
+      },
+
+      // Calls `set()` with `changes`. If resulting model is valid,
+      // returns true. Otherwise, cancels changes and returns false.
+      safeSet: function (changes) {
+        var hasChanges = changes && ('object' === typeof changes) && (Object.keys(changes).length > 0)
+        if (!hasChanges)
+          throw new Error('InvalidChanges');
+
+        this.set(changes);
+        if (this.isValid())
+          return true;
+
+        this.revert();
+        return false;
       }
     });
   };
