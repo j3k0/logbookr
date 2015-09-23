@@ -72,7 +72,7 @@
       revert: function () {
         var diff = this.diff();
         if (diff)
-          this.set(this.diff());
+          this.set(diff);
       },
 
       // Calls `set()` with `changes`. If resulting model is valid,

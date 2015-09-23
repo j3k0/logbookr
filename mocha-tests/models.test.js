@@ -85,7 +85,7 @@ describe('ProcedureModel', function () {
     });
 
     describe('#diff()', function () {
-      it('returns object with previous attributes that were changed', function () {
+      it('returns set of changes required to revert model to its previous state', function () {
         var procedure = new ProcedureModel();
         var changes = {
           patient: 'someone',  // change field
@@ -97,7 +97,7 @@ describe('ProcedureModel', function () {
         expect(procedure.diff()).to.eql(expectedDiff);
       });
 
-      it('returns `false` when model is unchagned', function () {
+      it('returns `false` when model is unchagned compared to its previous state', function () {
         var procedure = new ProcedureModel();
         expect(procedure.diff()).to.eql(false);
       });
