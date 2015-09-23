@@ -131,6 +131,17 @@ describe('ProcedureModel', function () {
         expect(procedure.get('patient')).to.be('someone else');
       });
 
+      it('preserves model.validationError', function () {
+        var procedure = createProcedure();
+        procedure.safeSet({patient: ''});
+
+        var backboneValidatedProcedure = createProcedure();
+        backboneValidatedProcedure.set('patient', '');
+        backboneValidatedProcedure.isValid();
+
+        expect(procedure.validationError).to.be(backboneValidatedProcedure.validationError);
+      });
+
       it('returns false and reverts changes if, when applied, resulted in invalid model', function () {
         var procedure = createProcedure();
         expect(procedure.safeSet({patient: ''})).to.be(false);

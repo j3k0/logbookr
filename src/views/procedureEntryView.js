@@ -8,6 +8,7 @@ define(function (require) {
     var FieldView = require('./fieldView');
     var FieldModel = require('../models/fieldModel');
     var debug = require('../debug');
+    var errors = require('../errors');
 
     var ProcedureEntryView = Backbone.View.extend({
 
@@ -182,31 +183,19 @@ define(function (require) {
                     return prev;
                 }, {});
 
-            // TODO:
-            // Validate!
-            // if (!attrs.type) {
-            //     if (navigator.notification && navigator.notification.alert) {
-            //         navigator.notification.alert(
-            //             'Veuillez sélectionner le type de l\'intervention',  // message
-            //             function (){
-            //             },                              // callback to invoke with index of button pressed
-            //             'Sauvegarde Impossible',            // title
-            //             'Fermer'                        // buttonName
-            //         );
-            //     }
-            //     else {
-            //         /*alert('Veuillez sélectionner le type de procédure');*/
-            //     }
-            //     return false;
-            // }
+            var ok = this.model.safeSet(attrs);
 
-            // Actual save.
-            this.model.set(attrs);
-            this.collection.unshift(this.model);
-            this.model.save();
+            if (ok) {
+                debug('updated model with attrs', attrs, '\n', this.model);
+                this.collection.unshift(this.model);
+                this.model.save();
+                this.goBack();
+            }
+            else {
+                debug('failed to update model', this.model.validationError);
+                errors.display(this.model.validationError);
+            }
 
-            debug('saved model with attrs', attrs, '\n', this.model);
-            this.goBack();
             return false;
         },
 
