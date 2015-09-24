@@ -3,7 +3,7 @@
  -->
 <div class="procedure-field <%-field.name%>">
   <div class="procedure-description"><span>
-    <%- field.description %>
+    <%- field.description || field.name %>
   </span></div>
 
   <input type="text" class="procedure-input procedure-<%-field.name%>"
