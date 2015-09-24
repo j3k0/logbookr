@@ -20,14 +20,20 @@ describe('FieldModel', function () {
   });
 
   describe('#validate()', function () {
-    it('returns error message on invalid type', function () {
+    it('`type` must be one of FieldModel.types', function () {
       var invalidType = new FieldModel({type: 'not-a-type'});
       expect(invalidType.isValid()).to.be(false);
-      expect(invalidType.validationError).to.match(/^ValidationError:/);
+      expect(invalidType.validationError).to.match(/^ValidationError: `type` must be one of/);
+    });
+
+    it('`name` must be non-empty string', function () {
+      var field = new FieldModel();
+      expect(field.isValid()).to.be(false);
+      expect(field.validationError).to.match(/^ValidationError: `name` must be non-empty string/);
     });
 
     it('returns undefined on well-formed fields', function () {
-      var field = new FieldModel({type: FieldModel.types.TEXT});
+      var field = new FieldModel({name: 'name'});
       expect(field.isValid()).to.be(true);
     });
   });

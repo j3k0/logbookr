@@ -4,6 +4,7 @@
   var definition = function (require) {
     var Backbone = require('backbone');
     var errors = require('../errors');
+    var validations = require('../validations');
 
     var types = ['date', 'text', 'textarea', 'choicetree'];
 
@@ -24,6 +25,10 @@
           return errors.validationError('`type` must be one of `'
             + JSON.stringify(types) + '`; got `' + attrs.type + '`.');
         }
+
+        // Name must be non-empty string.
+        if (!validations.isNonEmptyString(attrs.name))
+          return errors.validationError('`name` must be non-empty string');
       }
     },
 
