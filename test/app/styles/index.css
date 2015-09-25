@@ -5,6 +5,10 @@
 
 /*-- Application stylesheets. -----------------------------------------------*/
 
+.debug {
+  display: none;
+}
+
 pre {
   font-family: monospace;
   color: #444444;

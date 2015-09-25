@@ -1,9 +1,11 @@
 <div class="content">
-
+  <!-- Some controls -->
   <div class="new-procedure">
       <div class="btn edit-template"><%-tr('procedures.edit-template')%></div>
       <div class="btn procedure-btn add-procedure"><%-tr('procedures.add-procedure')%></div>
   </div>
+
+  <!-- List of procedures -->
   <div class="list">
     <ul class="list-ul">
       <% _.each(procedures, function(procedure){ %>
@@ -22,7 +24,7 @@
   </div>
 
   <!-- Some meta -->
-  <div>
+  <div class="debug">
     Model IDs:
     <pre><%= JSON.stringify(_.pluck(collection.models, 'id'), null, 2) %></pre>
     Collection itself:

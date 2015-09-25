@@ -1,10 +1,12 @@
 <!-- Template is collection of fields that will be added
      to new model. -->
-
 <div class="content">
+  <!-- List of template fields -->
   <div class="list">
+    <!-- Adding new field -->
     <div class="btn add-field"><%-tr('template.add-new-field')%></div>
 
+    <!-- Render list -->
     <ul class="list-ul">
       <% _.each(fields, function (field) { %>
         <li class="list-li item template-field" data-id="<%-field.name%>">
@@ -30,7 +32,8 @@
     </ul>
   </div>
 
-  <div class="meta">
+  <!-- Debug info -->
+  <div class="debug">
     Fields Collection:
     <pre><%= JSON.stringify(collection, null, 2) %></pre>
   </div>

@@ -1,92 +1,24 @@
 <div class="content">
   <!-- Required fields -->
-  <div>Required fields:
+  <div class="debug">
+    Required fields:
     <pre><%= JSON.stringify(_.pluck(procedure.requiredFields, 'name')) %></pre>
-    <%= requiredFieldsHtml %>
   </div>
+  <div><%= requiredFieldsHtml %></div>
 
   <!-- Optional fields based on model's .fields property -->
-  <div>Optional fields:
+  <div class="debug">
+    Optional fields:
     <pre><%= JSON.stringify(_.pluck(procedure.fields, 'name')) %></pre>
-    <%= fieldsHtml %>
   </div>
+
+  <div><%= fieldsHtml %></div>
 
   <!-- TODO:
        Picture?
   -->
-
-  <!-- Controls -->
-
-  <!--input type="submit" class="save-button btn procedure-btn" value="Sauvegarder"-->
-  <div class="parent">
-      <div class="delete-procedure btn procedure-btn"><%-tr('procedure.delete-button')%></div>
-      <div class="save-button btn procedure-btn"><%-tr('procedure.save-button')%></div>
-    </div>
-  </div>
-
-    <!-- Some meta -->
-  <div>Procedure:
-    <pre><%= JSON.stringify(procedure, null, 2) %></pre>
-  </div>
-
-
-
-
-<!--   <div class="procedure procedure-field">
-    <div class="procedure-description">
-      <span>Intervention</span>
-    </div>
-    <input readonly type="text" class="procedure-type procedure-input" value="<%-procedure.type%>"
-           data-attribute-name="type">
-  </div>
-
-  <div class="date procedure-field">
-    <div class="procedure-description">
-      <span>Date</span>
-    </div>
-    <input readonly type="datetime" class="procedure-datetime procedure-input datetime-input" id="datetime" data-field="datetime" name="datetime" type="text" value="<%-procedure.date%>" readonly />
-  </div>
-
-  <div class="patient-name procedure-field">
-    <div class="procedure-description">
-      <span>Nom du patient</span>
-    </div>
-    <input type="text" class="procedure-patient procedure-input" value="<%-procedure.patient%>">
-  </div>
-
-  <div class="diagnostic procedure-field">
-    <div class="procedure-description">
-      <span>Diagnostic</span>
-    </div>
-    <input type="text" class="procedure-diagnostic procedure-input" value="<%-procedure.diagnostic%>">
-  </div> -->
-
-
-<!--   <div class="procedure-picture-container hidden">
-    <img src="<%-documentRoot %><%-procedure.picture %>" class="responsive-procedure-picture">
-  </div> -->
-
-
-<!--   <div class="supervision procedure-field">
-    <div class="procedure-description">
-      <span>Supervision</span>
-    </div>
-    <input readonly type="text" class="procedure-supervision procedure-input" value="<%-procedure.supervision%>">
-  </div>
-
-  <div class="senior procedure-field">
-    <div class="procedure-description">
-      <span>Senior</span>
-    </div>
-    <input readonly type="text" class="procedure-senior procedure-input" value="<%-procedure.senior%>">
-  </div>
-  <div class="stage procedure-field">
-    <div class="procedure-description">
-      <span>Stage</span>
-    </div>
-    <input readonly type="text" class="procedure-stage procedure-input" value="<%-procedure.stage%>">
-  </div>
-  <div class="picture procedure-field">
+  <!--
+    <div class="picture procedure-field">
     <div class="procedure-description">
       <span>Photos</span>
     </div>
@@ -100,9 +32,19 @@
     <% } %>
     <div class="take-procedure-picture-btn btn">+ Ajouter une photo</div>
   </div>
-  <div class="comment procedure-field">
-    <div class="procedure-description">
-      <span>Commentaire</span>
+  -->
+
+  <!-- Controls -->
+
+  <!--input type="submit" class="save-button btn procedure-btn" value="Sauvegarder"-->
+  <div class="parent">
+      <div class="delete-procedure btn procedure-btn"><%-tr('procedure.delete-button')%></div>
+      <div class="save-button btn procedure-btn"><%-tr('procedure.save-button')%></div>
     </div>
-    <textarea type="text" class="procedure-comment procedure-input" value="<%-procedure.comment%>"><%-procedure.comment%></textarea>
-  </div>  -->
+  </div>
+
+  <!-- Some meta -->
+  <div class="debug">
+    Procedure:
+    <pre><%= JSON.stringify(procedure, null, 2) %></pre>
+  </div>
