@@ -51,7 +51,10 @@
         'template.title': 'Template Editor',
         'template.add-new-field': 'Add new field',
         'template.remove-field': 'Remove Field',
-        'tempalte.description-placehodler': 'Type in field\'s description…'
+        'tempalte.description-placehodler': 'Type in field\'s description…',
+
+        // treePickerView
+        'treePicker.defaultTitle': 'Custom Choice Tree'
       }
     };
 

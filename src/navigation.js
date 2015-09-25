@@ -7,7 +7,9 @@ define(function (require) {
     var ProceduresCollection = require('./models/proceduresCollection');
     var ChoiceModel = require('./models/choiceModel');
     var ChoiceTree = require('./models/choiceTree');
+    var ProcedureModel = require('./models/ProcedureModel');
     var _ = require('underscore');
+    var tr = require('./tr');
 
     var Navigation = function(options) {
         this.updateTitle = options.updateTitle;
@@ -57,9 +59,22 @@ define(function (require) {
     Navigation.prototype.pickChoiceTreeOf = function(name, cb) {
         var choice = ChoiceTree.getInstance().get(name);
         if (choice === undefined) {
+            // Retrieve field's description by looking for field in:
+            //  - template
+            //  - current procedure optional fields
+            //  - current procedure required fields
+            //  - default procedure required fields
+            var field = (template.getInstance().get(name) && template.getInstance().get(name).toJSON()) ||
+                (this.views.procedure.model && this.views.procedure.model.fieldInfo(name)) ||
+                new ProcedureModel().fieldInfo(name);
+
+            var title = field
+                ? field.description
+                : tr('treePicker.defaultTitle');
+
             choice = new ChoiceModel({
                 id: name,
-                name: 'Custom Tree??',
+                name: title,
                 subtree: []
             });
 
