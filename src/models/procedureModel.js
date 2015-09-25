@@ -94,6 +94,23 @@
 
         this.revert();
         return false;
+      },
+
+      // Returns field info by its name.
+      fieldInfo: function (fieldName) {
+        var fieldInfo = undefined;
+
+        var found = this.get('requiredFields')
+          .concat(this.get('fields'))
+          .some(function (field) {
+            if (field.name === fieldName) {
+              fieldInfo = field;
+              return true;
+            }
+            return false;
+          }, this);
+
+        return found ? fieldInfo : undefined;
       }
     });
   };

@@ -170,5 +170,23 @@ describe('ProcedureModel', function () {
         expect(fn).withArgs({}).to.throwError(/^InvalidChanges$/);
       });
     });
+
+    describe('#fieldInfo()', function () {
+      var myField = {
+        name: 'my-field',
+        description: 'my-description',
+        type: FieldModel.types.TEXT
+      };
+
+      it('returns field info by its name', function () {
+        var procedure = createProcedure(undefined, {template: [myField]});
+        expect(procedure.fieldInfo(myField.name)).to.eql(myField)
+      });
+
+      it('returns undefined if fields was not found', function () {
+        var procedure = createProcedure();
+        expect(procedure.fieldInfo(myField.name)).to.be(undefined);
+      });
+    });
   });
 });
