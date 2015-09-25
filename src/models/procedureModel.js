@@ -42,7 +42,12 @@
       initialize: function (attributes, options) {
         // If options.template is present, copy fields over.
         if (options && Array.isArray(options.template)) {
-          this.set('fields', toFields(options.template));
+          var fields = toFields(options.template);
+          this.set('fields', fields);
+
+          fields.forEach(function (field) {
+            this.set(field.name, '');
+          }, this);
         }
       },
 

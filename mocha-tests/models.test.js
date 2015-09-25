@@ -40,7 +40,7 @@ describe('FieldModel', function () {
 });
 
 describe('ProcedureModel', function () {
-  var createProcedure = function (customAttributes) {
+  var createProcedure = function (customAttributes, options) {
     var defaults = {
       id: 'id',
       date: 'date',
@@ -48,7 +48,8 @@ describe('ProcedureModel', function () {
       patient: 'patient'
     };
 
-    return new ProcedureModel(underscore.extend(defaults, customAttributes || {}));
+    var attrs = underscore.extend(defaults, customAttributes || {})
+    return new ProcedureModel(attrs, options);
   };
 
 
@@ -88,6 +89,11 @@ describe('ProcedureModel', function () {
       // Make sure it is copy and not the same reference.
       expect(procedure.get('fields')).to.not.be(template);
       expect(procedure.get('fields')).to.eql(template);
+
+      // Make sure we defined attributes according to field names.
+      template.forEach(function (field) {
+        expect(procedure.get(field.name)).to.be('');
+      });
     });
 
     describe('#diff()', function () {
