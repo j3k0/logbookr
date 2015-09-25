@@ -1,69 +1,106 @@
 define(function (require) {
-
     var ProcedureEntryView = require('./views/procedureEntryView');
     var ProceduresView = require('./views/proceduresView');
     var TreePickerView = require('./views/treePickerView');
+    var TemplateView = require('./views/templateView');
+    var template = require('./models/template');
     var ProceduresCollection = require('./models/proceduresCollection');
+    var ChoiceModel = require('./models/choiceModel');
     var ChoiceTree = require('./models/choiceTree');
-    var $ = require('jquery');
+    var ProcedureModel = require('./models/ProcedureModel');
+    var _ = require('underscore');
+    var tr = require('./tr');
 
     var Navigation = function(options) {
-
         this.updateTitle = options.updateTitle;
         this.goHome = options.goHome;
-
         this.openInMain = options.openInMain,
         this.mainEl = options.mainEl;
-
         this.openInPopover = options.openInPopover;
         this.popoverEl = options.popoverEl;
+
+        // Initialize views
+        this.views = {
+            procedures: new ProceduresView({
+                el: this.mainEl,
+                collection: ProceduresCollection.getInstance(),
+                updateTitle: this.updateTitle,
+                openProcedure: _.bind(this.openProcedure, this),
+                openTemplate: _.bind(this.openTemplate, this),
+                goBack: this.goHome
+            }),
+
+            procedure: new ProcedureEntryView({
+                el: this.mainEl,
+                collection: ProceduresCollection.getInstance(),
+                updateTitle: this.updateTitle,
+                openChoiceTree: this.pickChoiceTreeOf.bind(this),
+                goBack: _.bind(this.openProcedures, this)
+            }),
+
+            template: new TemplateView({
+                el: this.mainEl,
+                collection: template.getInstance(),
+                updateTitle: this.updateTitle,
+                goBack: _.bind(this.openProcedures, this)
+            })
+        }
     }
 
-    Navigation.prototype.proceduresView = function() {
-        return new ProceduresView({
-            collection: ProceduresCollection.getInstance(),
-            updateTitle: this.updateTitle,
-            openProcedure: _.bind(this.openProcedure, this),
-            goBack: this.goHome
-        });
-    };
-
-    Navigation.prototype.procedureView = function(procedure) {
-        return new ProcedureEntryView({
-            el: this.mainEl,
-            collection: ProceduresCollection.getInstance(),
-            model: procedure,
-            updateTitle: this.updateTitle,
-            openSupervision: _.bind(this.pickChoiceTreeOf, this, 'supervision'),
-            openProcedure: _.bind(this.pickChoiceTreeOf, this, 'procedure'),
-            openStage: _.bind(this.pickChoiceTreeOf, this, 'stage'),
-            openSenior: _.bind(this.pickChoiceTreeOf, this, 'senior'),
-            goBack: _.bind(this.openProcedures, this)
-        });
-    };
-
-    Navigation.prototype.pickChoiceTree = function(choiceTree, cb) {
+    Navigation.prototype._pickChoiceTree = function(choiceTree, cb) {
         this.openInPopover(new TreePickerView({
             el: this.popoverEl,
             items: choiceTree,
             onSelect: cb,
-            openChoiceTree: _.bind(this.pickChoiceTree, this)
+            openChoiceTree: _.bind(this._pickChoiceTree, this)
         }));
     };
 
     Navigation.prototype.pickChoiceTreeOf = function(name, cb) {
-        this.pickChoiceTree(ChoiceTree.getInstance().get(name).tree(), cb);
+        var choice = ChoiceTree.getInstance().get(name);
+        if (choice === undefined) {
+            // Retrieve field's description by looking for field in:
+            //  - template
+            //  - current procedure optional fields
+            //  - current procedure required fields
+            //  - default procedure required fields
+            var field = (template.getInstance().get(name) && template.getInstance().get(name).toJSON()) ||
+                (this.views.procedure.model && this.views.procedure.model.fieldInfo(name)) ||
+                new ProcedureModel().fieldInfo(name);
+
+            var title = field
+                ? field.description
+                : tr('treePicker.defaultTitle');
+
+            choice = new ChoiceModel({
+                id: name,
+                name: title,
+                subtree: []
+            });
+
+            ChoiceTree.getInstance().add(choice);
+            choice.save();
+        }
+
+        this._pickChoiceTree(choice.tree(), cb);
     };
 
-    Navigation.prototype.openProcedure = function(procedure) {
-        this.openInMain(this.procedureView(procedure));
+    Navigation.prototype.openTemplate = function () {
+        this.openInMain(this.views.template);
     };
 
-    Navigation.prototype.openProcedures = function() {
-        this.openInMain(this.proceduresView(), $(this.mainEl));
+    Navigation.prototype.openProcedure = function (procedure) {
+        this.views.procedure.swapModel(procedure);
+        this.openInMain(this.views.procedure);
     };
 
-    Navigation.prototype.mainView = Navigation.prototype.proceduresView;
+    Navigation.prototype.openProcedures = function () {
+        this.openInMain(this.views.procedures);
+    };
+
+    Navigation.prototype.mainView = function () {
+        return this.views.procedures;
+    };
 
     return Navigation;
 });

@@ -1,0 +1,42 @@
+{
+  "name": "logbookr",
+  "version": "0.1.0",
+  "private": true,
+  "description": "This module handle a logbook feature, easy to integrate into a cordova/html5 application.",
+  "directories": {
+    "test": "mocha-tests"
+  },
+  "scripts": {
+    "test": "./node_modules/.bin/mocha mocha-tests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/j3k0/logbookr.git"
+  },
+  "bugs": {
+    "url": "https://github.com/j3k0/logbookr/issues"
+  },
+  "homepage": "https://github.com/j3k0/logbookr#readme",
+  "devDependencies": {
+    "expect.js": "^0.3.1",
+    "mocha": "^2.3.3"
+  },
+  "eslintConfig": {
+    "extends": "eslint:recommended",
+    "env": {
+      "node": true,
+      "browser": true,
+      "amd": true,
+      "mocha": true
+    },
+    "rules": {
+      "no-console": 0
+    }
+  },
+  "dependencies": {
+    "backbone": "^1.2.3",
+    "backbone.localstorage": "^1.1.16",
+    "moment": "^2.10.6",
+    "underscore": "^1.8.3"
+  }
+}

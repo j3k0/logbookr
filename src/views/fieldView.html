@@ -1,0 +1,17 @@
+<!-- TODO:
+     render specific input based on field type
+ -->
+<div class="procedure-field <%-field.name%>">
+  <div class="procedure-description"><span>
+    <%- field.description || field.name %>
+  </span></div>
+
+  <input type="text" class="procedure-input procedure-<%-field.name%>"
+         value="<%-value%>"
+         data-attribute-name="<%-field.name%>"
+         data-attribute-type="<%-field.type%>"
+    <% if (field.type === FieldModel.types.CHOICETREE || field.type === FieldModel.types.DATE) { %>
+         readonly
+    <% } %>
+  >
+</div>

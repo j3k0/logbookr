@@ -1,0 +1,40 @@
+<!-- Template is collection of fields that will be added
+     to new model. -->
+<div class="content">
+  <!-- List of template fields -->
+  <div class="list">
+    <!-- Adding new field -->
+    <div class="btn add-field"><%-tr('template.add-new-field')%></div>
+
+    <!-- Render list -->
+    <ul class="list-ul">
+      <% _.each(fields, function (field) { %>
+        <li class="list-li item template-field" data-id="<%-field.name%>">
+          <input type="text" class="template-input field-description" value="<%-field.description%>"
+                 placeholder="<%-tr('tempalte.description-placehodler')%>"
+          >
+
+          <select class="template-input field-type" value="<%-field.type%>">
+            <% _.each(FieldModel.types, function (val, key) { %>
+              <option value="<%-FieldModel.types[key]%>"
+                <% if (field.type === val) { %>
+                      selected
+                <% } %>
+              ><%-tr('FieldModel.' + key)%></option>
+            <% }); %>
+          </select>
+
+          <span class="template-field-controls">
+            <a href="#" class="remove-field"><%-tr('template.remove-field')%></a>
+          </span>
+        </li>
+      <% }); %>
+    </ul>
+  </div>
+
+  <!-- Debug info -->
+  <div class="debug">
+    Fields Collection:
+    <pre><%= JSON.stringify(collection, null, 2) %></pre>
+  </div>
+</div>

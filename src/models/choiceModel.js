@@ -2,6 +2,7 @@ define(function (require) {
 
     var Backbone = require('backbone');
     var uuid = require('./uuid');
+    var debug = require('../debug');
 
     var Choice = function(parent, attributes, model) {
         this.init(parent, attributes, model);
@@ -9,14 +10,14 @@ define(function (require) {
 
     Choice.prototype.initFromPath = function(path, model) {
         if (model.attributes.id !== path[0]) {
-            console.error("Invalid path");
+            debug.error("Invalid path");
             return;
         }
         var c = new Choice(null, model.attributes, model);
         for (var i = 1; i < path.length; ++i) {
             c = c.subtree.get(path[i]);
             if (!c) {
-                console.error("Invalid path");
+                debug.error("Invalid path");
                 return;
             }
         }
@@ -127,7 +128,7 @@ define(function (require) {
     };
     var c = new Choice(null, dummyData);
     */
-    
+
     var ChoiceModel = Backbone.Model.extend({
         tree: function() {
             return new Choice(null, this.attributes, this);

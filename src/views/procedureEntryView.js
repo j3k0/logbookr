@@ -5,7 +5,12 @@ define(function (require) {
     var Backbone = require("backbone");
     var template = require("./text!./procedureEntryView.html");
     var DateTimePicker = require("datetimepicker");
-    
+    var FieldView = require('./fieldView');
+    var FieldModel = require('../models/fieldModel');
+    var debug = require('../debug');
+    var errors = require('../errors');
+    var tr = require('../tr');
+
     var ProcedureEntryView = Backbone.View.extend({
 
         template: _.template(template),
@@ -14,51 +19,99 @@ define(function (require) {
             this.options = options || {};
             this.options.viewName = "ProcedureEntryView";
 
-            this.openSupervision = options.openSupervision;
-            this.openProcedure = options.openProcedure;
-            this.openSenior = options.openSenior;
-            this.openStage = options.openStage;
+            this.openChoiceTree = options.openChoiceTree;
             this.updateTitle = options.updateTitle;
             this.goBack = options.goBack;
         },
-        
+
+        fieldHtml: function (field) {
+            var view = new FieldView({
+                model: new FieldModel(field),
+                value: this.get(field.name)
+            });
+
+            return view.html();
+        },
+
+        fieldsHtml: function (key) {
+            return this.model.get(key)
+                .map(this.fieldHtml.bind(this.model))
+                .join('\n');
+        },
+
+        swapModel: function (procedure) {
+            this.model = procedure;
+        },
+
         render: function() {
             var that = this;
+
+            var done = function (documentRoot) {
+                var requiredFieldsHtml = that.fieldsHtml('requiredFields');
+                var fieldsHtml = that.fieldsHtml('fields');
+                that.$el.html(that.template({
+                    procedure: that.model.toJSON(),
+                    requiredFieldsHtml: requiredFieldsHtml,
+                    fieldsHtml: fieldsHtml,
+                    documentRoot: documentRoot,
+                    tr: tr
+                }));
+
+                that.titleView = tr('procedure.title');
+                that.updateTitle(that.titleView);
+                that.addDateTimePicker();
+            };
+
             if (window.requestFileSystem) {
-                window.requestFileSystem(window.PERSISTENT, 0, function(fileSys) {
-                    that.$el.html(that.template({
-                        procedure: that.model.toJSON(),
-                        documentRoot: fileSys.root.nativeURL
-                    }));
-                    that.titleView = "Nouvelle intervention";
-                    that.updateTitle(that.titleView);
-                    that.addDateTimePicker();
+                window.requestFileSystem(window.PERSISTENT, 0, function (fs) {
+                    done(fs.root.nativeURL);
                 });
             }
             else {
-                that.$el.html(that.template({
-                    procedure: that.model.toJSON(),
-                    documentRoot: "."
-                }));
-                that.titleView = "Nouvelle intervention";
-                that.updateTitle(that.titleView);
-                that.addDateTimePicker();
+                done('.')
             }
-            return this;
+
+            return that;
         },
 
         events:{
             'click .save-button': 'saveProcedure',
             'click .delete-procedure': 'deleteProcedure',
-            'click .procedure input': 'pickProcedure',
-            'click .supervision input': 'pickSupervision',
-            'click .senior input': 'pickSenior',
-            'click .stage input': 'pickStage',
-            'click .take-procedure-picture-btn': 'takePicture',
-            'click .delete-picture': 'confirmDeletePicture',
-            'click .procedure-picture-container': 'hidePicture',
-            'click .procedure-picture-thumbnail': 'showPicture',
-            'click .edit-button': 'edit'
+            // TODO:
+            // we can be more specific and don't bind clicks for every input;
+            // probably can be moved to FieldView, not sure how, though;
+            // w/ever for now.
+            'click .procedure-input': 'inputClicked'
+
+            // TODO:
+            // Bring pictures back.
+            // 'click .take-procedure-picture-btn': 'takePicture',
+            // 'click .delete-picture': 'confirmDeletePicture',
+            // 'click .procedure-picture-container': 'hidePicture',
+            // 'click .procedure-picture-thumbnail': 'showPicture',
+            // 'click .edit-button': 'edit'
+        },
+
+        inputClicked: function (event) {
+            var $input = $(event.target);
+            var fieldType = $input.data('attribute-type');
+            var processedHere = true;
+            var updateInputValue = $input.val.bind($input);
+            debug('input ' + event.target + ' (`' + fieldType + '`) clicked.');
+
+            switch (fieldType) {
+                case FieldModel.types.CHOICETREE:
+                    this.openChoiceTree($input.data('attribute-name'), updateInputValue);
+                    break;
+                default:
+                    processedHere = false;
+                    break;
+            }
+
+            if (processedHere) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
         },
 
         addDateTimePicker: function() {
@@ -73,6 +126,7 @@ define(function (require) {
           var $dtBox = $('<div />');
           this.$el.append($dtBox);
           var options = _.extend({
+            mode: 'datetime',
             parentElement: this.el,
             animationDuration: 0,
             shortDayNames: ["Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"],
@@ -89,111 +143,69 @@ define(function (require) {
             defaultDate: defaultDate,
             addEventHandlers: function() {
               that.dtPickerObj = this;
-              that.$(".datetime-input").off("click");
-              that.$(".datetime-input").off("focus");
-              that.$(".datetime-input").click(function(e) {
-                if (e.preventDefault) {
-                  e.preventDefault();
-                }
-                if (e.stopPropagation) {
-                  e.stopPropagation();
-                }
-                $("#main").scrollTop(0);
-                setTimeout(function() {
-                  that.dtPickerObj.showDateTimePicker(that.$(".datetime-input"));
-                }, 30);
-              });
+              that.$('.procedure-input[data-attribute-type="' + FieldModel.types.DATE + '"]')
+                // TODO:
+                // not sure if `off` is required, since we might do stuff
+                // when date input is clicked within .inputClicked event handler.
+                .off("click")
+                .off("focus")
+                .click(function(e) {
+                    if (e.preventDefault) {
+                      e.preventDefault();
+                    }
+                    if (e.stopPropagation) {
+                      e.stopPropagation();
+                    }
+                    $("#main").scrollTop(0);
+                    setTimeout(function() {
+                      that.dtPickerObj.showDateTimePicker($(e.target));
+                    }, 30);
+                  });
             }
           });
           $dtBox.DateTimePicker(options);
         },
 
-        pickProcedure: function(ev) {
-            ev.preventDefault();
-            var that = this;
-            this.openProcedure(function(value) {
-                that.$(".procedure-type").val(value);
-            });
-            return false;
-        },
-
-        pickSupervision: function(ev) {
-            ev.preventDefault();
-            var that = this;
-            this.openSupervision(function(value) {
-                that.$(".procedure-supervision").val(value);
-            });
-            return false;
-        },
-
-        pickSenior: function(ev) {
-            ev.preventDefault();
-            var that = this;
-            this.openSenior(function(value) {
-                that.$(".procedure-senior").val(value);
-            });
-            return false;
-        },
-
-        pickStage: function(ev) {
-            ev.preventDefault();
-            var that = this;
-            this.openStage(function(value) {
-                that.$(".procedure-stage").val(value);
-            });
-            return false;
-        },
-
         deleteProcedure: function(ev) {
             ev.preventDefault();
+            ev.stopPropagation();
+
             if (this.model.collection)
                 this.model.destroy();
+
             this.goBack();
-            return false;
         },
 
         saveProcedure: function(ev) {
             ev.preventDefault();
-            var attrs = {
-                type: this.$('.procedure-type').val(),
-                date: this.$('.procedure-datetime').val(),
-                patient: this.$('.procedure-patient').val(),
-                diagnostic: this.$('.procedure-diagnostic').val(),
-                supervision: this.$('.procedure-supervision').val(),
-                senior: this.$('.procedure-senior').val(),
-                stage: this.$('.procedure-stage').val(),
-                comment: this.$('.procedure-comment').val(),
-                picture: this.$('.procedure-picture-thumbnail').attr("image-url")
-            };
-            if (!attrs.type) {
-                if (navigator.notification && navigator.notification.alert) {
-                    navigator.notification.alert(
-                        'Veuillez sélectionner le type de l\'intervention',  // message
-                        function (){
-                        },                              // callback to invoke with index of button pressed
-                        'Sauvegarde Impossible',            // title
-                        'Fermer'                        // buttonName
-                    );
-                }
-                else {
-                    /*alert('Veuillez sélectionner le type de procédure');*/
-                }
-                return false;
+            ev.stopPropagation();
+
+            var attrs = $('.procedure-input')
+                .get()
+                .reduce(function (prev, current) {
+                    var el = $(current);
+                    prev[el.data('attribute-name')] = el.val();
+                    return prev;
+                }, {});
+
+            var ok = this.model.safeSet(attrs);
+
+            if (ok) {
+                debug('updated model with attrs', attrs, '\n', this.model);
+                this.collection.unshift(this.model);
+                this.model.save();
+                this.goBack();
             }
-            this.model.set(attrs);
-            this.collection.unshift(this.model);
-            this.model.save();
-            /*this.model.save(attrs, {
-                success: function(response){
-                },
-                error: function (model, response) {}
-            });*/
-            this.goBack();
-            return false;
+            else {
+                debug('failed to update model', this.model.validationError);
+                errors.display(this.model.validationError);
+            }
         },
 
         takePicture: function(ev) {
             ev.preventDefault();
+            ev.stopPropagation();
+
             this.devicePixelRatio = window.devicePixelRatio || 1;
             var that = this;
             if (window.navigator.camera) {
@@ -224,7 +236,6 @@ define(function (require) {
                     );
                 }
             }
-            return false;
         },
 
          // Called when a photo is successfully retrieved
@@ -288,7 +299,7 @@ define(function (require) {
         },
 
         deletePicture: function(pictureId) {
-            console.log(pictureId);
+            debug(pictureId);
             this.$(".one-picture[pictureId='"+pictureId+"']" ).remove();
         },
 
@@ -312,30 +323,30 @@ define(function (require) {
             }
         },
 
-        movePic: function(file){ 
+        movePic: function(file){
             window.resolveLocalFileSystemURL(file,
                 _(this.resolveOnSuccess).bind(this),
-                _(this.resOnError).bind(this)); 
+                _(this.resOnError).bind(this));
         },
 
         //Callback function when the file system uri has been resolved
-        resolveOnSuccess: function(entry){ 
+        resolveOnSuccess: function(entry){
             var that = this;
-            console.log("resolve success");
+            debug("resolve success");
             var n = +new Date();
             //new file name
             var newFileName = n + ".jpg";
             var myFolderApp = "AJCR";
 
             setTimeout(function() {
-                console.log("requesting a file system.");
+                debug("requesting a file system.");
                 window.requestFileSystem(window.PERSISTENT, 0, function(fileSys) {
-                    console.log("requestFileSystem success: URL=" + fileSys.root.nativeURL);
+                    debug("requestFileSystem success: URL=" + fileSys.root.nativeURL);
                     //The folder is created if doesn't exist
                     fileSys.root.getDirectory(myFolderApp, {
                         create:true, exclusive: false
                     }, function(directory) {
-                        console.log("getDirectory success: URL=" + directory.nativeURL);
+                        debug("getDirectory success: URL=" + directory.nativeURL);
                         entry.moveTo(directory, newFileName,
                             _.bind(that.successMove, that),
                             _.bind(that.resOnError, that));
@@ -348,7 +359,7 @@ define(function (require) {
 
         //Callback function when the file has been moved successfully - inserting the complete path
         successMove: function(entry) {
-            console.log("move success: URL=" + entry.nativeURL);
+            debug("move success: URL=" + entry.nativeURL);
             var imgNativeURL = "" + entry.nativeURL;
             this.$(".responsive-procedure-picture")[0].src = imgNativeURL;
             this.$(".procedure-picture-thumbnail")[0].src = imgNativeURL;
@@ -356,12 +367,14 @@ define(function (require) {
         },
 
         resOnError: function(error) {
-            console.log("Error");
-            console.log(error.code);
+            debug("Error");
+            debug(error.code);
         },
 
         edit: function(ev) {
             ev.preventDefault();
+            ev.stopPropagation();
+
             var editButton = this.$(".nav-bar .edit-button");
             if(editButton.hasClass("edit-mode")){
                 editButton.removeClass("edit-mode");
@@ -377,7 +390,6 @@ define(function (require) {
                 this.$(".procedure-description .delete-icon").addClass("hidden");
                 this.$(".procedure-description").removeClass("procedure-description-editable");
             }
-            return false;
         }
     });
 

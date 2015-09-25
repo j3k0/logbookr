@@ -5,13 +5,14 @@ require.config({
     // Make vendor easier to access.
     "logbookr": "../src",
 
-    // Opt for Lo-Dash Underscore compatibility build over Underscore.
-    "underscore": "libs/lodash/dist/lodash.underscore",
+    // Some things come from node, so stuff is the same in browser and mocha.
+    "backbone":   "../node_modules/backbone/backbone",
+    "backbone.localstorage": "../node_modules/backbone.localstorage/backbone.localStorage",
+    "underscore": "../node_modules/underscore/underscore",
+    "moment": "../node_modules/moment/moment",
 
     // Map remaining vendor dependencies.
     "jquery":     "libs/jquery/jquery",
-    "backbone":   "libs/backbone/backbone",
-    "backbone.localStorage":   "libs/backbone.localStorage/backbone.localStorage",
     "sweetalert": "libs/sweetalert/lib/sweet-alert",
     "datetimepicker": "libs/curioussolutions-datetimepicker/src/DateTimePicker"
   },
@@ -25,6 +26,6 @@ require.config({
 
       // This maps the global `Backbone` object to `require("backbone")`.
       exports: "Backbone"
-    },
+    }
   }
 });
