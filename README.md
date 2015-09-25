@@ -12,3 +12,8 @@ Each entries have a number of fields (see `procedureModel`). Some of those field
  1. `http-server .`
  1. browse to `http://localhost:8080/test`
 
+## Run unit tests
+
+ 1. `npm install`
+ 2. `npm test`
+
