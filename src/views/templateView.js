@@ -9,6 +9,7 @@
     var FieldModel = require('../models/FieldModel');
     var uuid = require('../models/uuid');
     var tr = require('../tr');
+    var alerts = require('../alerts');
 
     return backbone.View.extend({
       template: underscore.template(templateText),
@@ -68,7 +69,14 @@
 
       removeField: function (event) {
         event.preventDefault();
-        this._field(event).destroy();
+        event.stopPropagation();
+
+        var self = this;
+        alerts.confirm('removeField', function (confirmed) {
+          if (confirmed) {
+            self._field(event).destroy();
+          }
+        });
       },
 
       fieldChanged: function (event) {

@@ -71,7 +71,11 @@
 
         'alert.removeProcedure.title': 'Removing Procedure',
         'alert.removeProcedure.text': 'Are you sure you want to remove this procedure?',
-        'alert.removeProcedure.confirm': 'Remove'
+        'alert.removeProcedure.confirm': 'Remove',
+
+        'alert.removeField.title': 'Removing Field',
+        'alert.removeField.text': 'Are you sure you want to remove this field?',
+        'alert.removeField.confirm': 'Remove'
       }
     };
 
