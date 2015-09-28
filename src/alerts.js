@@ -12,15 +12,17 @@
     //
     // Except if that translation is missing, it will return:
     //  tr('alert.default.title')
-    var getTr = function (alertId, subkey) {
+    var getTr = function (alertId, subkey, defaultPrefix) {
       var key = 'alert.' + alertId + '.' + subkey;
-      var defaultKey = 'alert.default.' + subkey;
+      var defaultKey = 'alert.default.' + (defaultPrefix
+        ? defaultPrefix + '.' + subkey
+        : subkey);
 
       if (tr.has(key))
         return tr(key);
 
-      debug.warn('subkey `' + subkey + '` not found for alert `', alertId,'`; ',
-                 'using default one: `', defaultKey + '`.');
+      debug.warn('subkey `' + subkey + '` not found for alert `' + alertId + '`;',
+                 'using default one: `' + defaultKey + '`.');
       return tr(defaultKey);
     };
 
