@@ -9,15 +9,7 @@
     }
 
     return {
-      validationError: createError.bind(null, 'ValidationError'),
-
-      // TODO:
-      // alert() is ugly!
-      //
-      // Simple alert() wrapper.
-      display: function (message) {
-        return root.alert(message);
-      }
+      validationError: createError.bind(null, 'ValidationError')
     };
   };
 
