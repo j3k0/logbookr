@@ -151,7 +151,7 @@ describe('ProcedureModel', function () {
         backboneValidatedProcedure.set('patient', '');
         backboneValidatedProcedure.isValid();
 
-        expect(procedure.validationError).to.be(backboneValidatedProcedure.validationError);
+        expect(procedure.validationError).to.eql(backboneValidatedProcedure.validationError);
       });
 
       it('returns false and reverts changes if, when applied, resulted in invalid model', function () {
