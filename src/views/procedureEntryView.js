@@ -204,7 +204,7 @@ define(function (require) {
             }
             else {
                 debug('failed to update model', this.model.validationError);
-                errors.display(this.model.validationError);
+                alerts.error(this.model.validationError);
             }
         },
 

@@ -62,6 +62,13 @@
         'alert.default.confirm': 'Confirm',
         'alert.default.cancel': 'Cancel',
 
+        'alert.default.error.title': 'Error',
+        'alert.default.error.text': 'Error occured.',
+        'alert.default.error.details': 'Details:',
+
+        'alert.error.ValidationError.title': 'Validation Failed',
+        'alert.error.ValidationError.text': 'Input data is wrong.',
+
         'alert.removeProcedure.title': 'Removing Procedure',
         'alert.removeProcedure.text': 'Are you sure you want to remove this procedure?',
         'alert.removeProcedure.confirm': 'Remove'

@@ -41,6 +41,33 @@
           showConfirmButton: true,
           showCancelButton: true
         }, callback);
+      },
+
+      // Show error notification. @error is isntance of Error,
+      // see ('./errors') for more details.
+      //
+      // Alert ID will be `'error.' + error.name`.
+      // Defaults are at `alert.error.default.` + subkey.
+      //
+      // Translation subkeys: title, text, details
+      // (details is translation of "Details:", not quite related to error).
+      //
+      // I think the best way is to keep title and text as general explanations
+      // of what error.name is and how to fix it, and add details text
+      // with actual error message, so we won't have to switch to
+      // more advanced translartor that supports params. (Maybe do that later.)
+      error: function (error) {
+        var alertId = 'error.' + error.name;
+        var title = getTr(alertId, 'title', 'error');
+        var text = getTr(alertId, 'text', 'error') + '\n\n' +
+                   getTr(alertId, 'details', 'error') + '\n' +
+                   error.message;
+
+        return swal({
+          type: 'error',
+          title: title,
+          text: text
+        });
       }
     };
   };
