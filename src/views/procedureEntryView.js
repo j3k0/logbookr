@@ -10,6 +10,7 @@ define(function (require) {
     var debug = require('../debug');
     var errors = require('../errors');
     var tr = require('../tr');
+    var alerts = require('../alerts');
 
     var ProcedureEntryView = Backbone.View.extend({
 
@@ -170,10 +171,15 @@ define(function (require) {
             ev.preventDefault();
             ev.stopPropagation();
 
-            if (this.model.collection)
-                this.model.destroy();
+            var self = this;
+            alerts.confirm('removeProcedure', function (confirmed) {
+                if (confirmed) {
+                    if (self.model.collection)
+                        self.model.destroy();
 
-            this.goBack();
+                    self.goBack();
+                }
+            });
         },
 
         saveProcedure: function(ev) {

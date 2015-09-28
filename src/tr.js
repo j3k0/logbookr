@@ -54,7 +54,17 @@
         'tempalte.description-placehodler': 'Type in field\'s description…',
 
         // treePickerView
-        'treePicker.defaultTitle': 'Custom Choice Tree'
+        'treePicker.defaultTitle': 'Custom Choice Tree',
+
+        // alerts
+        'alert.default.title': 'Please Confirm',
+        'alert.default.text': 'Please confirm the action.',
+        'alert.default.confirm': 'Confirm',
+        'alert.default.cancel': 'Cancel',
+
+        'alert.removeProcedure.title': 'Removing Procedure',
+        'alert.removeProcedure.text': 'Are you sure you want to remove this procedure?',
+        'alert.removeProcedure.confirm': 'Remove'
       }
     };
 
@@ -66,10 +76,14 @@
       if (!locales.hasOwnProperty(tr.locale))
         return errorMessage('No Locale', key);
 
-      if (!locales[tr.locale].hasOwnProperty(key))
+      if (!tr.has(key))
         return errorMessage('No Translation', key);
 
       return locales[tr.locale][key];
+    };
+
+    tr.has = function (key) {
+        return locales[tr.locale].hasOwnProperty(key);
     };
 
     tr.locale = 'en';
