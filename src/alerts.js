@@ -31,6 +31,7 @@
       // Translation subkeys: title, text, confirm, cancel
       confirm: function (alertId, callback) {
         return swal({
+          type: 'warning',
           title: getTr(alertId, 'title'),
           text: getTr(alertId, 'text'),
           confirmButtonText: getTr(alertId, 'confirm'),
