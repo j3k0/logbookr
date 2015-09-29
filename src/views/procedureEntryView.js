@@ -21,7 +21,20 @@ define(function (require) {
 
             this.openChoiceTree = options.openChoiceTree;
             this.updateTitle = options.updateTitle;
-            this.goBack = options.goBack;
+            this.goBack = function () {
+                // TODO:
+                // this restores models in collection to the state
+                // in which they are in local storage, effectively
+                // discarding any unsaved changes.
+                //
+                // Feels very hacky and won't work when changing pages
+                // by means other that `< Back` button.
+                //
+                // Requried since we add photos by pushing into model's array.
+                if (this.model.collection)
+                    this.model.fetch();
+                options.goBack()
+            };
         },
 
         fieldHtml: function (field) {
@@ -81,7 +94,7 @@ define(function (require) {
             // we can be more specific and don't bind clicks for every input;
             // probably can be moved to FieldView, not sure how, though;
             // w/ever for now.
-            'click .procedure-input': 'inputClicked'
+            'click .procedure-input': 'inputClicked',
 
             // TODO:
             // Bring pictures back.
@@ -90,6 +103,10 @@ define(function (require) {
             // 'click .procedure-picture-container': 'hidePicture',
             // 'click .procedure-picture-thumbnail': 'showPicture',
             // 'click .edit-button': 'edit'
+
+            'click .js-photo-thumbnail': 'showPhoto',
+            'click .js-photo > img': 'hidePhoto',
+            'click .js-photo > a': 'deletePhoto'
         },
 
         inputClicked: function (event) {
@@ -108,7 +125,15 @@ define(function (require) {
                     camera.takePicture(function (err, pic) {
                         // TODO:
                         // handle errors!
-                        // maybe hide this within method
+
+                        // TODO:
+                        // instead of updating model we should probably
+                        // update some input's value, so we won't have the
+                        // situation where model is changed in memory but not
+                        // in local storage.
+                        //
+                        // Not sure how to render in this situation. Probably
+                        // some JS on that input's update.
                         self.model.get('photos').push(pic);
                         self.render();
                     });
@@ -203,11 +228,12 @@ define(function (require) {
                     return prev;
                 }, {});
 
-            // photos are different
-            attrs.photos = $('.photos > li')
+            // TODO:
+            // we can actually have multiple photos fiedls, not just one.
+            attrs.photos = $('.procedure-photo')
                 .get()
                 .map(function (el) {
-                    return JSON.parse($(el).data('json'));
+                    return $(el).data('json');
                 });
 
             var ok = this.model.safeSet(attrs);
@@ -222,6 +248,56 @@ define(function (require) {
                 debug('failed to update model', this.model.validationError);
                 alerts.error(this.model.validationError);
             }
+        },
+
+        //
+        // Photos stuff
+        //
+
+        // Returns index of photo in the photos array.
+        _photoInfo: function (event) {
+            var $li = $(event.target).parents('.procedure-photo');
+            var $block = $li.parents('.procedure-photos');
+            var attr = 'photos';
+
+            return {
+                attributeName: attr,                     // model attribute with photos aray.
+                index: $li.data('idx'),                  // photo's idx in that array.
+                photo: $li.data('json'),                 // photo itself
+                photoElement: $block.find('.js-photo'),  // where to show full-sized photo.
+                elementToDelete: $li                     // this will get deleted, if user asks to.
+            };
+        },
+
+        showPhoto: function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            var info = this._photoInfo(event);
+
+            // Update image src/alt.
+            $(info.photoElement).find('img').attr({
+                src: info.photo.url,
+                alt: info.photo.legend
+            });
+
+            // Save photo's info so Delete button knows what to delete.
+            $(info.photoElement).find('a').data('photo', info.elementToDelete);
+
+            // Show js-photo block for this image.
+            info.photoElement.show();
+        },
+
+        hidePhoto: function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+            $(event.target).parent().hide();
+        },
+
+        deletePhoto: function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+            $(event.target).data('photo').remove();
         }
     });
 });

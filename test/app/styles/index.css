@@ -20,13 +20,13 @@ pre {
   padding: 1em;
 }
 
-.procedure-photos > li {
+.procedure-photos li {
   display: inline;
   padding: 0 .5em;
 }
 
 .procedure-add-photo,
-.procedure-photo > img {
+.js-photo-thumbnail {
   width: 64px;
   height: 64px;
 }

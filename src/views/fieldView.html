@@ -17,25 +17,36 @@
       <% } %>
     >
   <% } else { %>
-    <!-- Photos are an array of stuff you can add to. Each one is removable. -->
-    <ul class="procedure-photos">
-      <% value.forEach(function (photo) { %>
-        <li class="procedure-photo" data-json="<%- JSON.stringify(photo) %>">
-          <img src="<%= photo.url%>" alt="<%= photo.legend%>">
-        </li>
-      <% }) %>
+    <!-- TODO:
+         For now this only supports `photos` attribute,
+         so creating more fields of type `photos` will not work correctly.
+    -->
 
-      <!-- TODO
-       Though we process events based on this, not sure if adding
-       `procedure-input` class here is nice, it's a link.
-       Maybe attach js handler to differebt selector later.
-       Would be nice to prefix non-css classes with somethin like 'js-' too!
-      -->
-      <li><span class="procedure-add-photo clickable procedure-input procedure-<%-field.name%>"
-         data-attribute-name="<%-field.name%>"
-         data-attribute-type="<%-field.type%>">
-      </span></li>
-    </ul>
+    <!-- Photos are an array of stuff you can add to. Each one is removable. -->
+    <div class="procedure-photos">
+      <ul>
+        <% value.forEach(function (photo, idx) { %>
+          <li class="procedure-photo" data-idx="<%- idx %>" data-json="<%- JSON.stringify(photo) %>">
+            <img class="clickable js-photo-thumbnail" src="<%= photo.url%>" alt="<%= photo.legend%>">
+          </li>
+        <% }) %>
+
+        <!-- TODO
+         Though we process events based on this, not sure if adding
+         `procedure-input` class here is nice, it's a link.
+         Maybe attach js handler to differebt selector later.
+         Would be nice to prefix non-css classes with somethin like 'js-' too!
+        -->
+        <li><span class="procedure-add-photo clickable procedure-input procedure-<%-field.name%>"
+           data-attribute-name="<%-field.name%>"
+           data-attribute-type="<%-field.type%>">
+        </span></li>
+      </ul>
+
+      <div class="hidden js-photo">
+        <a href="#">Delete</a><br>
+        <img>
+    </div>
   <% } %>
 
 </div>
