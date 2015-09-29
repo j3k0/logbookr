@@ -69,6 +69,13 @@
           return errors.validationError('Required attributes missing.');
       },
 
+      // Clone model.
+      // underscore doesn't want to do deep clones, okay then.
+      clone: function () {
+        var attrs = JSON.parse(JSON.stringify(this.attributes));
+        return new this.constructor(attrs);
+      },
+
       // Returns difference between current model state and the state before
       // previous `set()`. Effectively, set of attribute changes
       // that will return model into its previous state, if applied.

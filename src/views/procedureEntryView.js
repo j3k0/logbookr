@@ -21,20 +21,7 @@ define(function (require) {
 
             this.openChoiceTree = options.openChoiceTree;
             this.updateTitle = options.updateTitle;
-            this.goBack = function () {
-                // TODO:
-                // this restores models in collection to the state
-                // in which they are in local storage, effectively
-                // discarding any unsaved changes.
-                //
-                // Feels very hacky and won't work when changing pages
-                // by means other that `< Back` button.
-                //
-                // Requried since we add photos by pushing into model's array.
-                if (this.model.collection)
-                    this.model.fetch();
-                options.goBack()
-            };
+            this.goBack = options.goBack;
         },
 
         fieldHtml: function (field) {
@@ -53,7 +40,22 @@ define(function (require) {
         },
 
         swapModel: function (procedure) {
-            this.model = procedure;
+            // TODO:
+            // not sure this is needed, but it probably is.
+            // Look into.
+            if (this.model) {
+                this.model.off();
+                this.model.stopListening();
+            }
+
+            this.model = procedure.clone();
+            this.original = procedure;
+
+            var self = this;
+            this.model.on('change', function () {
+                debug('clone changed', self.model.get('id'));
+                self.render();
+            });
         },
 
         render: function() {
@@ -95,6 +97,7 @@ define(function (require) {
             // probably can be moved to FieldView, not sure how, though;
             // w/ever for now.
             'click .procedure-input': 'inputClicked',
+            'change .procedure-input': 'inputChanged',
 
             // TODO:
             // Bring pictures back.
@@ -114,28 +117,20 @@ define(function (require) {
             var $input = $(event.target);
             var fieldType = $input.data('attribute-type');
             var processedHere = true;
-            var updateInputValue = $input.val.bind($input);
             debug('input ' + event.target + ' (`' + fieldType + '`) clicked.');
 
             switch (fieldType) {
                 case FieldModel.types.CHOICETREE:
-                    self.openChoiceTree($input.data('attribute-name'), updateInputValue);
+                    self.openChoiceTree($input.data('attribute-name'), function (value) {
+                        $input.val(value).change();
+                    });
                     break;
                 case FieldModel.types.PHOTOS:
                     camera.takePicture(function (err, pic) {
                         // TODO:
                         // handle errors!
-
-                        // TODO:
-                        // instead of updating model we should probably
-                        // update some input's value, so we won't have the
-                        // situation where model is changed in memory but not
-                        // in local storage.
-                        //
-                        // Not sure how to render in this situation. Probably
-                        // some JS on that input's update.
                         self.model.get('photos').push(pic);
-                        self.render();
+                        self.model.trigger('change');
                     });
                     break;
                 default:
@@ -147,6 +142,13 @@ define(function (require) {
                 event.preventDefault();
                 event.stopPropagation();
             }
+        },
+
+        inputChanged: function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+            var $input = $(event.target);
+            this.model.set($input.data('attribute-name'), $input.val());
         },
 
         addDateTimePicker: function() {
@@ -208,8 +210,8 @@ define(function (require) {
             var self = this;
             alerts.confirm('removeProcedure', function (confirmed) {
                 if (confirmed) {
-                    if (self.model.collection)
-                        self.model.destroy();
+                    if (self.original.collection)
+                        self.original.destroy();
 
                     self.goBack();
                 }
@@ -220,33 +222,18 @@ define(function (require) {
             ev.preventDefault();
             ev.stopPropagation();
 
-            var attrs = $('input.procedure-input')
-                .get()
-                .reduce(function (prev, current) {
-                    var el = $(current);
-                    prev[el.data('attribute-name')] = el.val();
-                    return prev;
-                }, {});
-
-            // TODO:
-            // we can actually have multiple photos fiedls, not just one.
-            attrs.photos = $('.procedure-photo')
-                .get()
-                .map(function (el) {
-                    return $(el).data('json');
-                });
-
-            var ok = this.model.safeSet(attrs);
+            var attrs = this.model.attributes;
+            var ok = this.original.safeSet(attrs);
 
             if (ok) {
-                debug('updated model with attrs', attrs, '\n', this.model);
-                this.collection.unshift(this.model);
-                this.model.save();
+                debug('updated model with attrs', attrs, '\n', this.original);
+                this.collection.unshift(this.original);
+                this.original.save();
                 this.goBack();
             }
             else {
-                debug('failed to update model', this.model.validationError);
-                alerts.error(this.model.validationError);
+                debug('failed to update model', this.original.validationError);
+                alerts.error(this.original.validationError);
             }
         },
 
@@ -282,7 +269,9 @@ define(function (require) {
             });
 
             // Save photo's info so Delete button knows what to delete.
-            $(info.photoElement).find('a').data('photo', info.elementToDelete);
+            $(info.photoElement).find('a')
+                .data('attributeName', info.attributeName)
+                .data('index', info.index);
 
             // Show js-photo block for this image.
             info.photoElement.show();
@@ -297,7 +286,13 @@ define(function (require) {
         deletePhoto: function (event) {
             event.preventDefault();
             event.stopPropagation();
-            $(event.target).data('photo').remove();
+
+            var $button = $(event.target);
+            var attributeName = $button.data('attributeName');
+            var idx = $button.data('index');
+
+            this.model.get(attributeName).splice(idx, 1);
+            this.model.trigger('change');
         }
     });
 });

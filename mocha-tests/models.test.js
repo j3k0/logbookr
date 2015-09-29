@@ -96,6 +96,24 @@ describe('ProcedureModel', function () {
       });
     });
 
+    describe('#clone()', function () {
+      it('returns new instance with deep cloned attributes', function () {
+        var obj = {answer: 42};
+        var array = [obj];
+        var procedure = new ProcedureModel({array: array});
+        var clone = procedure.clone();
+
+        // Same references
+        expect(procedure.get('array')).to.be(array);
+        expect(procedure.get('array')[0]).to.be(obj);
+        // Different references, still equal contents.
+        expect(clone).to.be.a(ProcedureModel);
+        expect(clone.get('array')).to.eql(array);
+        expect(clone.get('array')).not.to.be(array);
+        expect(clone.get('array')[0]).not.to.be(obj);
+      });
+    });
+
     describe('#diff()', function () {
       it('returns set of changes required to revert model to its previous state', function () {
         var procedure = new ProcedureModel();
