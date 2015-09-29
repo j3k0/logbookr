@@ -31,11 +31,13 @@
         'FieldModel.TEXT': 'Text',
         'FieldModel.TEXTAREA': 'Text Area',
         'FieldModel.CHOICETREE': 'Choice Tree',
+        'FieldModel.PHOTOS': 'Photos',
 
         // FieldModel required fields descriptions
         'FieldModel.required.date': 'Date Performed',
         'FieldModel.required.type': 'Type of Procedure',
         'FieldModel.required.patient': 'Patient\'s Full Name',
+        'FieldModel.required.photos': 'Photos',
 
         // proceduresView
         'procedures.title': 'The Interventions',

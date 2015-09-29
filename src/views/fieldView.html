@@ -6,12 +6,36 @@
     <%- field.description || field.name %>
   </span></div>
 
-  <input type="text" class="procedure-input procedure-<%-field.name%>"
-         value="<%-value%>"
+  <% if (field.type !== FieldModel.types.PHOTOS) { %>
+    <!-- Non-photos field get simple input. -->
+    <input type="text" class="js-procedure-input procedure-input procedure-<%-field.name%>"
+           value="<%-value%>"
+           data-attribute-name="<%-field.name%>"
+           data-attribute-type="<%-field.type%>"
+      <% if (field.type === FieldModel.types.CHOICETREE || field.type === FieldModel.types.DATE) { %>
+           readonly
+      <% } %>
+    >
+  <% } else { %>
+    <!-- Photos are an array of stuff you can add to. Each one is removable. -->
+    <ul class="procedure-photos">
+      <% value.forEach(function (photo) { %>
+        <li class="procedure-photo" data-json="<%- JSON.stringify(photo) %>">
+          <img src="<%= photo.url%>" alt="<%= photo.legend%>">
+        </li>
+      <% }) %>
+
+      <!-- TODO
+       Though we process events based on this, not sure if adding
+       `procedure-input` class here is nice, it's a link.
+       Maybe attach js handler to differebt selector later.
+       Would be nice to prefix non-css classes with somethin like 'js-' too!
+      -->
+      <li><span class="procedure-add-photo clickable procedure-input procedure-<%-field.name%>"
          data-attribute-name="<%-field.name%>"
-         data-attribute-type="<%-field.type%>"
-    <% if (field.type === FieldModel.types.CHOICETREE || field.type === FieldModel.types.DATE) { %>
-         readonly
-    <% } %>
-  >
+         data-attribute-type="<%-field.type%>">
+      </span></li>
+    </ul>
+  <% } %>
+
 </div>

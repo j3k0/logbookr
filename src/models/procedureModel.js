@@ -27,10 +27,12 @@
           date: '',
           type: '',
           patient: '',
+          photos: [],
           requiredFields: toFields([
             {name: 'date', description: tr('FieldModel.required.date'), type: FieldModel.types.DATE},
             {name: 'type', description: tr('FieldModel.required.type'), type: FieldModel.types.CHOICETREE},
-            {name: 'patient', description: tr('FieldModel.required.patient'), type: FieldModel.types.TEXT}
+            {name: 'patient', description: tr('FieldModel.required.patient'), type: FieldModel.types.TEXT},
+            {name: 'photos', description: tr('FieldModel.required.photos'), type: FieldModel.types.PHOTOS}
           ]),
           // TODO:
           // rename requiredFields to fields and fields to additionalField.

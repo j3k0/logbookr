@@ -6,7 +6,7 @@
     var errors = require('../errors');
     var validations = require('../validations');
 
-    var types = ['date', 'text', 'textarea', 'choicetree'];
+    var types = ['date', 'text', 'textarea', 'choicetree', 'photos'];
 
     var FieldModel = Backbone.Model.extend({
       idAttribute: 'name',

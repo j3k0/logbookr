@@ -6,7 +6,7 @@ var FieldModel = require('../src/models/fieldModel');
 describe('FieldModel', function () {
   it('exports available field types', function () {
     expect(FieldModel.types).to.have.keys(
-      'DATE', 'TEXT', 'TEXTAREA', 'CHOICETREE'
+      'DATE', 'TEXT', 'TEXTAREA', 'CHOICETREE', 'PHOTOS'
     );
   });
 

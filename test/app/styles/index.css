@@ -9,9 +9,35 @@
   display: none;
 }
 
+.clickable {
+  cursor: pointer;
+}
+
 pre {
   font-family: monospace;
   color: #444444;
   background-color: #E4E4E4;
   padding: 1em;
+}
+
+.procedure-photos > li {
+  display: inline;
+  padding: 0 .5em;
+}
+
+.procedure-add-photo,
+.procedure-photo > img {
+  width: 64px;
+  height: 64px;
+}
+
+.procedure-add-photo {
+  text-align: center;
+  vertical-align: top;
+  font-size: 48px;
+  padding: 0;
+}
+
+.procedure-add-photo:after {
+  content: '+';
 }
