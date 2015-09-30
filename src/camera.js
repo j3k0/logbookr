@@ -1,6 +1,9 @@
 (function (root, isBrowser) {
   "use strict";
 
+  // TODO:
+  // this module is a lie.
+
   var definition = function () {
     // Let's wrap camera stuff into callback function, something like:
     //  callback(err, pictrure)
