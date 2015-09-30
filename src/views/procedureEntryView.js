@@ -267,6 +267,20 @@ define(function (require) {
                 .data();
         },
 
+        // Remove active class from all thumbnails and hide full-sized picture.
+        // @domPhotos is .procedure-photo block.
+        _deactivateThumbnails: function (domPhotos) {
+            domPhotos.find('.procedure-photo').removeClass('active');
+            domPhotos.find('.js-photo').hide();
+        },
+
+        // Add active class to thumbnail.
+        // @thumbnail is .procedure-photo element.
+        _activateThumbnail: function (thumbnail) {
+            this._deactivateThumbnails(thumbnail.parents('.procedure-photos'));
+            thumbnail.addClass('active');
+        },
+
         // When user clicks on the thumbnail, we show full-sized picture
         // with legend and controls that allow to remove it.
         showPhoto: function (event) {
@@ -274,6 +288,9 @@ define(function (require) {
             event.stopPropagation();
 
             var info = this._thumbnailInfo(event);
+
+            // Highlight currently selected thumbnail.
+            this._activateThumbnail(info.dom.thumbnail);
 
             // Legend goes into input within jsPhoto.
             info.dom.photo.find('.js-photo-legend').val(info.photo.legend);
@@ -298,7 +315,7 @@ define(function (require) {
         hidePhoto: function (event) {
             event.preventDefault();
             event.stopPropagation();
-            $(event.target).parent().hide();
+            this._deactivateThumbnails($(event.target).parents('.procedure-photos'));
         },
 
         deletePhoto: function (event) {

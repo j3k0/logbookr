@@ -25,11 +25,22 @@ pre {
   padding: 0 .5em;
 }
 
-.procedure-photos li:first-child {
+/* TODO:
+   Doesn't loog good, because other images jump.
+ */
+.procedure-photo.active img {
+  border-bottom: 2px solid red;
+}
+
+.procedure-photo img {
+  padding-bottom: 2px;
+}
+
+.procedure-photo:first-child {
   padding-left: 0;
 }
 
-.procedure-photos li:last-child {
+.procedure-add-photo {
   padding-right: 0;
 }
 
