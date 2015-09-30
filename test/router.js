@@ -13,6 +13,16 @@ define(function(require, exports, module) {
   module.exports = Backbone.Router.extend({
 
     initialize: function() {
+        // init views
+        this.home = new HomeView({el: '#tab-content'});
+        this.navigation = new LogbookR.Navigation({
+            goHome: _.bind(Backbone.history.navigate, Backbone.history, "home", { trigger: true }),
+            updateTitle: _.bind(this.updateTitle, this),
+            openInMain: _.bind(this.openInMain, this),
+            mainEl: "#tab-content",
+            openInPopover: _.bind(this.openInPopover, this),
+            popoverEl: "#popover"
+        });
         // Load logbook initial data
         LogbookData.choices.initialize(LogbookR.ChoiceTree.getInstance());
         $("#back").on("click", _.bind(function () { this.mainView.goBack(); }, this));
@@ -25,18 +35,11 @@ define(function(require, exports, module) {
     },
 
     home: function() {
-      this.openInMain(new HomeView({el: '#tab-content'}));
+      this.openInMain(this.home);
     },
 
     logbook: function() {
-        this.openInMain(new LogbookR.Navigation({
-            goHome: _.bind(Backbone.history.navigate, Backbone.history, "home", { trigger: true }),
-            updateTitle: _.bind(this.updateTitle, this),
-            openInMain: _.bind(this.openInMain, this),
-            mainEl: "#tab-content",
-            openInPopover: _.bind(this.openInPopover, this),
-            popoverEl: "#popover"
-        }).mainView());
+        this.openInMain(this.navigation.mainView());
     },
 
     openInMain: function(view, $el) {
