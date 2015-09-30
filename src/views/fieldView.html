@@ -26,7 +26,7 @@
     <div class="procedure-photos">
       <ul>
         <% value.forEach(function (photo, idx) { %>
-          <li class="procedure-photo" data-index="<%- idx %>">
+          <li class="procedure-photo" data-attribute-name="<%-field.name%>" data-index="<%- idx %>">
             <img class="clickable js-photo-thumbnail" src="<%= photo.url%>" alt="<%= photo.legend%>">
           </li>
         <% }) %>

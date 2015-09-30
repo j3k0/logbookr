@@ -92,20 +92,13 @@ define(function (require) {
         events:{
             'click .save-button': 'saveProcedure',
             'click .delete-procedure': 'deleteProcedure',
+            'click .procedure-add-photo': 'addPhoto',
             // TODO:
             // we can be more specific and don't bind clicks for every input;
             // probably can be moved to FieldView, not sure how, though;
             // w/ever for now.
             'click .procedure-input': 'inputClicked',
             'change .procedure-input': 'inputChanged',
-
-            // TODO:
-            // Bring pictures back.
-            // 'click .take-procedure-picture-btn': 'takePicture',
-            // 'click .delete-picture': 'confirmDeletePicture',
-            // 'click .procedure-picture-container': 'hidePicture',
-            // 'click .procedure-picture-thumbnail': 'showPicture',
-            // 'click .edit-button': 'edit'
 
             'click .js-photo-thumbnail': 'showPhoto',
             'click .js-photo-image': 'hidePhoto',
@@ -124,14 +117,6 @@ define(function (require) {
                 case FieldModel.types.CHOICETREE:
                     self.openChoiceTree($input.data('attribute-name'), function (value) {
                         $input.val(value).change();
-                    });
-                    break;
-                case FieldModel.types.PHOTOS:
-                    camera.takePicture(function (err, pic) {
-                        // TODO:
-                        // handle errors!
-                        self.model.get('photos').push(pic);
-                        self.model.trigger('change');
                     });
                     break;
                 default:
@@ -246,7 +231,7 @@ define(function (require) {
         _thumbnailInfo: function (event) {
             var $li = $(event.target).parents('.procedure-photo');
             var $block = $li.parents('.procedure-photos');
-            var attributeName = 'photos';  // TODO: do not hardcode this.
+            var attributeName = $li.data('attribute-name');
             var index = $li.data('index');
 
             return {
@@ -279,6 +264,22 @@ define(function (require) {
         _activateThumbnail: function (thumbnail) {
             this._deactivateThumbnails(thumbnail.parents('.procedure-photos'));
             thumbnail.addClass('active');
+        },
+
+        // When clicking on add photo.
+        addPhoto: function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            var self = this;
+            var attributeName = $(event.target).data('attribute-name');
+
+            camera.takePicture(function (err, pic) {
+                // TODO:
+                // handle errors!
+                self.model.get(attributeName).push(pic);
+                self.model.trigger('change');
+            });
         },
 
         // When user clicks on the thumbnail, we show full-sized picture
