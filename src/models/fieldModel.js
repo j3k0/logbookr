@@ -11,6 +11,16 @@
     var FieldModel = Backbone.Model.extend({
       idAttribute: 'name',
 
+      // Returns default value for field type.
+      defaultValue: function () {
+        switch (this.get('type')) {
+          case FieldModel.types.PHOTOS:
+            return [];
+          default:
+            return '';
+        }
+      },
+
       defaults: function () {
         return {
           name: '',

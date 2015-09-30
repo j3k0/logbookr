@@ -37,6 +37,22 @@ describe('FieldModel', function () {
       expect(field.isValid()).to.be(true);
     });
   });
+
+  describe('#defaultValue()', function () {
+    it('empty array for PHOTOS', function () {
+      var field = new FieldModel({type: FieldModel.types.PHOTOS});
+
+      console.log(field)
+
+      expect(field.defaultValue()).to.be.an(Array);
+      expect(field.defaultValue()).to.have.length(0);
+    });
+
+    it('empty string for other types', function () {
+      var field = new FieldModel();
+      expect(field.defaultValue()).to.be('');
+    });
+  });
 });
 
 describe('ProcedureModel', function () {
@@ -81,7 +97,7 @@ describe('ProcedureModel', function () {
       var template = [
         {name: 'some-field', description: 'very-descriptive', type: 'text'},
         {name: 'other-field', description: 'even-more-descriptive', type: 'date'},
-        {name: 'ok', description: 'nice', type: 'text'}
+        {name: 'ok', description: 'nice', type: 'photos'}
       ];
 
       var procedure = new ProcedureModel(undefined, {template: template});
@@ -92,7 +108,7 @@ describe('ProcedureModel', function () {
 
       // Make sure we defined attributes according to field names.
       template.forEach(function (field) {
-        expect(procedure.get(field.name)).to.be('');
+        expect(procedure.get(field.name)).to.eql(new FieldModel(field).defaultValue());
       });
     });
 
