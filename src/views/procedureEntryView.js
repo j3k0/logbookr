@@ -108,8 +108,9 @@ define(function (require) {
             // 'click .edit-button': 'edit'
 
             'click .js-photo-thumbnail': 'showPhoto',
-            'click .js-photo > img': 'hidePhoto',
-            'click .js-photo > a': 'deletePhoto'
+            'click .js-photo-image': 'hidePhoto',
+            'click .js-photo-delete': 'deletePhoto',
+            'change .js-photo-legend': 'updatePhoto'
         },
 
         inputClicked: function (event) {
@@ -241,40 +242,57 @@ define(function (require) {
         // Photos stuff
         //
 
-        // Returns index of photo in the photos array.
-        _photoInfo: function (event) {
+        // When clicking on thumbnail.
+        _thumbnailInfo: function (event) {
             var $li = $(event.target).parents('.procedure-photo');
             var $block = $li.parents('.procedure-photos');
-            var attr = 'photos';
+            var attributeName = 'photos';  // TODO: do not hardcode this.
+            var index = $li.data('index');
 
             return {
-                attributeName: attr,                     // model attribute with photos aray.
-                index: $li.data('idx'),                  // photo's idx in that array.
-                photo: $li.data('json'),                 // photo itself
-                photoElement: $block.find('.js-photo'),  // where to show full-sized photo.
-                elementToDelete: $li                     // this will get deleted, if user asks to.
+                attributeName: attributeName,                // model attribute with photos aray.
+                index: index,                                // photo's index in that array.
+                photo: this.model.get(attributeName)[index], // photo itself
+                dom: {
+                    thumbnail: $li,                // thumbnail element.
+                    photo: $block.find('.js-photo') // where to show full-sized photo.
+                }
             };
         },
 
+        // When clicking within .js-photo div.
+        _photoInfo: function (event) {
+            return $(event.target)
+                .parents('.js-photo')
+                .data();
+        },
+
+        // When user clicks on the thumbnail, we show full-sized picture
+        // with legend and controls that allow to remove it.
         showPhoto: function (event) {
             event.preventDefault();
             event.stopPropagation();
 
-            var info = this._photoInfo(event);
+            var info = this._thumbnailInfo(event);
 
-            // Update image src/alt.
-            $(info.photoElement).find('img').attr({
+            // Legend goes into input within jsPhoto.
+            info.dom.photo.find('.js-photo-legend').val(info.photo.legend);
+
+            // Picture goes into image within jsPhoto.
+            info.dom.photo.find('.js-photo-image').attr({
                 src: info.photo.url,
                 alt: info.photo.legend
             });
 
-            // Save photo's info so Delete button knows what to delete.
-            $(info.photoElement).find('a')
-                .data('attributeName', info.attributeName)
-                .data('index', info.index);
+            // We also update jsPhoto's data, so we know which photo
+            // is currently selected for updating legend and removing.
+            info.dom.photo.data({
+                'attributeName': info.attributeName,
+                'index': info.index
+            });
 
             // Show js-photo block for this image.
-            info.photoElement.show();
+            info.dom.photo.show();
         },
 
         hidePhoto: function (event) {
@@ -287,12 +305,17 @@ define(function (require) {
             event.preventDefault();
             event.stopPropagation();
 
-            var $button = $(event.target);
-            var attributeName = $button.data('attributeName');
-            var idx = $button.data('index');
-
-            this.model.get(attributeName).splice(idx, 1);
+            var info = this._photoInfo(event);
+            this.model.get(info.attributeName).splice(info.index, 1);
             this.model.trigger('change');
+        },
+
+        updatePhoto: function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            var info = this._photoInfo(event);
+            this.model.get(info.attributeName)[info.index].legend = $(event.target).val();
         }
     });
 });

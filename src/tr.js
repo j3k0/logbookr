@@ -49,6 +49,9 @@
         'procedure.save-button': 'Save Procedure',
         'procedure.delete-button': 'Delete Procedure',
 
+        // fieldView
+        'field.delete-photo': 'Delete Photo',
+
         // templateView
         'template.title': 'Template Editor',
         'template.add-new-field': 'Add new field',

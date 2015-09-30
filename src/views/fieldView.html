@@ -26,7 +26,7 @@
     <div class="procedure-photos">
       <ul>
         <% value.forEach(function (photo, idx) { %>
-          <li class="procedure-photo" data-idx="<%- idx %>" data-json="<%- JSON.stringify(photo) %>">
+          <li class="procedure-photo" data-index="<%- idx %>">
             <img class="clickable js-photo-thumbnail" src="<%= photo.url%>" alt="<%= photo.legend%>">
           </li>
         <% }) %>
@@ -44,8 +44,9 @@
       </ul>
 
       <div class="hidden js-photo">
-        <a href="#">Delete</a><br>
-        <img>
+        <input type="text" class="js-photo-legend procedure-input">
+        <a href="#" class="js-photo-delete"><%-tr('field.delete-photo')%></a>
+        <img class="js-photo-image">
     </div>
   <% } %>
 

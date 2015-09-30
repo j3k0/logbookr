@@ -14,33 +14,10 @@
 
   <div><%= fieldsHtml %></div>
 
-  <!-- TODO:
-       Picture?
-  -->
-  <!--
-    <div class="picture procedure-field">
-    <div class="procedure-description">
-      <span>Photos</span>
-    </div>
-    <% if (procedure.picture) { %>
-        <img src="<%-documentRoot %><%-procedure.picture %>" image-url="<%-procedure.picture %>" class="procedure-picture-thumbnail" width="64" height="64">
-    <% } else { %>
-          <div pictureId="5" class="one-picture one-picture-editable">
-            <img class="delete-icon delete-picture" src="app/styles/img/delete.svg">
-            <img src="" class="procedure-picture-thumbnail" width="64" height="64">
-          </div>
-    <% } %>
-    <div class="take-procedure-picture-btn btn">+ Ajouter une photo</div>
-  </div>
-  -->
-
   <!-- Controls -->
-
-  <!--input type="submit" class="save-button btn procedure-btn" value="Sauvegarder"-->
   <div class="parent">
-      <div class="delete-procedure btn procedure-btn"><%-tr('procedure.delete-button')%></div>
-      <div class="save-button btn procedure-btn"><%-tr('procedure.save-button')%></div>
-    </div>
+    <div class="delete-procedure btn procedure-btn"><%-tr('procedure.delete-button')%></div>
+    <div class="save-button btn procedure-btn"><%-tr('procedure.save-button')%></div>
   </div>
 
   <!-- Some meta -->
@@ -48,3 +25,4 @@
     Procedure:
     <pre><%= JSON.stringify(procedure, null, 2) %></pre>
   </div>
+</div>
