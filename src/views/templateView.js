@@ -95,7 +95,7 @@
           var restorableName = this.collection.descriptionToName(attrs.description);
           if (restorableName)
             attrs.name = restorableName;
-          else
+          else if (attrs.description)  // don't save empty descriptions
             this.collection.setDescriptionToName(attrs.description, field.get('name'));
         }
         else if (field.get('type') === FieldModel.types.CHOICETREE) {
