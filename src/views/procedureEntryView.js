@@ -323,9 +323,15 @@ define(function (require) {
             event.preventDefault();
             event.stopPropagation();
 
-            var info = this._photoInfo(event);
-            this.model.get(info.attributeName).splice(info.index, 1);
-            this.model.trigger('change');
+            var self = this;
+            var info = self._photoInfo(event);
+
+            alerts.confirm('removePhoto', function (confirmed) {
+                if (confirmed) {
+                    self.model.get(info.attributeName).splice(info.index, 1);
+                    self.model.trigger('change');
+                }
+            });
         },
 
         updatePhoto: function (event) {
