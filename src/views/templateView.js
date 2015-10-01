@@ -81,11 +81,33 @@
 
       fieldChanged: function (event) {
         event.preventDefault();
+        event.stopPropagation();
+
         var $li = this._fieldBlock(event);
-        this._field(event).save({
+        var field =  this._field(event);
+        var attrs = {
           description: $li.find(".field-description").val(),
           type: $li.find('.field-type').val()
-        });
+        };
+
+        if (attrs.type === FieldModel.types.CHOICETREE) {
+          // For ChoiceTree fields, try to restore their name based on description.
+          var restorableName = this.collection.descriptionToName(attrs.description);
+          if (restorableName)
+            attrs.name = restorableName;
+          else
+            this.collection.setDescriptionToName(attrs.description, field.get('name'));
+        }
+        else if (field.get('type') === FieldModel.types.CHOICETREE) {
+          // If we are changing field's type from choicetree to something else,
+          // we probably would like to revert its name, so it won't conflict
+          // with possibly adding same-description choicetree field.
+          //
+          // TODO:
+          // do we need this?
+        }
+
+        field.save(attrs);
       }
     });
   };
