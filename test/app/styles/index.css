@@ -9,9 +9,54 @@
   display: none;
 }
 
+.clickable {
+  cursor: pointer;
+}
+
 pre {
   font-family: monospace;
   color: #444444;
   background-color: #E4E4E4;
   padding: 1em;
+}
+
+.procedure-photos li {
+  display: inline;
+  padding: 0 .5em;
+}
+
+/* TODO:
+   Doesn't loog good, because other images jump.
+ */
+.procedure-photo.active img {
+  border-bottom: 2px solid red;
+}
+
+.procedure-photo img {
+  padding-bottom: 2px;
+}
+
+.procedure-photo:first-child {
+  padding-left: 0;
+}
+
+.procedure-add-photo {
+  padding-right: 0;
+}
+
+.procedure-add-photo,
+.js-photo-thumbnail {
+  width: 64px;
+  height: 64px;
+}
+
+.procedure-add-photo {
+  text-align: center;
+  vertical-align: top;
+  font-size: 48px;
+  padding: 0;
+}
+
+.procedure-add-photo:after {
+  content: '+';
 }

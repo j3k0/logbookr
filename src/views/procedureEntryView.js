@@ -1,17 +1,17 @@
 define(function (require) {
-
     var $ = require("jquery");
     var _ = require("underscore");
     var Backbone = require("backbone");
     var template = require("./text!./procedureEntryView.html");
-    var DateTimePicker = require("datetimepicker");
     var FieldView = require('./fieldView');
     var FieldModel = require('../models/fieldModel');
     var debug = require('../debug');
-    var errors = require('../errors');
     var tr = require('../tr');
+    var alerts = require('../alerts');
+    var camera = require('../camera');
+    require("datetimepicker");
 
-    var ProcedureEntryView = Backbone.View.extend({
+    return Backbone.View.extend({
 
         template: _.template(template),
 
@@ -40,7 +40,22 @@ define(function (require) {
         },
 
         swapModel: function (procedure) {
-            this.model = procedure;
+            // TODO:
+            // not sure this is needed, but it probably is.
+            // Look into.
+            if (this.model) {
+                this.model.off();
+                this.model.stopListening();
+            }
+
+            this.model = procedure.clone();
+            this.original = procedure;
+
+            var self = this;
+            this.model.on('change', function () {
+                debug('clone changed', self.model.get('id'));
+                self.render();
+            });
         },
 
         render: function() {
@@ -77,31 +92,32 @@ define(function (require) {
         events:{
             'click .save-button': 'saveProcedure',
             'click .delete-procedure': 'deleteProcedure',
+            'click .procedure-add-photo': 'addPhoto',
             // TODO:
             // we can be more specific and don't bind clicks for every input;
             // probably can be moved to FieldView, not sure how, though;
             // w/ever for now.
-            'click .procedure-input': 'inputClicked'
+            'click .procedure-input': 'inputClicked',
+            'change .procedure-input': 'inputChanged',
 
-            // TODO:
-            // Bring pictures back.
-            // 'click .take-procedure-picture-btn': 'takePicture',
-            // 'click .delete-picture': 'confirmDeletePicture',
-            // 'click .procedure-picture-container': 'hidePicture',
-            // 'click .procedure-picture-thumbnail': 'showPicture',
-            // 'click .edit-button': 'edit'
+            'click .js-photo-thumbnail': 'showPhoto',
+            'click .js-photo-image': 'hidePhoto',
+            'click .js-photo-delete': 'deletePhoto',
+            'change .js-photo-legend': 'updatePhoto'
         },
 
         inputClicked: function (event) {
+            var self = this;
             var $input = $(event.target);
             var fieldType = $input.data('attribute-type');
             var processedHere = true;
-            var updateInputValue = $input.val.bind($input);
             debug('input ' + event.target + ' (`' + fieldType + '`) clicked.');
 
             switch (fieldType) {
                 case FieldModel.types.CHOICETREE:
-                    this.openChoiceTree($input.data('attribute-name'), updateInputValue);
+                    self.openChoiceTree($input.data('attribute-name'), function (value) {
+                        $input.val(value).change();
+                    });
                     break;
                 default:
                     processedHere = false;
@@ -112,6 +128,13 @@ define(function (require) {
                 event.preventDefault();
                 event.stopPropagation();
             }
+        },
+
+        inputChanged: function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+            var $input = $(event.target);
+            this.model.set($input.data('attribute-name'), $input.val());
         },
 
         addDateTimePicker: function() {
@@ -170,228 +193,153 @@ define(function (require) {
             ev.preventDefault();
             ev.stopPropagation();
 
-            if (this.model.collection)
-                this.model.destroy();
+            var self = this;
+            alerts.confirm('removeProcedure', function (confirmed) {
+                if (confirmed) {
+                    if (self.original.collection)
+                        self.original.destroy();
 
-            this.goBack();
+                    self.goBack();
+                }
+            });
         },
 
         saveProcedure: function(ev) {
             ev.preventDefault();
             ev.stopPropagation();
 
-            var attrs = $('.procedure-input')
-                .get()
-                .reduce(function (prev, current) {
-                    var el = $(current);
-                    prev[el.data('attribute-name')] = el.val();
-                    return prev;
-                }, {});
-
-            var ok = this.model.safeSet(attrs);
+            var attrs = this.model.attributes;
+            var ok = this.original.safeSet(attrs);
 
             if (ok) {
-                debug('updated model with attrs', attrs, '\n', this.model);
-                this.collection.unshift(this.model);
-                this.model.save();
+                debug('updated model with attrs', attrs, '\n', this.original);
+                this.collection.unshift(this.original);
+                this.original.save();
                 this.goBack();
             }
             else {
-                debug('failed to update model', this.model.validationError);
-                errors.display(this.model.validationError);
+                debug('failed to update model', this.original.validationError);
+                alerts.error(this.original.validationError);
             }
         },
 
-        takePicture: function(ev) {
-            ev.preventDefault();
-            ev.stopPropagation();
+        //
+        // Photos stuff
+        //
 
-            this.devicePixelRatio = window.devicePixelRatio || 1;
-            var that = this;
-            if (window.navigator.camera) {
-                navigator.camera.getPicture(
-                    _(that.onPhotoDataSuccess).bind(that),
-                    _(that.onFail).bind(that),
-                    {
-                        quality: 50,
-                        destinationType: Camera.DestinationType.FILE_URI,
-                        sourceType : Camera.PictureSourceType.CAMERA,
-                        allowEdit: false,
-                        encodingType: Camera.EncodingType.JPEG,
-                        targetWidth:  512,
-                        targetHeight: 512,
-                        popoverOptions: CameraPopoverOptions,
-                        saveToPhotoAlbum: false
-                    }
-                );
-            }
-            else {
-                if (window.navigator.notification) {
-                    navigator.notification.alert(
-                        'Aucun appareil photo détecté',  // message
-                        function (){
-                        },                              // callback to invoke with index of button pressed
-                        'Prise de photo',               // title
-                        'Fermer'                        // buttonName
-                    );
+        // When clicking on thumbnail.
+        _thumbnailInfo: function (event) {
+            var $li = $(event.target).parents('.procedure-photo');
+            var $block = $li.parents('.procedure-photos');
+            var attributeName = $li.data('attribute-name');
+            var index = $li.data('index');
+
+            return {
+                attributeName: attributeName,                // model attribute with photos aray.
+                index: index,                                // photo's index in that array.
+                photo: this.model.get(attributeName)[index], // photo itself
+                dom: {
+                    thumbnail: $li,                // thumbnail element.
+                    photo: $block.find('.js-photo') // where to show full-sized photo.
                 }
-            }
+            };
         },
 
-         // Called when a photo is successfully retrieved
-        onPhotoDataSuccess: function(imageURI) {
-            var that = this;
-            _.defer(function() {
-                /*that.$(".responsive-procedure-picture")[0].src = imageURI;
-                that.$(".procedure-picture-thumbnail")[0].src = imageURI;
-                that.$(".procedure-picture-thumbnail").attr("image-url", imageURI).removeClass("hidden");*/
-                that.movePic(imageURI);
+        // When clicking within .js-photo div.
+        _photoInfo: function (event) {
+            return $(event.target)
+                .parents('.js-photo')
+                .data();
+        },
+
+        // Remove active class from all thumbnails and hide full-sized picture.
+        // @domPhotos is .procedure-photo block.
+        _deactivateThumbnails: function (domPhotos) {
+            domPhotos.find('.procedure-photo').removeClass('active');
+            domPhotos.find('.js-photo').hide();
+        },
+
+        // Add active class to thumbnail.
+        // @thumbnail is .procedure-photo element.
+        _activateThumbnail: function (thumbnail) {
+            this._deactivateThumbnails(thumbnail.parents('.procedure-photos'));
+            thumbnail.addClass('active');
+        },
+
+        // When clicking on add photo.
+        addPhoto: function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            var self = this;
+            var attributeName = $(event.target).data('attribute-name');
+
+            camera.takePicture(function (err, pic) {
+                // TODO:
+                // handle errors!
+                self.model.get(attributeName).push(pic);
+                self.model.trigger('change');
             });
         },
 
-        // Called if something bad happens.
-        onFail: function(message) {
-            if ((message === "has no access to assets") && (device.platform === 'iOS')){
-                if (window.navigator.notification) {
-                    navigator.notification.alert(
-                        "Si l\'appareil photo ne fonctionne pas, veuillez aller dans les \"Réglages\" de votre iPhone/iPad, section \"Confidentialité\", \"Appareil photo\" et autoriser AJCR à utiliser l\'appareil.",  // message
-                        function (){
-                        },                              // callback to invoke with index of button pressed
-                        'Prise de photo',               // title
-                        'Fermer'                        // buttonName
-                    );
+        // When user clicks on the thumbnail, we show full-sized picture
+        // with legend and controls that allow to remove it.
+        showPhoto: function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            var info = this._thumbnailInfo(event);
+
+            // Highlight currently selected thumbnail.
+            this._activateThumbnail(info.dom.thumbnail);
+
+            // Legend goes into input within jsPhoto.
+            info.dom.photo.find('.js-photo-legend').val(info.photo.legend);
+
+            // Picture goes into image within jsPhoto.
+            info.dom.photo.find('.js-photo-image').attr({
+                src: info.photo.url,
+                alt: info.photo.legend
+            });
+
+            // We also update jsPhoto's data, so we know which photo
+            // is currently selected for updating legend and removing.
+            info.dom.photo.data({
+                'attributeName': info.attributeName,
+                'index': info.index
+            });
+
+            // Show js-photo block for this image.
+            info.dom.photo.show();
+        },
+
+        hidePhoto: function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+            this._deactivateThumbnails($(event.target).parents('.procedure-photos'));
+        },
+
+        deletePhoto: function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            var self = this;
+            var info = self._photoInfo(event);
+
+            alerts.confirm('removePhoto', function (confirmed) {
+                if (confirmed) {
+                    self.model.get(info.attributeName).splice(info.index, 1);
+                    self.model.trigger('change');
                 }
-            }
-            if ((message !== "Camera cancelled.")  && (message !== 'has no access to assets')){
-                if (window.navigator.notification) {
-                    navigator.notification.alert(
-                        "La photo n'a pas été prise. " + message,  // message
-                        function (){
-                        },                              // callback to invoke with index of button pressed
-                        'Prise de photo',               // title
-                        'Fermer'                        // buttonName
-                    );
-                }
-            }
+            });
         },
 
-        confirmDeletePicture: function(ev) {
-            ev.preventDefault();
-            var deleteButton = $(ev.currentTarget);
-            var pictureId = deleteButton.parent().attr('pictureId');
-            var that = this;
-            if (window.navigator.notification) {
-                navigator.notification.confirm(
-                    'Etes-vous sûr(e) de vouloir effacer l\'image ?',  // message
-                    function (buttonIndex){
-                        if (buttonIndex === 2) {
-                            that.deletePicture(pictureId);
-                        }
-                    },                          // callback to invoke with index of button pressed
-                    'Confirmation',             // title
-                    'Annuler,Effacer'           // buttonLabels
-                );
-            }
-            else {
-                that.deletePicture(pictureId);
-            }
+        updatePhoto: function (event) {
+            event.preventDefault();
+            event.stopPropagation();
 
-        },
-
-        deletePicture: function(pictureId) {
-            debug(pictureId);
-            this.$(".one-picture[pictureId='"+pictureId+"']" ).remove();
-        },
-
-        hidePicture: function(ev) {
-            ev.preventDefault();
-            var picture = this.$(".procedure-picture-container");
-            if (!picture.hasClass("hidden")) {
-                picture.addClass("hidden");
-                this.$(".content").removeClass("hidden");
-                $("#tab-content").scrollTop(10000);
-            }
-        },
-
-        showPicture: function(ev) {
-            ev.preventDefault();
-            var picture = this.$(".procedure-picture-container");
-            picture[0].src = this.$('.procedure-picture-thumbnail').attr("image-url");
-            if (picture.hasClass("hidden")) {
-                picture.removeClass("hidden");
-                this.$(".content").addClass("hidden");
-            }
-        },
-
-        movePic: function(file){
-            window.resolveLocalFileSystemURL(file,
-                _(this.resolveOnSuccess).bind(this),
-                _(this.resOnError).bind(this));
-        },
-
-        //Callback function when the file system uri has been resolved
-        resolveOnSuccess: function(entry){
-            var that = this;
-            debug("resolve success");
-            var n = +new Date();
-            //new file name
-            var newFileName = n + ".jpg";
-            var myFolderApp = "AJCR";
-
-            setTimeout(function() {
-                debug("requesting a file system.");
-                window.requestFileSystem(window.PERSISTENT, 0, function(fileSys) {
-                    debug("requestFileSystem success: URL=" + fileSys.root.nativeURL);
-                    //The folder is created if doesn't exist
-                    fileSys.root.getDirectory(myFolderApp, {
-                        create:true, exclusive: false
-                    }, function(directory) {
-                        debug("getDirectory success: URL=" + directory.nativeURL);
-                        entry.moveTo(directory, newFileName,
-                            _.bind(that.successMove, that),
-                            _.bind(that.resOnError, that));
-                    },
-                    _.bind(that.resOnError, that));
-                },
-                _.bind(that.resOnError, that));
-            }, 0);
-        },
-
-        //Callback function when the file has been moved successfully - inserting the complete path
-        successMove: function(entry) {
-            debug("move success: URL=" + entry.nativeURL);
-            var imgNativeURL = "" + entry.nativeURL;
-            this.$(".responsive-procedure-picture")[0].src = imgNativeURL;
-            this.$(".procedure-picture-thumbnail")[0].src = imgNativeURL;
-            this.$(".procedure-picture-thumbnail").attr("image-url", entry.fullPath).removeClass("hidden");
-        },
-
-        resOnError: function(error) {
-            debug("Error");
-            debug(error.code);
-        },
-
-        edit: function(ev) {
-            ev.preventDefault();
-            ev.stopPropagation();
-
-            var editButton = this.$(".nav-bar .edit-button");
-            if(editButton.hasClass("edit-mode")){
-                editButton.removeClass("edit-mode");
-                editButton.addClass("done-mode");
-                editButton.html("Terminer");
-                this.$(".procedure-description .delete-icon").removeClass("hidden");
-                this.$(".procedure-description").addClass("procedure-description-editable");
-            }
-            else {
-                editButton.removeClass("done-mode");
-                editButton.addClass("edit-mode");
-                editButton.html("Editer");
-                this.$(".procedure-description .delete-icon").addClass("hidden");
-                this.$(".procedure-description").removeClass("procedure-description-editable");
-            }
+            var info = this._photoInfo(event);
+            this.model.get(info.attributeName)[info.index].legend = $(event.target).val();
         }
     });
-
-    return ProcedureEntryView;
 });

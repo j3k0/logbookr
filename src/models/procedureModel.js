@@ -13,7 +13,13 @@
         if (!field.isValid())
           throw field.validationError;
 
-        return new FieldModel(attrs).toJSON();
+        return field;
+      });
+    };
+
+    var toFieldsJson = function (fields) {
+      return fields.map(function (field) {
+        return field.toJSON();
       });
     };
 
@@ -24,14 +30,18 @@
           id: '',
           createdAt: Date.now(),
           // Required fields and their values.
+          // TODO:
+          // would probably be better to set default values via field.defaultValue().
           date: '',
           type: '',
           patient: '',
-          requiredFields: toFields([
+          photos: [],
+          requiredFields: toFieldsJson(toFields([
             {name: 'date', description: tr('FieldModel.required.date'), type: FieldModel.types.DATE},
             {name: 'type', description: tr('FieldModel.required.type'), type: FieldModel.types.CHOICETREE},
-            {name: 'patient', description: tr('FieldModel.required.patient'), type: FieldModel.types.TEXT}
-          ]),
+            {name: 'patient', description: tr('FieldModel.required.patient'), type: FieldModel.types.TEXT},
+            {name: 'photos', description: tr('FieldModel.required.photos'), type: FieldModel.types.PHOTOS}
+          ])),
           // TODO:
           // rename requiredFields to fields and fields to additionalField.
           // or something
@@ -43,10 +53,10 @@
         // If options.template is present, copy fields over.
         if (options && Array.isArray(options.template)) {
           var fields = toFields(options.template);
-          this.set('fields', fields);
+          this.set('fields', toFieldsJson(fields));
 
           fields.forEach(function (field) {
-            this.set(field.name, '');
+            this.set(field.get('name'), field.defaultValue());
           }, this);
         }
       },
@@ -65,6 +75,13 @@
 
         if (!expectedAttributes)
           return errors.validationError('Required attributes missing.');
+      },
+
+      // Clone model.
+      // underscore doesn't want to do deep clones, okay then.
+      clone: function () {
+        var attrs = JSON.parse(JSON.stringify(this.attributes));
+        return new this.constructor(attrs);
       },
 
       // Returns difference between current model state and the state before

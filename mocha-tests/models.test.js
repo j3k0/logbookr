@@ -6,7 +6,7 @@ var FieldModel = require('../src/models/fieldModel');
 describe('FieldModel', function () {
   it('exports available field types', function () {
     expect(FieldModel.types).to.have.keys(
-      'DATE', 'TEXT', 'TEXTAREA', 'CHOICETREE'
+      'DATE', 'TEXT', 'TEXTAREA', 'CHOICETREE', 'PHOTOS'
     );
   });
 
@@ -35,6 +35,19 @@ describe('FieldModel', function () {
     it('returns undefined on well-formed fields', function () {
       var field = new FieldModel({name: 'name'});
       expect(field.isValid()).to.be(true);
+    });
+  });
+
+  describe('#defaultValue()', function () {
+    it('empty array for PHOTOS', function () {
+      var field = new FieldModel({type: FieldModel.types.PHOTOS});
+      expect(field.defaultValue()).to.be.an(Array);
+      expect(field.defaultValue()).to.have.length(0);
+    });
+
+    it('empty string for other types', function () {
+      var field = new FieldModel();
+      expect(field.defaultValue()).to.be('');
     });
   });
 });
@@ -81,7 +94,7 @@ describe('ProcedureModel', function () {
       var template = [
         {name: 'some-field', description: 'very-descriptive', type: 'text'},
         {name: 'other-field', description: 'even-more-descriptive', type: 'date'},
-        {name: 'ok', description: 'nice', type: 'text'}
+        {name: 'ok', description: 'nice', type: 'photos'}
       ];
 
       var procedure = new ProcedureModel(undefined, {template: template});
@@ -92,7 +105,25 @@ describe('ProcedureModel', function () {
 
       // Make sure we defined attributes according to field names.
       template.forEach(function (field) {
-        expect(procedure.get(field.name)).to.be('');
+        expect(procedure.get(field.name)).to.eql(new FieldModel(field).defaultValue());
+      });
+    });
+
+    describe('#clone()', function () {
+      it('returns new instance with deep cloned attributes', function () {
+        var obj = {answer: 42};
+        var array = [obj];
+        var procedure = new ProcedureModel({array: array});
+        var clone = procedure.clone();
+
+        // Same references
+        expect(procedure.get('array')).to.be(array);
+        expect(procedure.get('array')[0]).to.be(obj);
+        // Different references, still equal contents.
+        expect(clone).to.be.a(ProcedureModel);
+        expect(clone.get('array')).to.eql(array);
+        expect(clone.get('array')).not.to.be(array);
+        expect(clone.get('array')[0]).not.to.be(obj);
       });
     });
 
@@ -151,7 +182,7 @@ describe('ProcedureModel', function () {
         backboneValidatedProcedure.set('patient', '');
         backboneValidatedProcedure.isValid();
 
-        expect(procedure.validationError).to.be(backboneValidatedProcedure.validationError);
+        expect(procedure.validationError).to.eql(backboneValidatedProcedure.validationError);
       });
 
       it('returns false and reverts changes if, when applied, resulted in invalid model', function () {

@@ -9,6 +9,8 @@
     var FieldModel = require('../models/FieldModel');
     var uuid = require('../models/uuid');
     var tr = require('../tr');
+    var alerts = require('../alerts');
+    var errors = require('../errors');
 
     return backbone.View.extend({
       template: underscore.template(templateText),
@@ -68,16 +70,54 @@
 
       removeField: function (event) {
         event.preventDefault();
-        this._field(event).destroy();
+        event.stopPropagation();
+
+        var self = this;
+        alerts.confirm('removeField', function (confirmed) {
+          if (confirmed) {
+            self._field(event).destroy();
+          }
+        });
       },
 
       fieldChanged: function (event) {
         event.preventDefault();
+        event.stopPropagation();
+
         var $li = this._fieldBlock(event);
-        this._field(event).save({
-          description: $li.find(".field-description").val(),
+        var $descriptionInput = $li.find(".field-description");
+        var field =  this._field(event);
+        var attrs = {
+          description: $descriptionInput.val(),
           type: $li.find('.field-type').val()
-        });
+        };
+
+        // Don't bother with empty descriptions
+        if (attrs.description) {
+          // Check that description is unique.
+          var otherFieldHasSameDescription = this.collection.some(function (model) {
+            return model.id !== field.id
+              ? model.get('description') === attrs.description
+              : false;
+          });
+
+          if (otherFieldHasSameDescription) {
+            var error = errors.duplicateError('Each field must have an unique description.');
+            $descriptionInput.select().focus();
+            return alerts.error(error);
+          }
+
+          // Let's find out whether we had field with this description before.
+          // If we did, set its name to what it use to be.
+          // If we didn't, save it.
+          var restorableName = this.collection.descriptionToName(attrs.description);
+          if (restorableName)
+            attrs.name = restorableName;
+          else
+            this.collection.setDescriptionToName(attrs.description, field.get('name'));
+        }
+
+        field.save(attrs);
       }
     });
   };

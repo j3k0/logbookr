@@ -31,11 +31,13 @@
         'FieldModel.TEXT': 'Text',
         'FieldModel.TEXTAREA': 'Text Area',
         'FieldModel.CHOICETREE': 'Choice Tree',
+        'FieldModel.PHOTOS': 'Photos',
 
         // FieldModel required fields descriptions
         'FieldModel.required.date': 'Date Performed',
         'FieldModel.required.type': 'Type of Procedure',
         'FieldModel.required.patient': 'Patient\'s Full Name',
+        'FieldModel.required.photos': 'Photos',
 
         // proceduresView
         'procedures.title': 'The Interventions',
@@ -47,6 +49,9 @@
         'procedure.save-button': 'Save Procedure',
         'procedure.delete-button': 'Delete Procedure',
 
+        // fieldView
+        'field.delete-photo': 'Delete Photo',
+
         // templateView
         'template.title': 'Template Editor',
         'template.add-new-field': 'Add new field',
@@ -54,7 +59,35 @@
         'tempalte.description-placehodler': 'Type in field\'s description…',
 
         // treePickerView
-        'treePicker.defaultTitle': 'Custom Choice Tree'
+        'treePicker.defaultTitle': 'Custom Choice Tree',
+
+        // alerts
+        'alert.default.title': 'Please Confirm',
+        'alert.default.text': 'Please confirm the action.',
+        'alert.default.confirm': 'Confirm',
+        'alert.default.cancel': 'Cancel',
+
+        'alert.default.error.title': 'Error',
+        'alert.default.error.text': 'Error occured.',
+        'alert.default.error.details': 'Details:',
+
+        'alert.error.ValidationError.title': 'Validation Failed',
+        'alert.error.ValidationError.text': 'Input data is wrong.',
+
+        'alert.error.DuplicateError.title': 'Duplicates Detected',
+        'alert.error.DuplicateError.text': 'Data must be unique.',
+
+        'alert.removeProcedure.title': 'Removing Procedure',
+        'alert.removeProcedure.text': 'Are you sure you want to remove this procedure?',
+        'alert.removeProcedure.confirm': 'Remove',
+
+        'alert.removeField.title': 'Removing Field',
+        'alert.removeField.text': 'Are you sure you want to remove this field?',
+        'alert.removeField.confirm': 'Remove',
+
+        'alert.removePhoto.title': 'Removing Photo',
+        'alert.removePhoto.text': 'Are you sure you want to remove this photo?',
+        'alert.removePhoto.confirm': 'Remove'
       }
     };
 
@@ -66,10 +99,14 @@
       if (!locales.hasOwnProperty(tr.locale))
         return errorMessage('No Locale', key);
 
-      if (!locales[tr.locale].hasOwnProperty(key))
+      if (!tr.has(key))
         return errorMessage('No Translation', key);
 
       return locales[tr.locale][key];
+    };
+
+    tr.has = function (key) {
+        return locales[tr.locale].hasOwnProperty(key);
     };
 
     tr.locale = 'en';

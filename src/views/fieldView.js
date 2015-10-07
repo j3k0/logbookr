@@ -6,6 +6,7 @@
     var backbone = require('backbone');
     var templateText = require('./text!./fieldView.html');
     var FieldModel = require('../models/FieldModel');
+    var tr = require('../tr');
 
     return backbone.View.extend({
       template: _.template(templateText),
@@ -21,7 +22,8 @@
         return this.template({
           field: this.model.toJSON(),
           value: this.value,
-          FieldModel: FieldModel
+          FieldModel: FieldModel,
+          tr: tr
         });
       }
     });

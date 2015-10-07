@@ -2,36 +2,15 @@
   "use strict";
 
   var definition = function () {
+    var createError = function (name, message) {
+      var e = new Error(message);
+      e.name = name;
+      return e;
+    }
+
     return {
-      validationError: function (message) {
-        return 'ValidationError: ' + message;
-      },
-
-      // TODO:
-      // alert() is ugly!
-      //
-      // Simple alert() wrapper.
-      display: function (message) {
-        return root.alert(message);
-
-        // TODO:
-        // Validate!
-        // if (!attrs.type) {
-        //     if (navigator.notification && navigator.notification.alert) {
-        //         navigator.notification.alert(
-        //             'Veuillez sélectionner le type de l\'intervention',  // message
-        //             function (){
-        //             },                              // callback to invoke with index of button pressed
-        //             'Sauvegarde Impossible',            // title
-        //             'Fermer'                        // buttonName
-        //         );
-        //     }
-        //     else {
-        //         /*alert('Veuillez sélectionner le type de procédure');*/
-        //     }
-        //     return false;
-        // }
-      }
+      validationError: createError.bind(null, 'ValidationError'),
+      duplicateError: createError.bind(null, 'DuplicateError')
     };
   };
 
