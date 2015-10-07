@@ -92,25 +92,28 @@
           type: $li.find('.field-type').val()
         };
 
-        // Check that description is unique.
-        var otherFieldHasSameDescription = this.collection.some(function (model) {
-          return model.get('description') === attrs.description;
-        });
+        // Don't bother with empty descriptions
+        if (attrs.description) {
+          // Check that description is unique.
+          var otherFieldHasSameDescription = this.collection.some(function (model) {
+            return model.get('description') === attrs.description;
+          });
 
-        if (otherFieldHasSameDescription) {
-          var error = errors.duplicateError('Each field must have an unique description.');
-          $descriptionInput.select().focus();
-          return alerts.error(error);
+          if (otherFieldHasSameDescription) {
+            var error = errors.duplicateError('Each field must have an unique description.');
+            $descriptionInput.select().focus();
+            return alerts.error(error);
+          }
+
+          // Let's find out whether we had field with this description before.
+          // If we did, set its name to what it use to be.
+          // If we didn't, save it.
+          var restorableName = this.collection.descriptionToName(attrs.description);
+          if (restorableName)
+            attrs.name = restorableName;
+          else
+            this.collection.setDescriptionToName(attrs.description, field.get('name'));
         }
-
-        // Let's find out whether we had field with this description before.
-        // If we did, set its name to what it use to be.
-        // If we didn't, save it.
-        var restorableName = this.collection.descriptionToName(attrs.description);
-        if (restorableName)
-          attrs.name = restorableName;
-        else if (attrs.description)  // don't save empty descriptions
-          this.collection.setDescriptionToName(attrs.description, field.get('name'));
 
         field.save(attrs);
       }
