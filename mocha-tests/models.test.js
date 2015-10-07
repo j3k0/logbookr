@@ -41,9 +41,6 @@ describe('FieldModel', function () {
   describe('#defaultValue()', function () {
     it('empty array for PHOTOS', function () {
       var field = new FieldModel({type: FieldModel.types.PHOTOS});
-
-      console.log(field)
-
       expect(field.defaultValue()).to.be.an(Array);
       expect(field.defaultValue()).to.have.length(0);
     });
