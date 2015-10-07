@@ -10,6 +10,7 @@
     var uuid = require('../models/uuid');
     var tr = require('../tr');
     var alerts = require('../alerts');
+    var errors = require('../errors');
 
     return backbone.View.extend({
       template: underscore.template(templateText),
@@ -84,11 +85,23 @@
         event.stopPropagation();
 
         var $li = this._fieldBlock(event);
+        var $descriptionInput = $li.find(".field-description");
         var field =  this._field(event);
         var attrs = {
-          description: $li.find(".field-description").val(),
+          description: $descriptionInput.val(),
           type: $li.find('.field-type').val()
         };
+
+        // Check that description is unique.
+        var otherFieldHasSameDescription = this.collection.some(function (model) {
+          return model.get('description') === attrs.description;
+        });
+
+        if (otherFieldHasSameDescription) {
+          var error = errors.duplicateError('Each field must have an unique description.');
+          $descriptionInput.select().focus();
+          return alerts.error(error);
+        }
 
         // Let's find out whether we had field with this description before.
         // If we did, set its name to what it use to be.

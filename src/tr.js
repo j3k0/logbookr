@@ -74,6 +74,9 @@
         'alert.error.ValidationError.title': 'Validation Failed',
         'alert.error.ValidationError.text': 'Input data is wrong.',
 
+        'alert.error.DuplicateError.title': 'Duplicates Detected',
+        'alert.error.DuplicateError.text': 'Data must be unique.',
+
         'alert.removeProcedure.title': 'Removing Procedure',
         'alert.removeProcedure.text': 'Are you sure you want to remove this procedure?',
         'alert.removeProcedure.confirm': 'Remove',

@@ -9,7 +9,8 @@
     }
 
     return {
-      validationError: createError.bind(null, 'ValidationError')
+      validationError: createError.bind(null, 'ValidationError'),
+      duplicateError: createError.bind(null, 'DuplicateError')
     };
   };
 
