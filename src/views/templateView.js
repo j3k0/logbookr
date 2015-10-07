@@ -96,7 +96,9 @@
         if (attrs.description) {
           // Check that description is unique.
           var otherFieldHasSameDescription = this.collection.some(function (model) {
-            return model.get('description') === attrs.description;
+            return model.id !== field.id
+              ? model.get('description') === attrs.description
+              : false;
           });
 
           if (otherFieldHasSameDescription) {
