@@ -3,17 +3,7 @@
     <%- field.description || field.name %>
   </span></div>
 
-  <% if (field.type !== FieldModel.types.PHOTOS) { %>
-    <!-- Non-photos field get simple input. -->
-    <input type="text" class="js-procedure-input procedure-input procedure-<%-field.name%>"
-           value="<%-value%>"
-           data-attribute-name="<%-field.name%>"
-           data-attribute-type="<%-field.type%>"
-      <% if (field.type === FieldModel.types.CHOICETREE || field.type === FieldModel.types.DATE) { %>
-           readonly
-      <% } %>
-    >
-  <% } else { %>
+  <% if (field.type === FieldModel.types.PHOTOS) { %>
     <!-- Photos are an array of stuff you can add to. Each one is removable. -->
     <div class="procedure-photos">
       <ul>
@@ -41,7 +31,23 @@
           <a href="#" class="js-photo-delete"><%-tr('field.delete-photo')%></a>
         </div>
         <img class="js-photo-image">
+      </div>
     </div>
+  <% } else if (field.type === FieldModel.types.TEXTAREA) { %>
+    <textarea rows="5"
+              class="js-procedure-input procedure-input procedure-<%-field.name%>"
+              data-attribute-name="<%-field.name%>"
+              data-attribute-type="<%-field.type%>"
+    ><%= value %></textarea>
+  <% } else { %>
+    <!-- Other types are <input/>. -->
+    <input type="text" class="js-procedure-input procedure-input procedure-<%-field.name%>"
+           value="<%-value%>"
+           data-attribute-name="<%-field.name%>"
+           data-attribute-type="<%-field.type%>"
+      <% if (field.type === FieldModel.types.CHOICETREE || field.type === FieldModel.types.DATE) { %>
+           readonly
+      <% } %>
+    >
   <% } %>
-
 </div>
