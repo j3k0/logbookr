@@ -20,6 +20,9 @@ define(function (require) {
             this.openProcedure = options.openProcedure;
             this.openTemplate = options.openTemplate;
             this.goBack = options.goBack;
+
+            this._filteredBy = null;
+            this._filterByPatientDebounced = _.debounce(this._filterByPatient.bind(this), 200);
         },
 
         render: function() {
@@ -34,10 +37,11 @@ define(function (require) {
             return this;
         },
 
-        events:{
+        events: {
             'click .procedure': 'goToProcedure',
             'click .add-procedure': 'newProcedure',
-            'click .edit-template': 'editTemplate'
+            'click .edit-template': 'editTemplate',
+            'keyup .js-filter-by-patient': 'filterByPatient'
         },
 
         newProcedure: function() {
@@ -51,7 +55,7 @@ define(function (require) {
             ev.stopPropagation();
 
             var chosenProcedure = $(ev.currentTarget);
-            var procedureId = chosenProcedure.attr("procedure-id");
+            var procedureId = chosenProcedure.data("procedure-id");
             var procedure = this.collection.get(procedureId);
             if (procedure !== undefined)
                 this.openProcedure(procedure);
@@ -62,6 +66,53 @@ define(function (require) {
             event.stopPropagation();
 
             this.openTemplate();
+        },
+
+        filterByPatient: function (event) {
+            this._filterByPatientDebounced(event);
+        },
+
+        _filterByPatient: function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+            console.log('called', Date.now());
+
+            var $input = $(event.target)
+            var query = $input.val();
+
+            // Empty input means "show everything".
+            if (query === '')
+                query = null;
+
+            // We are done, if already filtered with same query.
+            if (this._filteredBy === query)
+                return;
+
+            // Remember current state.
+            this._filteredBy = query;
+
+            var $procedures = $('.procedure');
+            var $nothingFound = $('.js-nothing-found')
+
+            if (query === null) {
+                $nothingFound.hide();
+                $procedures.show();
+                return;
+            }
+
+            // Find matching ids.
+            var ids = this.collection.filterByPatient(query).map(function (m) {
+                return m.id;
+            });
+
+            // Hide everything, but ids.
+            var idsSelector = '[data-procedure-id="' + ids.join('|') + '"]';
+            var nShown = $procedures.hide().filter(idsSelector).show().length;
+
+            if (nShown === 0)
+                $nothingFound.show();
+            else
+                $nothingFound.hide();
         }
     });
 

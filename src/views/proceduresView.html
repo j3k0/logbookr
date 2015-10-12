@@ -3,6 +3,16 @@
   <div class="new-procedure">
       <div class="btn edit-template"><%-tr('procedures.edit-template')%></div>
       <div class="btn procedure-btn add-procedure"><%-tr('procedures.add-procedure')%></div>
+      <div style="margin: 0 1em;">
+        <%- tr('procedures.filter-by-patient.title') %>
+        <input class="js-filter-by-patient procedure-input"
+               placeholder="<%- tr('procedures.filter-by-patient.placeholder')%>"
+               value=""
+        >
+        <div class="js-nothing-found hidden" style="margin-top: 1em;">
+          <%- tr('procedures.noting-found') %>
+        </div>
+      </div>
   </div>
 
   <!-- List of procedures -->
@@ -10,7 +20,7 @@
     <ul class="list-ul">
       <% _.each(procedures, function(procedure){ %>
         <% if (procedure.type != undefined) {%>
-        <li class="list-li procedure" procedure-id=<%-procedure.id%>>
+        <li class="list-li procedure" data-procedure-id=<%-procedure.id%>>
           <div class="procedure-instance">
             <%= procedure.type %>
             <div class="procedure-patient"><%= procedure.patient %></div>

@@ -43,6 +43,9 @@
         'procedures.title': 'The Interventions',
         'procedures.add-procedure': '+ Add new Procedure',
         'procedures.edit-template': 'Edit Template',
+        'procedures.filter-by-patient.title': 'Filter by Patient\'s name',
+        'procedures.filter-by-patient.placeholder': 'Type in patient\'s name…',
+        'procedures.noting-found': 'Nothing found',
 
         // procedureView
         'procedure.title': 'New Intervention',
