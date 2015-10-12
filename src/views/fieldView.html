@@ -1,6 +1,3 @@
-<!-- TODO:
-     render specific input based on field type
- -->
 <div class="procedure-field <%-field.name%>">
   <div class="procedure-description"><span>
     <%- field.description || field.name %>
@@ -17,11 +14,6 @@
       <% } %>
     >
   <% } else { %>
-    <!-- TODO:
-         For now this only supports `photos` attribute,
-         so creating more fields of type `photos` will not work correctly.
-    -->
-
     <!-- Photos are an array of stuff you can add to. Each one is removable. -->
     <div class="procedure-photos">
       <ul>
