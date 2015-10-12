@@ -92,14 +92,14 @@ define(function (require) {
         events:{
             'click .save-button': 'saveProcedure',
             'click .delete-procedure': 'deleteProcedure',
-            'click .procedure-add-photo': 'addPhoto',
             // TODO:
             // we can be more specific and don't bind clicks for every input;
             // probably can be moved to FieldView, not sure how, though;
             // w/ever for now.
-            'click .procedure-input': 'inputClicked',
-            'change .procedure-input': 'inputChanged',
+            'click .js-procedure-input': 'inputClicked',
+            'change .js-procedure-input': 'inputChanged',
 
+            'click .js-procedure-add-photo': 'addPhoto',
             'click .js-photo-thumbnail': 'showPhoto',
             'click .js-photo-image': 'hidePhoto',
             'click .js-photo-delete': 'deletePhoto',
