@@ -22,7 +22,7 @@ define(function (require) {
             this.goBack = options.goBack;
 
             this._filteredBy = null;
-            this._filterByPatientDebounced = _.debounce(this._filterByPatient.bind(this), 200);
+            this._filterByPatientDebounced = _.debounce(this._filterByPatient.bind(this), 150);
         },
 
         render: function() {
@@ -31,6 +31,8 @@ define(function (require) {
                 tr: tr
             }));
 
+            this.$procedures = this.$('.procedure');
+            this.$nothingFound = this.$('.js-nothing-found');
             this.titleView = tr('procedures.title');
             this.updateTitle(this.titleView);
             return this;
@@ -53,7 +55,7 @@ define(function (require) {
             ev.preventDefault();
             ev.stopPropagation();
 
-            var chosenProcedure = $(ev.currentTarget);
+            var chosenProcedure = this.$(ev.currentTarget);
             var procedureId = chosenProcedure.data("procedure-id");
             var procedure = this.collection.get(procedureId);
             if (procedure !== undefined)
@@ -90,12 +92,9 @@ define(function (require) {
             // Remember current state.
             this._filteredBy = query;
 
-            var $procedures = $('.procedure');
-            var $nothingFound = $('.js-nothing-found')
-
             if (query === null) {
-                $nothingFound.hide();
-                $procedures.show();
+                this.$nothingFound.hide();
+                this.$procedures.show();
                 return;
             }
 
@@ -106,12 +105,12 @@ define(function (require) {
 
             // Hide everything, but ids.
             var idsSelector = '[data-procedure-id="' + ids.join('|') + '"]';
-            var nShown = $procedures.hide().filter(idsSelector).show().length;
+            var nShown = this.$procedures.hide().filter(idsSelector).show().length;
 
             if (nShown === 0)
-                $nothingFound.show();
+                this.$nothingFound.show();
             else
-                $nothingFound.hide();
+                this.$nothingFound.hide();
         }
     });
 
