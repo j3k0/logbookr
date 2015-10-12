@@ -27,7 +27,6 @@ define(function (require) {
 
         render: function() {
             this.$el.html(this.template({
-                collection: this.collection,
                 procedures: this.collection.toJSON(),
                 tr: tr
             }));

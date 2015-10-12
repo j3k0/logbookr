@@ -32,12 +32,4 @@
       <% }); %>
     </ul>
   </div>
-
-  <!-- Some meta -->
-  <div class="debug">
-    Model IDs:
-    <pre><%= JSON.stringify(_.pluck(collection.models, 'id'), null, 2) %></pre>
-    Collection itself:
-    <pre><%= JSON.stringify(collection, null, 2) %></pre>
-  </div>
 </div>
