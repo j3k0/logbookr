@@ -48,7 +48,7 @@ define(function (require) {
         newProcedure: function() {
             var attrs = {id: uuid()};
             var options = {template: template.getInstance().toJSON()};
-            this.openProcedure(new ProcedureModel(attrs, options));
+            this.openProcedure(new ProcedureModel(attrs, options), true);
         },
 
         goToProcedure: function(ev) {

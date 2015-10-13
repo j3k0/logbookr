@@ -1,5 +1,7 @@
 define(function (require) {
+    var EditableView = require('./views/editableView');
     var ProcedureEntryView = require('./views/procedureEntryView');
+    var ProcedureShowView = require('./views/procedureShowView');
     var ProceduresView = require('./views/proceduresView');
     var TreePickerView = require('./views/treePickerView');
     var TemplateView = require('./views/templateView');
@@ -30,12 +32,15 @@ define(function (require) {
                 goBack: this.goHome
             }),
 
-            procedure: new ProcedureEntryView({
+            procedure: new EditableView({
                 el: this.mainEl,
-                collection: ProceduresCollection.getInstance(),
-                updateTitle: this.updateTitle,
-                openChoiceTree: this.pickChoiceTreeOf.bind(this),
-                goBack: _.bind(this.openProcedures, this)
+                goBack: _.bind(this.openProcedures, this),
+                showView: new ProcedureShowView(),
+                editView: new ProcedureEntryView({
+                    collection: ProceduresCollection.getInstance(),
+                    updateTitle: this.updateTitle,
+                    openChoiceTree: this.pickChoiceTreeOf.bind(this)
+                })
             }),
 
             template: new TemplateView({
@@ -89,8 +94,9 @@ define(function (require) {
         this.openInMain(this.views.template);
     };
 
-    Navigation.prototype.openProcedure = function (procedure) {
-        this.views.procedure.swapModel(procedure);
+    Navigation.prototype.openProcedure = function (procedure, isNew) {
+        var mode = isNew ? EditableView.modes.EDIT : EditableView.modes.SHOW;
+        this.views.procedure.swapModel(procedure, mode);
         this.openInMain(this.views.procedure);
     };
 

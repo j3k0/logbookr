@@ -204,10 +204,7 @@ define(function (require) {
             });
         },
 
-        saveProcedure: function(ev) {
-            ev.preventDefault();
-            ev.stopPropagation();
-
+        save: function () {
             var attrs = this.model.attributes;
             var ok = this.original.safeSet(attrs);
 
@@ -215,12 +212,13 @@ define(function (require) {
                 debug('updated model with attrs', attrs, '\n', this.original);
                 this.collection.unshift(this.original);
                 this.original.save();
-                this.goBack();
             }
             else {
                 debug('failed to update model', this.original.validationError);
                 alerts.error(this.original.validationError);
             }
+
+            return ok;
         },
 
         //

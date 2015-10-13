@@ -39,6 +39,12 @@
         'FieldModel.required.patient': 'Patient\'s Full Name',
         'FieldModel.required.photos': 'Photos',
 
+        // editableView
+        'editable.edit': 'Edit',
+        'editable.remove': 'Remove',
+        'editable.save': 'Save Changes',
+        'editable.discard': 'Discard Changes',
+
         // proceduresView
         'procedures.title': 'The Interventions',
         'procedures.add-procedure': '+ Add new Procedure',
