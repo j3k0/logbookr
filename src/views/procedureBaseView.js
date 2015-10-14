@@ -3,9 +3,9 @@
 
   var definition = function (require) {
     var $ = require('jquery');
-    var backbone = require('backbone');
+    var BaseView = require('./baseView');
 
-    return backbone.View.extend({
+    return BaseView.extend({
       // When clicking within .js-photo div.
       _photoInfo: function (event) {
         return $(event.target)

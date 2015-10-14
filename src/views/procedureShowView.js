@@ -11,11 +11,6 @@
     return ProcedureBaseView.extend({
       template: underscore.template(templateText),
 
-      initialize: function () {
-        // add parent events
-        underscore.extend(this.events, ProcedureBaseView.prototype.events);
-      },
-
       render: function () {
         this.$el.html(this.template({
           requiredFields: FieldView.fieldsHtml(this.model, 'requiredFields', true),

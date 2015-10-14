@@ -22,9 +22,6 @@ define(function (require) {
             this.openChoiceTree = options.openChoiceTree;
             this.updateTitle = options.updateTitle;
             this.goBack = options.goBack;
-
-            // add parent events
-            _.extend(this.events, ProcedureBaseView.prototype.events);
         },
 
         swapModel: function (procedure) {
