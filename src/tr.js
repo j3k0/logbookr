@@ -18,9 +18,7 @@
         'procedures.add-procedure': '+ Ajouter une intervention',
 
         // procedureView
-        'procedure.title': 'Nouvelle intervention',
-        'procedure.save-button': 'Sauvegarder',
-        'procedure.delete-button': 'Supprimer'
+        'procedure.title': 'Nouvelle intervention'
       },
 
       'en': {
@@ -55,11 +53,10 @@
 
         // procedureView
         'procedure.title': 'New Intervention',
-        'procedure.save-button': 'Save Procedure',
-        'procedure.delete-button': 'Delete Procedure',
 
         // fieldView
         'field.delete-photo': 'Delete Photo',
+        'field.no-photos': 'No photos yet',
 
         // templateView
         'template.title': 'Template Editor',

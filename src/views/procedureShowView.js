@@ -4,15 +4,17 @@
   var definition = function (require) {
     var backbone = require('backbone');
     var underscore = require('underscore');
-    // var templateText = require('./text!./editableView.html');
+    var templateText = require('./text!./procedureShowView.html');
+    var FieldView = require('./fieldView');
     var tr = require('../tr');
 
     return backbone.View.extend({
-      template: underscore.template('<pre><%- JSON.stringify(procedure, null, 2) %></pre>'),
+      template: underscore.template(templateText),
 
       render: function () {
         this.$el.html(this.template({
-          procedure: this.model.toJSON(),
+          requiredFields: FieldView.fieldsHtml(this.model, 'requiredFields', true),
+          fields: FieldView.fieldsHtml(this.model, 'fields', true),
           tr: tr
         }));
 

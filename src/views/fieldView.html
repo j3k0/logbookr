@@ -1,4 +1,7 @@
 <div class="procedure-field <%-field.name%>">
+  <!-- if we are rendering readonly, apply js-ignore so some events won't get processed. -->
+  <% var readonlyCssClass = readonly ? 'js-ignore' : ''; %>
+
   <div class="procedure-description"><span>
     <%- field.description || field.name %>
   </span></div>
@@ -19,33 +22,58 @@
          Maybe attach js handler to differebt selector later.
          Would be nice to prefix non-css classes with somethin like 'js-' too!
         -->
+
+        <!-- In readonly mode:
+              - don't show "add photo"
+              - if there are no photos, show "no photos" message.
+        -->
+        <% if (readonly) { %>
+          <% if (value.length === 0) { %>
+            <span><%- tr('field.no-photos') %></span>
+          <% } %>
+        <% } else { %>
         <li><span class="js-procedure-add-photo procedure-add-photo clickable procedure-input procedure-<%-field.name%>"
            data-attribute-name="<%-field.name%>"
            data-attribute-type="<%-field.type%>">
         </span></li>
+        <% } %>
       </ul>
 
       <div class="hidden js-photo">
         <div>
-          <input type="text" class="js-photo-legend procedure-input">
+          <input type="text" class="js-photo-legend procedure-input <%- readonlyCssClass %>"
+                 <% if (readonly) { %>
+                 readonly
+                 <% } %>
+          >
+
+          <% if (!readonly) { %>
           <a href="#" class="js-photo-delete"><%-tr('field.delete-photo')%></a>
+          <% } %>
         </div>
         <img class="js-photo-image">
       </div>
     </div>
   <% } else if (field.type === FieldModel.types.TEXTAREA) { %>
     <textarea rows="5"
-              class="js-procedure-input procedure-input procedure-<%-field.name%>"
+              class="js-procedure-input procedure-input
+                     <%- readonlyCssClass %>
+                     procedure-<%-field.name%>"
               data-attribute-name="<%-field.name%>"
               data-attribute-type="<%-field.type%>"
+              <% if (readonly) { %>
+              readonly
+              <% } %>
     ><%= value %></textarea>
   <% } else { %>
     <!-- Other types are <input/>. -->
-    <input type="text" class="js-procedure-input procedure-input procedure-<%-field.name%>"
-           value="<%-value%>"
+    <input type="text" value="<%-value%>"
+           class="js-procedure-input procedure-input
+                  <%- readonlyCssClass %>
+                  procedure-<%-field.name%>"
            data-attribute-name="<%-field.name%>"
            data-attribute-type="<%-field.type%>"
-      <% if (field.type === FieldModel.types.CHOICETREE || field.type === FieldModel.types.DATE) { %>
+      <% if (readonly || field.type === FieldModel.types.CHOICETREE || field.type === FieldModel.types.DATE) { %>
            readonly
       <% } %>
     >

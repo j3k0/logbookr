@@ -47,8 +47,8 @@ define(function (require) {
             var that = this;
 
             var done = function (documentRoot) {
-                var requiredFieldsHtml = FieldView.fieldsHtml(that.model, 'requiredFields');
-                var fieldsHtml = FieldView.fieldsHtml(that.model, 'fields');
+                var requiredFieldsHtml = FieldView.fieldsHtml(that.model, 'requiredFields', false);
+                var fieldsHtml = FieldView.fieldsHtml(that.model, 'fields', false);
 
                 that.$el.html(that.template({
                     procedure: that.model.toJSON(),
@@ -92,6 +92,10 @@ define(function (require) {
             var fieldType = $input.data('attribute-type');
             var processedHere = true;
             debug('input ' + event.target + ' (`' + fieldType + '`) clicked.');
+
+            // Ignore inputs, that asked us not to process them.
+            if ($input.hasClass('js-ignore'))
+                return;
 
             switch (fieldType) {
                 case FieldModel.types.CHOICETREE:

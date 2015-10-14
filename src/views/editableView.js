@@ -36,8 +36,8 @@
         }));
 
         this.$controls = this.$('.controls');
-        this.$showControls = this.$('.control-show');
-        this.$editControls = this.$('.control-edit');
+        this.$showControls = this.showView.$controls = this.$('.control-show');
+        this.$editControls = this.editView.$controls = this.$('.control-edit');
 
         this.$data = this.$('.data');
         this.showView.setElement(this.$data);
@@ -49,17 +49,19 @@
 
       // Display appropriate controls and render view.
       renderMode: function () {
+        var view = undefined;
+
+        [this.showView, this.editView].forEach(function (view) {
+          view.$controls.hide();
+        });
+
         switch (this.mode) {
           case EditableView.modes.SHOW:
-            this.$showControls.show();
-            this.$editControls.hide();
-            this.showView.render();
+            view = this.showView;
             break;
 
           case EditableView.modes.EDIT:
-            this.$showControls.hide();
-            this.$editControls.show();
-            this.editView.render();
+            view = this.editView;
             break;
 
           default:
@@ -67,6 +69,8 @@
             break;
         }
 
+        view.render();
+        view.$controls.show();
         return this;
       },
 

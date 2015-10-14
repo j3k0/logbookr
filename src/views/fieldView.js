@@ -16,6 +16,7 @@
         this.options.viewName = 'FieldView';
 
         this.value = options.value || '';
+        this.readonly = options.readonly;
       },
 
       html: function () {
@@ -23,25 +24,27 @@
           field: this.model.toJSON(),
           value: this.value,
           FieldModel: FieldModel,
-          tr: tr
+          tr: tr,
+          readonly: this.readonly
         });
       }
     },
 
     {
-      fieldHtml: function (field) {
+      fieldHtml: function (readonly, field) {
         var view = new FieldView({
           model: new FieldModel(field),
           value: this.get(field.name),
-          tr: tr
+          tr: tr,
+          readonly: readonly
         });
 
         return view.html();
       },
 
-      fieldsHtml: function (model, key) {
+      fieldsHtml: function (model, key, readonly) {
         return model.get(key)
-          .map(FieldView.fieldHtml.bind(model))
+          .map(FieldView.fieldHtml.bind(model, readonly))
           .join('\n');
       }
     });
