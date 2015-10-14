@@ -52,6 +52,7 @@
         var view = undefined;
 
         [this.showView, this.editView].forEach(function (view) {
+          view.undelegateEvents();
           view.$controls.hide();
         });
 
@@ -70,6 +71,7 @@
         }
 
         view.render();
+        view.delegateEvents();
         view.$controls.show();
         return this;
       },

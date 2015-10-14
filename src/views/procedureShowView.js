@@ -2,14 +2,19 @@
   "use strict";
 
   var definition = function (require) {
-    var backbone = require('backbone');
     var underscore = require('underscore');
     var templateText = require('./text!./procedureShowView.html');
     var FieldView = require('./fieldView');
+    var ProcedureBaseView = require('./ProcedureBaseView');
     var tr = require('../tr');
 
-    return backbone.View.extend({
+    return ProcedureBaseView.extend({
       template: underscore.template(templateText),
+
+      initialize: function () {
+        // add parent events
+        underscore.extend(this.events, ProcedureBaseView.prototype.events);
+      },
 
       render: function () {
         this.$el.html(this.template({

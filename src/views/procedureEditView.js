@@ -1,7 +1,6 @@
 define(function (require) {
     var $ = require("jquery");
     var _ = require("underscore");
-    var Backbone = require("backbone");
     var template = require("./text!./procedureEditView.html");
     var FieldView = require('./fieldView');
     var FieldModel = require('../models/fieldModel');
@@ -10,8 +9,9 @@ define(function (require) {
     var alerts = require('../alerts');
     var camera = require('../camera');
     require("datetimepicker");
+    var ProcedureBaseView = require('./ProcedureBaseView');
 
-    return Backbone.View.extend({
+    return ProcedureBaseView.extend({
 
         template: _.template(template),
 
@@ -22,6 +22,9 @@ define(function (require) {
             this.openChoiceTree = options.openChoiceTree;
             this.updateTitle = options.updateTitle;
             this.goBack = options.goBack;
+
+            // add parent events
+            _.extend(this.events, ProcedureBaseView.prototype.events);
         },
 
         swapModel: function (procedure) {
@@ -80,8 +83,6 @@ define(function (require) {
             'change .js-procedure-input': 'inputChanged',
 
             'click .js-procedure-add-photo': 'addPhoto',
-            'click .js-photo-thumbnail': 'showPhoto',
-            'click .js-photo-image': 'hidePhoto',
             'click .js-photo-delete': 'deletePhoto',
             'change .js-photo-legend': 'updatePhoto'
         },
@@ -92,10 +93,6 @@ define(function (require) {
             var fieldType = $input.data('attribute-type');
             var processedHere = true;
             debug('input ' + event.target + ' (`' + fieldType + '`) clicked.');
-
-            // Ignore inputs, that asked us not to process them.
-            if ($input.hasClass('js-ignore'))
-                return;
 
             switch (fieldType) {
                 case FieldModel.types.CHOICETREE:
@@ -211,45 +208,6 @@ define(function (require) {
         // Photos stuff
         //
 
-        // When clicking on thumbnail.
-        _thumbnailInfo: function (event) {
-            var $li = $(event.target).parents('.procedure-photo');
-            var $block = $li.parents('.procedure-photos');
-            var attributeName = $li.data('attribute-name');
-            var index = $li.data('index');
-
-            return {
-                attributeName: attributeName,                // model attribute with photos aray.
-                index: index,                                // photo's index in that array.
-                photo: this.model.get(attributeName)[index], // photo itself
-                dom: {
-                    thumbnail: $li,                // thumbnail element.
-                    photo: $block.find('.js-photo') // where to show full-sized photo.
-                }
-            };
-        },
-
-        // When clicking within .js-photo div.
-        _photoInfo: function (event) {
-            return $(event.target)
-                .parents('.js-photo')
-                .data();
-        },
-
-        // Remove active class from all thumbnails and hide full-sized picture.
-        // @domPhotos is .procedure-photo block.
-        _deactivateThumbnails: function (domPhotos) {
-            domPhotos.find('.procedure-photo').removeClass('active');
-            domPhotos.find('.js-photo').hide();
-        },
-
-        // Add active class to thumbnail.
-        // @thumbnail is .procedure-photo element.
-        _activateThumbnail: function (thumbnail) {
-            this._deactivateThumbnails(thumbnail.parents('.procedure-photos'));
-            thumbnail.addClass('active');
-        },
-
         // When clicking on add photo.
         addPhoto: function (event) {
             event.preventDefault();
@@ -264,43 +222,6 @@ define(function (require) {
                 self.model.get(attributeName).push(pic);
                 self.model.trigger('change');
             });
-        },
-
-        // When user clicks on the thumbnail, we show full-sized picture
-        // with legend and controls that allow to remove it.
-        showPhoto: function (event) {
-            event.preventDefault();
-            event.stopPropagation();
-
-            var info = this._thumbnailInfo(event);
-
-            // Highlight currently selected thumbnail.
-            this._activateThumbnail(info.dom.thumbnail);
-
-            // Legend goes into input within jsPhoto.
-            info.dom.photo.find('.js-photo-legend').val(info.photo.legend);
-
-            // Picture goes into image within jsPhoto.
-            info.dom.photo.find('.js-photo-image').attr({
-                src: info.photo.url,
-                alt: info.photo.legend
-            });
-
-            // We also update jsPhoto's data, so we know which photo
-            // is currently selected for updating legend and removing.
-            info.dom.photo.data({
-                'attributeName': info.attributeName,
-                'index': info.index
-            });
-
-            // Show js-photo block for this image.
-            info.dom.photo.show();
-        },
-
-        hidePhoto: function (event) {
-            event.preventDefault();
-            event.stopPropagation();
-            this._deactivateThumbnails($(event.target).parents('.procedure-photos'));
         },
 
         deletePhoto: function (event) {
