@@ -2,7 +2,7 @@ define(function (require) {
     var $ = require("jquery");
     var _ = require("underscore");
     var Backbone = require("backbone");
-    var template = require("./text!./procedureEntryView.html");
+    var template = require("./text!./procedureEditView.html");
     var FieldView = require('./fieldView');
     var FieldModel = require('../models/fieldModel');
     var debug = require('../debug');
@@ -17,7 +17,7 @@ define(function (require) {
 
         initialize: function(options) {
             this.options = options || {};
-            this.options.viewName = "ProcedureEntryView";
+            this.options.viewName = "ProcedureEditView";
 
             this.openChoiceTree = options.openChoiceTree;
             this.updateTitle = options.updateTitle;

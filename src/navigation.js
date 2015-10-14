@@ -1,6 +1,6 @@
 define(function (require) {
     var EditableView = require('./views/editableView');
-    var ProcedureEntryView = require('./views/procedureEntryView');
+    var ProcedureEditView = require('./views/procedureEditView');
     var ProcedureShowView = require('./views/procedureShowView');
     var ProceduresView = require('./views/proceduresView');
     var TreePickerView = require('./views/treePickerView');
@@ -36,7 +36,7 @@ define(function (require) {
                 el: this.mainEl,
                 goBack: _.bind(this.openProcedures, this),
                 showView: new ProcedureShowView(),
-                editView: new ProcedureEntryView({
+                editView: new ProcedureEditView({
                     collection: ProceduresCollection.getInstance(),
                     updateTitle: this.updateTitle,
                     openChoiceTree: this.pickChoiceTreeOf.bind(this)
