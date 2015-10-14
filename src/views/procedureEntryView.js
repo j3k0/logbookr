@@ -183,6 +183,11 @@ define(function (require) {
           $dtBox.DateTimePicker(options);
         },
 
+        hasUnsavedChanges: function () {
+            var diff = this.original.changedAttributes(this.model.attributes);
+            return diff !== false;
+        },
+
         remove: function (callback) {
             var self = this;
             alerts.confirm('removeProcedure', function (confirmed) {

@@ -99,7 +99,7 @@
         'alert.removePhoto.confirm': 'Remove',
 
         'alert.unsavedChanges.title': 'Unsaved Changes',
-        'alert.unsavedChanges.text': 'Any changes made will be discarded.',
+        'alert.unsavedChanges.text': 'You have made some changes, but have not saved them.',
         'alert.unsavedChanges.confirm': 'Discard and Proceed'
       }
     };

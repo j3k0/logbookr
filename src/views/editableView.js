@@ -2,6 +2,7 @@
 // One is for displaying data, one for editing it.
 //
 // editView must have:
+//  - #hasUnsavedChanges() method that returns true if data has been changed, but not saved yet;
 //  - #save() method that applies changes and returns `true` on success;
 //  - #remove(callback) method that removes entry and calls `callback` on success.
 
@@ -106,7 +107,7 @@
       },
 
       goBack: function () {
-        return this.mode === EditableView.modes.EDIT
+        return this.editView.hasUnsavedChanges()
           ? alerts.confirm('unsavedChanges', this._goBack)
           : this._goBack();
       }
