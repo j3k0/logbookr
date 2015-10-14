@@ -24,21 +24,6 @@ define(function (require) {
             this.goBack = options.goBack;
         },
 
-        fieldHtml: function (field) {
-            var view = new FieldView({
-                model: new FieldModel(field),
-                value: this.get(field.name)
-            });
-
-            return view.html();
-        },
-
-        fieldsHtml: function (key) {
-            return this.model.get(key)
-                .map(this.fieldHtml.bind(this.model))
-                .join('\n');
-        },
-
         swapModel: function (procedure) {
             // TODO:
             // not sure this is needed, but it probably is.
@@ -62,8 +47,9 @@ define(function (require) {
             var that = this;
 
             var done = function (documentRoot) {
-                var requiredFieldsHtml = that.fieldsHtml('requiredFields');
-                var fieldsHtml = that.fieldsHtml('fields');
+                var requiredFieldsHtml = FieldView.fieldsHtml(that.model, 'requiredFields');
+                var fieldsHtml = FieldView.fieldsHtml(that.model, 'fields');
+
                 that.$el.html(that.template({
                     procedure: that.model.toJSON(),
                     requiredFieldsHtml: requiredFieldsHtml,

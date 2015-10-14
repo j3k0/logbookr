@@ -8,7 +8,7 @@
     var FieldModel = require('../models/FieldModel');
     var tr = require('../tr');
 
-    return backbone.View.extend({
+    var FieldView = backbone.View.extend({
       template: _.template(templateText),
 
       initialize: function (options) {
@@ -26,7 +26,27 @@
           tr: tr
         });
       }
+    },
+
+    {
+      fieldHtml: function (field) {
+        var view = new FieldView({
+          model: new FieldModel(field),
+          value: this.get(field.name),
+          tr: tr
+        });
+
+        return view.html();
+      },
+
+      fieldsHtml: function (model, key) {
+        return model.get(key)
+          .map(FieldView.fieldHtml.bind(model))
+          .join('\n');
+      }
     });
+
+    return FieldView;
   };
 
   return isBrowser
