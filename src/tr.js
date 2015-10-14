@@ -96,7 +96,11 @@
 
         'alert.removePhoto.title': 'Removing Photo',
         'alert.removePhoto.text': 'Are you sure you want to remove this photo?',
-        'alert.removePhoto.confirm': 'Remove'
+        'alert.removePhoto.confirm': 'Remove',
+
+        'alert.unsavedChanges.title': 'Unsaved Changes',
+        'alert.unsavedChanges.text': 'Any changes made will be discarded.',
+        'alert.unsavedChanges.confirm': 'Discard and Proceed'
       }
     };
 

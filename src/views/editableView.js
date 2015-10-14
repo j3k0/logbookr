@@ -15,12 +15,13 @@
     var templateText = require('./text!./editableView.html');
     var tr = require('../tr');
     var debug = require('../debug');
+    var alerts = require('../alerts');
 
     var EditableView = backbone.View.extend({
       template: underscore.template(templateText),
 
       initialize: function (options) {
-        this.goBack = options.goBack;
+        this._goBack = options.goBack;
 
         this.mode = options.mode || EditableView.modes.DEFAULT;
         this.showView = options.showView;
@@ -102,6 +103,12 @@
 
       remove: function (/*event*/) {
         this.editView.remove(this.goBack);
+      },
+
+      goBack: function () {
+        return this.mode === EditableView.modes.EDIT
+          ? alerts.confirm('unsavedChanges', this._goBack)
+          : this._goBack();
       }
     },
 
