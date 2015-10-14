@@ -1,8 +1,9 @@
 // Idea here is to have two views and allow to alternate between them.
 // One is for displaying data, one for editing it.
 //
-// editView must have #save() method that applies changes and returns true
-// on success.
+// editView must have:
+//  - #save() method that applies changes and returns `true` on success;
+//  - #remove(callback) method that removes entry and calls `callback` on success.
 
 (function (root, isBrowser) {
   "use strict";
@@ -80,7 +81,8 @@
 
       events: {
         'click .control[data-mode]': 'onModeChange',
-        'click .save': 'save'
+        'click .save': 'save',
+        'click .remove': 'remove'
       },
 
       toggleMode: function (mode) {
@@ -96,6 +98,10 @@
       save: function (/*event*/) {
         if (this.editView.save())
           this.toggleMode(EditableView.modes.SHOW);
+      },
+
+      remove: function (/*event*/) {
+        this.editView.remove(this.goBack);
       }
     },
 

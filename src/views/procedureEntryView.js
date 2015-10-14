@@ -90,12 +90,6 @@ define(function (require) {
         },
 
         events:{
-            'click .save-button': 'saveProcedure',
-            'click .delete-procedure': 'deleteProcedure',
-            // TODO:
-            // we can be more specific and don't bind clicks for every input;
-            // probably can be moved to FieldView, not sure how, though;
-            // w/ever for now.
             'click .js-procedure-input': 'inputClicked',
             'change .js-procedure-input': 'inputChanged',
 
@@ -189,17 +183,14 @@ define(function (require) {
           $dtBox.DateTimePicker(options);
         },
 
-        deleteProcedure: function(ev) {
-            ev.preventDefault();
-            ev.stopPropagation();
-
+        remove: function (callback) {
             var self = this;
             alerts.confirm('removeProcedure', function (confirmed) {
                 if (confirmed) {
                     if (self.original.collection)
                         self.original.destroy();
 
-                    self.goBack();
+                    callback();
                 }
             });
         },
