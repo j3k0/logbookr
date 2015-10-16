@@ -1,0 +1,24 @@
+<div class="content">
+  <div class="list"><ul class="list-ul">
+      <% if (fields.length === 0) { %>
+        <span><%- tr('template.no-fields') %></span>
+      <% } %>
+
+      <% _.each(fields, function (field) { %>
+        <li class="list-li item template-field" data-id="<%-field.name%>">
+          <input type="text" class="template-input field-description" value="<%-field.description%>"
+                 placeholder="<%-tr('template.description-missing-placehodler')%>"
+                 readonly
+          >
+
+          <select class="template-input field-type" value="<%-field.type%>"
+                  disabled readonly
+          >
+            <option selected value="<%-FieldModel.types[field.type]%>">
+              <%-tr('FieldModel.' + field.type.toUpperCase())%>
+            </option>
+          </select>
+        </li>
+      <% }); %>
+  </ul></div>
+</div>

@@ -3,9 +3,9 @@
 //
 // editView must have:
 //  - #hasUnsavedChanges() method that returns true if data has been changed, but not saved yet;
-//  - #save() method that applies changes and returns `true` on success;
-//  - #discard() method that reverts any changes made;
-//  - #remove(callback) method that removes entry and calls `callback` on success.
+//  - #dataSave() method that applies changes and returns `true` on success;
+//  - #dataDiscard() method that reverts any changes made;
+//  - #dataRemove(callback) method that removes entry and calls `callback` on success.
 
 (function (root, isBrowser) {
   "use strict";
@@ -76,22 +76,22 @@
         return this;
       },
 
-      swapModel: function (model, mode) {
+      dataSwap: function (model, mode) {
         this.mode = mode || EditableView.modes.DEFAULT;
 
         [this.showView, this.editView].forEach(function (view) {
-          if (view.swapModel instanceof Function)
-            view.swapModel(model);
+          if (view.dataSwap instanceof Function)
+            view.dataSwap(model);
           else
             view.model = model;
         });
       },
 
       events: {
-        'click .edit': 'edit',
-        'click .remove': 'remove',
-        'click .discard': 'discard',
-        'click .save': 'save'
+        'click .edit': 'onEdit',
+        'click .remove': 'onRemove',
+        'click .discard': 'onDiscard',
+        'click .save': 'onSave'
       },
 
       _toggleMode: function (mode) {
@@ -99,31 +99,30 @@
         this.renderMode();
       },
 
-      edit: function (/*event*/) {
+      onEdit: function (/*event*/) {
         this._toggleMode(EditableView.modes.EDIT);
       },
 
-      remove: function (/*event*/) {
-        this.editView.remove(this.goBack);
+      onRemove: function (/*event*/) {
+        this.editView.dataRemove(this.goBack);
       },
 
-      discard: function (/*event*/) {
+      onDiscard: function (/*event*/) {
         var self = this;
 
         if (!self.editView.hasUnsavedChanges())
           return self._toggleMode(EditableView.modes.SHOW);
 
-
         alerts.confirm('unsavedChanges', function (confirmed) {
           if (confirmed) {
-            self.editView.discard();
+            self.editView.dataDiscard();
             self._toggleMode(EditableView.modes.SHOW);
           }
         });
       },
 
-      save: function (/*event*/) {
-        if (this.editView.save())
+      onSave: function (/*event*/) {
+        if (this.editView.dataSave())
           this._toggleMode(EditableView.modes.SHOW);
       }
     },

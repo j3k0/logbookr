@@ -5,7 +5,7 @@
     var $ = require('jquery');
     var backbone = require('backbone');
     var underscore = require('underscore');
-    var templateText = require('./text!./templateView.html');
+    var templateText = require('./text!./templateEditView.html');
     var FieldModel = require('../models/FieldModel');
     var uuid = require('../models/uuid');
     var tr = require('../tr');
@@ -15,14 +15,19 @@
     return backbone.View.extend({
       template: underscore.template(templateText),
 
+      _initializeOriginal: function () {
+        this.original = JSON.parse(JSON.stringify(this.collection.toJSON()));
+      },
+
       initialize: function (options) {
         this.options = options || {};
         options.viewName = 'Template';
 
         this.goBack = options.goBack;
         this.updateTitle = options.updateTitle;
-
         this.collection.on('change update', this.render, this);
+
+        this._initializeOriginal();
       },
 
       events: {
@@ -118,6 +123,49 @@
         }
 
         field.save(attrs);
+      },
+
+      hasUnsavedChanges: function () {
+        if (this.original.length !== this.collection.length)
+          return true;
+
+        return this.original.some(function (fieldJson, idx) {
+          var field = this.collection.at(idx);
+          var diff = field.changedAttributes(fieldJson);
+          return false !== diff;
+        }, this);
+      },
+
+      dataSave: function () {
+        this._initializeOriginal();
+        return true;
+      },
+
+      dataDiscard: function () {
+        this._dataRemove();
+        this.original.forEach(function (fieldJson) {
+          var field = new FieldModel(fieldJson)
+          this.collection.add(field);
+          field.save();
+        }, this);
+      },
+
+      _dataRemove: function () {
+        var field;
+        while (field = this.collection.first()) { // eslint-disable-line no-cond-assign
+          field.destroy();
+        }
+      },
+
+      dataRemove: function (callback) {
+        var self = this;
+        alerts.confirm('removeTemplate', function (confirmed) {
+            if (confirmed) {
+                self._dataRemove();
+                self._initializeOriginal();
+                callback();
+            }
+        });
       }
     });
   };

@@ -62,7 +62,9 @@
         'template.title': 'Template Editor',
         'template.add-new-field': 'Add new field',
         'template.remove-field': 'Remove Field',
-        'tempalte.description-placehodler': 'Type in field\'s description…',
+        'template.description-placehodler': 'Type in field\'s description…',
+        'template.description-missing-placehodler': 'No description specified',
+        'template.no-fields': 'No additional fields yet',
 
         // treePickerView
         'treePicker.defaultTitle': 'Custom Choice Tree',
@@ -86,6 +88,10 @@
         'alert.removeProcedure.title': 'Removing Procedure',
         'alert.removeProcedure.text': 'Are you sure you want to remove this procedure?',
         'alert.removeProcedure.confirm': 'Remove',
+
+        'alert.removeTemplate.title': 'Removing Template',
+        'alert.removeTemplate.text': 'All template fields will be removed.',
+        'alert.removeTemplate.confirm': 'Remove',
 
         'alert.removeField.title': 'Removing Field',
         'alert.removeField.text': 'Are you sure you want to remove this field?',

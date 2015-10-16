@@ -24,7 +24,7 @@ define(function (require) {
             this.goBack = options.goBack;
         },
 
-        swapModel: function (procedure) {
+        dataSwap: function (procedure) {
             // TODO:
             // not sure this is needed, but it probably is.
             // Look into.
@@ -172,7 +172,7 @@ define(function (require) {
             return diff !== false;
         },
 
-        remove: function (callback) {
+        dataRemove: function (callback) {
             var self = this;
             alerts.confirm('removeProcedure', function (confirmed) {
                 if (confirmed) {
@@ -184,7 +184,7 @@ define(function (require) {
             });
         },
 
-        save: function () {
+        dataSave: function () {
             var attrs = this.model.attributes;
             var ok = this.original.safeSet(attrs);
 
@@ -201,8 +201,8 @@ define(function (require) {
             return ok;
         },
 
-        discard: function () {
-            this.swapModel(this.original);
+        dataDiscard: function () {
+            this.dataSwap(this.original);
         },
 
         //

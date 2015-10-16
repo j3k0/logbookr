@@ -4,7 +4,8 @@ define(function (require) {
     var ProcedureShowView = require('./views/procedureShowView');
     var ProceduresView = require('./views/proceduresView');
     var TreePickerView = require('./views/treePickerView');
-    var TemplateView = require('./views/templateView');
+    var TemplateShowView = require('./views/templateShowView');
+    var TemplateEditView = require('./views/templateEditView');
     var template = require('./models/template');
     var ProceduresCollection = require('./models/proceduresCollection');
     var ChoiceModel = require('./models/choiceModel');
@@ -43,11 +44,16 @@ define(function (require) {
                 })
             }),
 
-            template: new TemplateView({
+            template: new EditableView({
                 el: this.mainEl,
-                collection: template.getInstance(),
-                updateTitle: this.updateTitle,
-                goBack: _.bind(this.openProcedures, this)
+                goBack: _.bind(this.openProcedures, this),
+                showView: new TemplateShowView({
+                    collection: template.getInstance()
+                }),
+                editView: new TemplateEditView({
+                    collection: template.getInstance(),
+                    updateTitle: this.updateTitle
+                })
             })
         }
     }
@@ -90,14 +96,25 @@ define(function (require) {
         this._pickChoiceTree(choice.tree(), cb);
     };
 
+    Navigation.prototype.openEditableView = function (view) {
+        Object.keys(this.views).forEach(function (viewName) {
+            var view = this.views[viewName];
+            if (view instanceof EditableView)
+                view.undelegateEvents();
+        }, this);
+
+        view.delegateEvents();
+        this.openInMain(view);
+    };
+
     Navigation.prototype.openTemplate = function () {
-        this.openInMain(this.views.template);
+        this.openEditableView(this.views.template);
     };
 
     Navigation.prototype.openProcedure = function (procedure, isNew) {
         var mode = isNew ? EditableView.modes.EDIT : EditableView.modes.SHOW;
-        this.views.procedure.swapModel(procedure, mode);
-        this.openInMain(this.views.procedure);
+        this.views.procedure.dataSwap(procedure, mode);
+        this.openEditableView(this.views.procedure);
     };
 
     Navigation.prototype.openProcedures = function () {
