@@ -76,7 +76,6 @@ define(function (require) {
         _filterByPatient: function (event) {
             event.preventDefault();
             event.stopPropagation();
-            console.log('called', Date.now());
 
             var $input = $(event.target)
             var query = $input.val();
