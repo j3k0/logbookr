@@ -4,13 +4,13 @@
 // editView must have:
 //  - #hasUnsavedChanges() method that returns true if data has been changed, but not saved yet;
 //  - #save() method that applies changes and returns `true` on success;
+//  - #discard() method that reverts any changes made;
 //  - #remove(callback) method that removes entry and calls `callback` on success.
 
 (function (root, isBrowser) {
   "use strict";
 
   var definition = function (require) {
-    var $ = require('jquery');
     var backbone = require('backbone');
     var underscore = require('underscore');
     var templateText = require('./text!./editableView.html');
@@ -22,7 +22,7 @@
       template: underscore.template(templateText),
 
       initialize: function (options) {
-        this._goBack = options.goBack;
+        this.goBack = options.goBack;
 
         this.mode = options.mode || EditableView.modes.DEFAULT;
         this.showView = options.showView;
@@ -88,34 +88,43 @@
       },
 
       events: {
-        'click .control[data-mode]': 'onModeChange',
-        'click .save': 'save',
-        'click .remove': 'remove'
+        'click .edit': 'edit',
+        'click .remove': 'remove',
+        'click .discard': 'discard',
+        'click .save': 'save'
       },
 
-      toggleMode: function (mode) {
+      _toggleMode: function (mode) {
         this.mode = mode;
         this.renderMode();
       },
 
-      onModeChange: function (event) {
-        var $control = $(event.target);
-        this.toggleMode($control.data('mode'));
-      },
-
-      save: function (/*event*/) {
-        if (this.editView.save())
-          this.toggleMode(EditableView.modes.SHOW);
+      edit: function (/*event*/) {
+        this._toggleMode(EditableView.modes.EDIT);
       },
 
       remove: function (/*event*/) {
         this.editView.remove(this.goBack);
       },
 
-      goBack: function () {
-        return this.editView.hasUnsavedChanges()
-          ? alerts.confirm('unsavedChanges', this._goBack)
-          : this._goBack();
+      discard: function (/*event*/) {
+        var self = this;
+
+        if (!self.editView.hasUnsavedChanges())
+          return self._toggleMode(EditableView.modes.SHOW);
+
+
+        alerts.confirm('unsavedChanges', function (confirmed) {
+          if (confirmed) {
+            self.editView.discard();
+            self._toggleMode(EditableView.modes.SHOW);
+          }
+        });
+      },
+
+      save: function (/*event*/) {
+        if (this.editView.save())
+          this._toggleMode(EditableView.modes.SHOW);
       }
     },
 

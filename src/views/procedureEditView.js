@@ -201,6 +201,10 @@ define(function (require) {
             return ok;
         },
 
+        discard: function () {
+            this.swapModel(this.original);
+        },
+
         //
         // Photos stuff
         //
