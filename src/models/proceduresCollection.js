@@ -16,10 +16,10 @@ define(function (require) {
         // Returns array of models that have patient's name similar to
         // @query string.
         filterByPatient: function (query) {
-            var re = new RegExp(query, 'ig');
+            var qs = String(query).toLowerCase();
 
             return this.filter(function (model) {
-                return re.test(model.get('patient'));
+                return -1 !== model.get('patient').toLowerCase().indexOf(qs);
             });
         }
     });

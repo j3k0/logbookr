@@ -99,12 +99,11 @@ define(function (require) {
             }
 
             // Find matching ids.
-            var ids = this.collection.filterByPatient(query).map(function (m) {
-                return m.id;
-            });
+            var idsSelector = this.collection.filterByPatient(query).map(function (m) {
+                return '[data-procedure-id="' + m.id + '"]';
+            }).join(',');
 
             // Hide everything, but ids.
-            var idsSelector = '[data-procedure-id="' + ids.join('|') + '"]';
             var nShown = this.$procedures.hide().filter(idsSelector).show().length;
 
             if (nShown === 0)
