@@ -2,14 +2,15 @@
   <!-- Required fields -->
   <div class="debug">
     Required fields:
-    <pre><%= JSON.stringify(_.pluck(procedure.requiredFields, 'name')) %></pre>
+    <pre><%- JSON.stringify(_.pluck(procedure.requiredFields, 'name')) %></pre>
   </div>
+
   <div><%= requiredFieldsHtml %></div>
 
   <!-- Optional fields based on model's .fields property -->
   <div class="debug">
     Optional fields:
-    <pre><%= JSON.stringify(_.pluck(procedure.fields, 'name')) %></pre>
+    <pre><%- JSON.stringify(_.pluck(procedure.fields, 'name')) %></pre>
   </div>
 
   <div><%= fieldsHtml %></div>
@@ -17,6 +18,6 @@
   <!-- Some meta -->
   <div class="debug">
     Procedure:
-    <pre><%= JSON.stringify(procedure, null, 2) %></pre>
+    <pre><%- JSON.stringify(procedure, null, 2) %></pre>
   </div>
 </div>

@@ -1,11 +1,11 @@
 <div class="content">
     <div class="dtpicker-header treepicker-header">
         <span class="nav-icon-container popover-back back-button" style="display: block;"><img class="nav-icon" src="app/styles/img/back.svg"></span>
-        <div class="dtpicker-title popover-title"><%= items.name %></div>
+        <div class="dtpicker-title popover-title"><%- items.name %></div>
         <span class="nav-icon-container edit-button popover-edit edit-mode" style="display: block;">Editer</span>
     </div>
         <!--button class="back-button">Retour</button>
-        <h1>Tree Picker View: <%= items.name %></h1-->
+        <h1>Tree Picker View: <%- items.name %></h1-->
         <div class="list">
             <ul class="list-ul">
             <% _.each(items.subtree, function(item){ %>
@@ -13,7 +13,7 @@
                     <li class="list-li item" item-id=<%-item.id%>>
                         <div class = "item-list-name">
                             <img class="delete-icon delete hidden" src="app/styles/img/delete.svg">
-                            <%= item.name %>
+                            <%- item.name %>
                             <img class="child-icon" src="app/styles/img/child.svg">
                        </div>
                     </li>
@@ -21,10 +21,10 @@
                     <li class="list-li item" item-id=<%-item.id%>>
                         <div class = "item-list-name">
                             <img class="delete-icon delete hidden" src="app/styles/img/delete.svg">
-                            <%= item.name %>
+                            <%- item.name %>
                         </div>
                     </li>
-                <% } %> 
+                <% } %>
             <% }); %>
             </ul>
         </div>

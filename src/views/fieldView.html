@@ -9,7 +9,7 @@
       <ul>
         <% value.forEach(function (photo, idx) { %>
           <li class="procedure-photo" data-attribute-name="<%-field.name%>" data-index="<%- idx %>">
-            <img class="clickable js-photo-thumbnail" src="<%= photo.url%>" alt="<%= photo.legend%>">
+            <img class="clickable js-photo-thumbnail" src="<%- photo.url%>" alt="<%- photo.legend%>">
           </li>
         <% }) %>
 
@@ -60,7 +60,7 @@
               <% if (readonly) { %>
               readonly
               <% } %>
-    ><%= value %></textarea>
+    ><%- value %></textarea>
   <% } else { %>
     <!-- Other types are <input/>. -->
     <input type="text" value="<%-value%>"
