@@ -110,13 +110,21 @@
       onDiscard: function (/*event*/) {
         var self = this;
 
+        // After we confirmed discarding changes, do different things based on
+        // whether we were creating new procedure or editing existing one.
+        var whenDiscared = function (creatingNewProcedure) {
+          return creatingNewProcedure
+            ? this.goBack()
+            : this._toggleMode(EditableView.modes.SHOW);
+        }.bind(self, self.editView.original && !self.editView.original.collection);
+
         if (!self.editView.hasUnsavedChanges())
-          return self._toggleMode(EditableView.modes.SHOW);
+          return whenDiscared();
 
         alerts.confirm('unsavedChanges', function (confirmed) {
           if (confirmed) {
             self.editView.dataDiscard();
-            self._toggleMode(EditableView.modes.SHOW);
+            whenDiscared();
           }
         });
       },
