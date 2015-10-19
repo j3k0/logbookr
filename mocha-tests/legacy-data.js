@@ -63,7 +63,7 @@ module.exports = {
         {
           "description": "Supervision",
           "name": "supervision",
-          "type": "text"
+          "type": "choicetree"
         },
         {
           "description": "Senior",

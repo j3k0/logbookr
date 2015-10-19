@@ -52,7 +52,7 @@
             comment: parsed.comment,
             fields: [
               {name: 'diagnostic', description: 'Diagnostic', type: 'text'},
-              {name: 'supervision', description: 'Supervision', type: 'text'},
+              {name: 'supervision', description: 'Supervision', type: 'choicetree'},
               {name: 'senior', description: 'Senior', type: 'choicetree'},
               {name: 'stage', description: 'Stage', type: 'choicetree'},
               {name: 'comment', description: 'Comment', type: 'textarea'}
