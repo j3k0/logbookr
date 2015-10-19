@@ -1,11 +1,10 @@
 define(function (require) {
-
     var Backbone = require('backbone');
     var ProcedureModel = require('./procedureModel');
-    require('backbone.localstorage');
+    var LS = require('../local-storage/index');
 
     var ProceduresCollection = Backbone.Collection.extend({
-        localStorage: new Backbone.LocalStorage("Procs"), // Unique name within your app.
+        localStorage: LS("Procs"),
         model: ProcedureModel,
 
         // Most recent on top.

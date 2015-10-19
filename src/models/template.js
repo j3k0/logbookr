@@ -4,13 +4,17 @@
   var definition = function (require) {
     var backbone = require('backbone');
     var Field = require('./fieldModel');
-    require('backbone.localstorage');
+    var LS = require('../local-storage/index');
 
-    var localStorageId = function (postfix) {
+    var localStorageId = function (postfix, unprefixed) {
       var base = 'Template';
-      return postfix
+      var result = postfix
         ? base + '.' + postfix
         : base;
+
+      return unprefixed
+        ? result
+        : LS.id(result);
     };
 
     var localStorageIdDescriptionToName = function (description) {
@@ -19,7 +23,7 @@
 
     var template = backbone.Collection.extend({
       model: Field,
-      localStorage: new backbone.LocalStorage(localStorageId()),
+      localStorage: LS(localStorageId(false, true)),
 
       // TODO:
       // possibly add a comparator, so fields won't appear in a random order.
