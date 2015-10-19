@@ -11,7 +11,7 @@
       <% _.each(fields, function (field) { %>
         <li class="list-li item template-field" data-id="<%-field.name%>">
           <input type="text" class="template-input field-description" value="<%-field.description%>"
-                 placeholder="<%-tr('tempalte.description-placehodler')%>"
+                 placeholder="<%-tr('template.description-placehodler')%>"
           >
 
           <select class="template-input field-type" value="<%-field.type%>">
@@ -35,6 +35,6 @@
   <!-- Debug info -->
   <div class="debug">
     Fields Collection:
-    <pre><%= JSON.stringify(collection, null, 2) %></pre>
+    <pre><%- JSON.stringify(collection, null, 2) %></pre>
   </div>
 </div>

@@ -23,6 +23,7 @@
 
       // TODO:
       // possibly add a comparator, so fields won't appear in a random order.
+
       // Provides mapping between field's description and name.
       // Allows "restoring" fields.
       // See #7 for more details.

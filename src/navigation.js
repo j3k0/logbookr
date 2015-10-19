@@ -1,8 +1,11 @@
 define(function (require) {
-    var ProcedureEntryView = require('./views/procedureEntryView');
+    var EditableView = require('./views/editableView');
+    var ProcedureEditView = require('./views/procedureEditView');
+    var ProcedureShowView = require('./views/procedureShowView');
     var ProceduresView = require('./views/proceduresView');
     var TreePickerView = require('./views/treePickerView');
-    var TemplateView = require('./views/templateView');
+    var TemplateShowView = require('./views/templateShowView');
+    var TemplateEditView = require('./views/templateEditView');
     var template = require('./models/template');
     var ProceduresCollection = require('./models/proceduresCollection');
     var ChoiceModel = require('./models/choiceModel');
@@ -30,19 +33,27 @@ define(function (require) {
                 goBack: this.goHome
             }),
 
-            procedure: new ProcedureEntryView({
+            procedure: new EditableView({
                 el: this.mainEl,
-                collection: ProceduresCollection.getInstance(),
-                updateTitle: this.updateTitle,
-                openChoiceTree: this.pickChoiceTreeOf.bind(this),
-                goBack: _.bind(this.openProcedures, this)
+                goBack: _.bind(this.openProcedures, this),
+                showView: new ProcedureShowView(),
+                editView: new ProcedureEditView({
+                    collection: ProceduresCollection.getInstance(),
+                    updateTitle: this.updateTitle,
+                    openChoiceTree: this.pickChoiceTreeOf.bind(this)
+                })
             }),
 
-            template: new TemplateView({
+            template: new EditableView({
                 el: this.mainEl,
-                collection: template.getInstance(),
-                updateTitle: this.updateTitle,
-                goBack: _.bind(this.openProcedures, this)
+                goBack: _.bind(this.openProcedures, this),
+                showView: new TemplateShowView({
+                    collection: template.getInstance()
+                }),
+                editView: new TemplateEditView({
+                    collection: template.getInstance(),
+                    updateTitle: this.updateTitle
+                })
             })
         }
     }
@@ -85,13 +96,25 @@ define(function (require) {
         this._pickChoiceTree(choice.tree(), cb);
     };
 
-    Navigation.prototype.openTemplate = function () {
-        this.openInMain(this.views.template);
+    Navigation.prototype.openEditableView = function (view) {
+        Object.keys(this.views).forEach(function (viewName) {
+            var view = this.views[viewName];
+            if (view instanceof EditableView)
+                view.undelegateEvents();
+        }, this);
+
+        view.delegateEvents();
+        this.openInMain(view);
     };
 
-    Navigation.prototype.openProcedure = function (procedure) {
-        this.views.procedure.swapModel(procedure);
-        this.openInMain(this.views.procedure);
+    Navigation.prototype.openTemplate = function () {
+        this.openEditableView(this.views.template);
+    };
+
+    Navigation.prototype.openProcedure = function (procedure, isNew) {
+        var mode = isNew ? EditableView.modes.EDIT : EditableView.modes.SHOW;
+        this.views.procedure.dataSwap(procedure, mode);
+        this.openEditableView(this.views.procedure);
     };
 
     Navigation.prototype.openProcedures = function () {

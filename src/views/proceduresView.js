@@ -20,38 +20,43 @@ define(function (require) {
             this.openProcedure = options.openProcedure;
             this.openTemplate = options.openTemplate;
             this.goBack = options.goBack;
+
+            this._filteredBy = null;
+            this._filterByPatientDebounced = _.debounce(this._filterByPatient.bind(this), 150);
         },
 
         render: function() {
             this.$el.html(this.template({
-                collection: this.collection,
                 procedures: this.collection.toJSON(),
                 tr: tr
             }));
 
+            this.$procedures = this.$('.procedure');
+            this.$nothingFound = this.$('.js-nothing-found');
             this.titleView = tr('procedures.title');
             this.updateTitle(this.titleView);
             return this;
         },
 
-        events:{
+        events: {
             'click .procedure': 'goToProcedure',
             'click .add-procedure': 'newProcedure',
-            'click .edit-template': 'editTemplate'
+            'click .edit-template': 'editTemplate',
+            'keyup .js-filter-by-patient': 'filterByPatient'
         },
 
         newProcedure: function() {
             var attrs = {id: uuid()};
             var options = {template: template.getInstance().toJSON()};
-            this.openProcedure(new ProcedureModel(attrs, options));
+            this.openProcedure(new ProcedureModel(attrs, options), true);
         },
 
         goToProcedure: function(ev) {
             ev.preventDefault();
             ev.stopPropagation();
 
-            var chosenProcedure = $(ev.currentTarget);
-            var procedureId = chosenProcedure.attr("procedure-id");
+            var chosenProcedure = this.$(ev.currentTarget);
+            var procedureId = chosenProcedure.data("procedure-id");
             var procedure = this.collection.get(procedureId);
             if (procedure !== undefined)
                 this.openProcedure(procedure);
@@ -62,6 +67,48 @@ define(function (require) {
             event.stopPropagation();
 
             this.openTemplate();
+        },
+
+        filterByPatient: function (event) {
+            this._filterByPatientDebounced(event);
+        },
+
+        _filterByPatient: function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            var $input = $(event.target)
+            var query = $input.val();
+
+            // Empty input means "show everything".
+            if (query === '')
+                query = null;
+
+            // We are done, if already filtered with same query.
+            if (this._filteredBy === query)
+                return;
+
+            // Remember current state.
+            this._filteredBy = query;
+
+            if (query === null) {
+                this.$nothingFound.hide();
+                this.$procedures.show();
+                return;
+            }
+
+            // Find matching ids.
+            var idsSelector = this.collection.filterByPatient(query).map(function (m) {
+                return '[data-procedure-id="' + m.id + '"]';
+            }).join(',');
+
+            // Hide everything, but ids.
+            var nShown = this.$procedures.hide().filter(idsSelector).show().length;
+
+            if (nShown === 0)
+                this.$nothingFound.show();
+            else
+                this.$nothingFound.hide();
         }
     });
 

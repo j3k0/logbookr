@@ -11,6 +11,16 @@ define(function (require) {
         // Most recent on top.
         comparator: function (model) {
             return -model.get('createdAt');
+        },
+
+        // Returns array of models that have patient's name similar to
+        // @query string.
+        filterByPatient: function (query) {
+            var qs = String(query).toLowerCase();
+
+            return this.filter(function (model) {
+                return -1 !== model.get('patient').toLowerCase().indexOf(qs);
+            });
         }
     });
 

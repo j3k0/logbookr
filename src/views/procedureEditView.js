@@ -1,8 +1,7 @@
 define(function (require) {
     var $ = require("jquery");
     var _ = require("underscore");
-    var Backbone = require("backbone");
-    var template = require("./text!./procedureEntryView.html");
+    var template = require("./text!./procedureEditView.html");
     var FieldView = require('./fieldView');
     var FieldModel = require('../models/fieldModel');
     var debug = require('../debug');
@@ -10,36 +9,22 @@ define(function (require) {
     var alerts = require('../alerts');
     var camera = require('../camera');
     require("datetimepicker");
+    var ProcedureBaseView = require('./ProcedureBaseView');
 
-    return Backbone.View.extend({
+    return ProcedureBaseView.extend({
 
         template: _.template(template),
 
         initialize: function(options) {
             this.options = options || {};
-            this.options.viewName = "ProcedureEntryView";
+            this.options.viewName = "ProcedureEditView";
 
             this.openChoiceTree = options.openChoiceTree;
             this.updateTitle = options.updateTitle;
             this.goBack = options.goBack;
         },
 
-        fieldHtml: function (field) {
-            var view = new FieldView({
-                model: new FieldModel(field),
-                value: this.get(field.name)
-            });
-
-            return view.html();
-        },
-
-        fieldsHtml: function (key) {
-            return this.model.get(key)
-                .map(this.fieldHtml.bind(this.model))
-                .join('\n');
-        },
-
-        swapModel: function (procedure) {
+        dataSwap: function (procedure) {
             // TODO:
             // not sure this is needed, but it probably is.
             // Look into.
@@ -62,8 +47,9 @@ define(function (require) {
             var that = this;
 
             var done = function (documentRoot) {
-                var requiredFieldsHtml = that.fieldsHtml('requiredFields');
-                var fieldsHtml = that.fieldsHtml('fields');
+                var requiredFieldsHtml = FieldView.fieldsHtml(that.model, 'requiredFields', false);
+                var fieldsHtml = FieldView.fieldsHtml(that.model, 'fields', false);
+
                 that.$el.html(that.template({
                     procedure: that.model.toJSON(),
                     requiredFieldsHtml: requiredFieldsHtml,
@@ -90,18 +76,10 @@ define(function (require) {
         },
 
         events:{
-            'click .save-button': 'saveProcedure',
-            'click .delete-procedure': 'deleteProcedure',
-            'click .procedure-add-photo': 'addPhoto',
-            // TODO:
-            // we can be more specific and don't bind clicks for every input;
-            // probably can be moved to FieldView, not sure how, though;
-            // w/ever for now.
-            'click .procedure-input': 'inputClicked',
-            'change .procedure-input': 'inputChanged',
+            'click .js-procedure-input': 'inputClicked',
+            'change .js-procedure-input': 'inputChanged',
 
-            'click .js-photo-thumbnail': 'showPhoto',
-            'click .js-photo-image': 'hidePhoto',
+            'click .js-procedure-add-photo': 'addPhoto',
             'click .js-photo-delete': 'deletePhoto',
             'change .js-photo-legend': 'updatePhoto'
         },
@@ -189,25 +167,24 @@ define(function (require) {
           $dtBox.DateTimePicker(options);
         },
 
-        deleteProcedure: function(ev) {
-            ev.preventDefault();
-            ev.stopPropagation();
+        hasUnsavedChanges: function () {
+            var diff = this.original.changedAttributes(this.model.attributes);
+            return diff !== false;
+        },
 
+        dataRemove: function (callback) {
             var self = this;
             alerts.confirm('removeProcedure', function (confirmed) {
                 if (confirmed) {
                     if (self.original.collection)
                         self.original.destroy();
 
-                    self.goBack();
+                    callback();
                 }
             });
         },
 
-        saveProcedure: function(ev) {
-            ev.preventDefault();
-            ev.stopPropagation();
-
+        dataSave: function () {
             var attrs = this.model.attributes;
             var ok = this.original.safeSet(attrs);
 
@@ -215,56 +192,22 @@ define(function (require) {
                 debug('updated model with attrs', attrs, '\n', this.original);
                 this.collection.unshift(this.original);
                 this.original.save();
-                this.goBack();
             }
             else {
                 debug('failed to update model', this.original.validationError);
                 alerts.error(this.original.validationError);
             }
+
+            return ok;
+        },
+
+        dataDiscard: function () {
+            this.dataSwap(this.original);
         },
 
         //
         // Photos stuff
         //
-
-        // When clicking on thumbnail.
-        _thumbnailInfo: function (event) {
-            var $li = $(event.target).parents('.procedure-photo');
-            var $block = $li.parents('.procedure-photos');
-            var attributeName = $li.data('attribute-name');
-            var index = $li.data('index');
-
-            return {
-                attributeName: attributeName,                // model attribute with photos aray.
-                index: index,                                // photo's index in that array.
-                photo: this.model.get(attributeName)[index], // photo itself
-                dom: {
-                    thumbnail: $li,                // thumbnail element.
-                    photo: $block.find('.js-photo') // where to show full-sized photo.
-                }
-            };
-        },
-
-        // When clicking within .js-photo div.
-        _photoInfo: function (event) {
-            return $(event.target)
-                .parents('.js-photo')
-                .data();
-        },
-
-        // Remove active class from all thumbnails and hide full-sized picture.
-        // @domPhotos is .procedure-photo block.
-        _deactivateThumbnails: function (domPhotos) {
-            domPhotos.find('.procedure-photo').removeClass('active');
-            domPhotos.find('.js-photo').hide();
-        },
-
-        // Add active class to thumbnail.
-        // @thumbnail is .procedure-photo element.
-        _activateThumbnail: function (thumbnail) {
-            this._deactivateThumbnails(thumbnail.parents('.procedure-photos'));
-            thumbnail.addClass('active');
-        },
 
         // When clicking on add photo.
         addPhoto: function (event) {
@@ -280,43 +223,6 @@ define(function (require) {
                 self.model.get(attributeName).push(pic);
                 self.model.trigger('change');
             });
-        },
-
-        // When user clicks on the thumbnail, we show full-sized picture
-        // with legend and controls that allow to remove it.
-        showPhoto: function (event) {
-            event.preventDefault();
-            event.stopPropagation();
-
-            var info = this._thumbnailInfo(event);
-
-            // Highlight currently selected thumbnail.
-            this._activateThumbnail(info.dom.thumbnail);
-
-            // Legend goes into input within jsPhoto.
-            info.dom.photo.find('.js-photo-legend').val(info.photo.legend);
-
-            // Picture goes into image within jsPhoto.
-            info.dom.photo.find('.js-photo-image').attr({
-                src: info.photo.url,
-                alt: info.photo.legend
-            });
-
-            // We also update jsPhoto's data, so we know which photo
-            // is currently selected for updating legend and removing.
-            info.dom.photo.data({
-                'attributeName': info.attributeName,
-                'index': info.index
-            });
-
-            // Show js-photo block for this image.
-            info.dom.photo.show();
-        },
-
-        hidePhoto: function (event) {
-            event.preventDefault();
-            event.stopPropagation();
-            this._deactivateThumbnails($(event.target).parents('.procedure-photos'));
         },
 
         deletePhoto: function (event) {

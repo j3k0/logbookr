@@ -1,5 +1,5 @@
 define(function (require) {
-    var ProcedureEntryView = require('./views/procedureEntryView');
+    var ProcedureEditView = require('./views/procedureEditView');
     var ProceduresView = require('./views/proceduresView');
     var TreePickerView = require('./views/treePickerView');
     var ProceduresCollection = require('./models/proceduresCollection');
@@ -8,7 +8,7 @@ define(function (require) {
 
     return {
         Navigation: Navigation,
-        ProcedureEntryView: ProcedureEntryView,
+        ProcedureEditView: ProcedureEditView,
         ProceduresView: ProceduresView,
         TreePickerView: TreePickerView,
         ProceduresCollection: ProceduresCollection,

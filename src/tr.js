@@ -18,9 +18,7 @@
         'procedures.add-procedure': '+ Ajouter une intervention',
 
         // procedureView
-        'procedure.title': 'Nouvelle intervention',
-        'procedure.save-button': 'Sauvegarder',
-        'procedure.delete-button': 'Supprimer'
+        'procedure.title': 'Nouvelle intervention'
       },
 
       'en': {
@@ -39,24 +37,34 @@
         'FieldModel.required.patient': 'Patient\'s Full Name',
         'FieldModel.required.photos': 'Photos',
 
+        // editableView
+        'editable.edit': 'Edit',
+        'editable.remove': 'Remove',
+        'editable.save': 'Save Changes',
+        'editable.discard': 'Discard Changes',
+
         // proceduresView
         'procedures.title': 'The Interventions',
         'procedures.add-procedure': '+ Add new Procedure',
         'procedures.edit-template': 'Edit Template',
+        'procedures.filter-by-patient.title': 'Filter by Patient\'s name',
+        'procedures.filter-by-patient.placeholder': 'Type in patient\'s name…',
+        'procedures.noting-found': 'Nothing found',
 
         // procedureView
         'procedure.title': 'New Intervention',
-        'procedure.save-button': 'Save Procedure',
-        'procedure.delete-button': 'Delete Procedure',
 
         // fieldView
         'field.delete-photo': 'Delete Photo',
+        'field.no-photos': 'No photos yet',
 
         // templateView
         'template.title': 'Template Editor',
         'template.add-new-field': 'Add new field',
         'template.remove-field': 'Remove Field',
-        'tempalte.description-placehodler': 'Type in field\'s description…',
+        'template.description-placehodler': 'Type in field\'s description…',
+        'template.description-missing-placehodler': 'No description specified',
+        'template.no-fields': 'No additional fields yet',
 
         // treePickerView
         'treePicker.defaultTitle': 'Custom Choice Tree',
@@ -81,13 +89,21 @@
         'alert.removeProcedure.text': 'Are you sure you want to remove this procedure?',
         'alert.removeProcedure.confirm': 'Remove',
 
+        'alert.removeTemplate.title': 'Removing Template',
+        'alert.removeTemplate.text': 'All template fields will be removed.',
+        'alert.removeTemplate.confirm': 'Remove',
+
         'alert.removeField.title': 'Removing Field',
         'alert.removeField.text': 'Are you sure you want to remove this field?',
         'alert.removeField.confirm': 'Remove',
 
         'alert.removePhoto.title': 'Removing Photo',
         'alert.removePhoto.text': 'Are you sure you want to remove this photo?',
-        'alert.removePhoto.confirm': 'Remove'
+        'alert.removePhoto.confirm': 'Remove',
+
+        'alert.unsavedChanges.title': 'Unsaved Changes',
+        'alert.unsavedChanges.text': 'You have made some changes, but have not saved them.',
+        'alert.unsavedChanges.confirm': 'Discard and Proceed'
       }
     };
 
