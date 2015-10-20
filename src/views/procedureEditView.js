@@ -218,8 +218,15 @@ define(function (require) {
             var attributeName = $(event.target).data('attribute-name');
 
             camera.takePicture(function (err, pic) {
-                // TODO:
-                // handle errors!
+                if (err) {
+                    debug.error(err);
+                    return alerts.error(err);
+                }
+
+                // `pic` is null means user decided not to take a photo.
+                if (pic === null)
+                    return debug.info('camera cancelled');
+
                 self.model.get(attributeName).push(pic);
                 self.model.trigger('change');
             });
