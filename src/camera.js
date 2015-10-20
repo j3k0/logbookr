@@ -4,7 +4,7 @@
   // TODO:
   // this module is a lie.
 
-  var definition = function () {
+  var definition = function (require) {
     // Let's wrap camera stuff into callback function, something like:
     //  callback(err, pictrure)
     // picture being {url: '', legend: ''} and error is Error or null
