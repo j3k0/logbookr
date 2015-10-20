@@ -93,8 +93,10 @@ describe('LocalStorage', function () {
         });
 
         it('Procs-{id}', function () {
-          var converted = convertLegacy('ProcsItem');
-          expect(JSON.parse(converted.item)).to.eql(legacy.ProcsItem.converted);
+          legacy.ProcsItem.forEach(function (legacyProc) {
+            var converted = converters.convert(legacyProc.key, legacyProc.item);
+            expect(JSON.parse(converted.item)).to.eql(legacyProc.converted);
+          });
         });
 
         it('returns null as key/item for other types of keys', function () {

@@ -17,7 +17,7 @@ module.exports = {
     item: '4825a7f7-d04c-1cc8-506f-c265d367c549,30b241d9-3294-1e9d-f193-8385a9e34afb'
   },
 
-  ProcsItem: {
+  ProcsItem: [{
     key: 'Procs-30b241d9-3294-1e9d-f193-8385a9e34afb',
     item: '{"id":"30b241d9-3294-1e9d-f193-8385a9e34afb","type":"Discectomie simple","date":"19-10-2015 19:52","patient":"deep tree","diagnostic":"","supervision":"Aidé","senior":"","stage":"c","comment":""}',
     converted: {
@@ -27,7 +27,7 @@ module.exports = {
       date: '19-10-2015 19:52',
       patient: 'deep tree',
       photos: [],
-      "requiredFields": [
+      requiredFields: [
         {
           "name": "date",
           "description": "Date Performed",
@@ -82,8 +82,72 @@ module.exports = {
         }
       ]
     }
-  }
+  },
 
-  // Procs-4825a7f7-d04c-1cc8-506f-c265d367c549
-  // {"id":"4825a7f7-d04c-1cc8-506f-c265d367c549","type":"Arthrodèse antérieure","date":"12-10-2015 19:45","patient":"1","diagnostic":"diag","supervision":"Aidé","senior":"lalalala","stage":"hello","comment":"comment"}
+  {
+    key: 'Procs-4825a7f7-d04c-1cc8-506f-c265d367c549',
+    item: '{"id":"4825a7f7-d04c-1cc8-506f-c265d367c549","type":"Arthrodèse antérieure","date":"12-10-2015 19:45","patient":"1","diagnostic":"diag","supervision":"Aidé","senior":"lalalala","stage":"hello","comment":"comment", "picture": "file://example/dir/pic.jpg"}',
+    converted: {
+      id: '4825a7f7-d04c-1cc8-506f-c265d367c549',
+      createdAt: 1444661100000,
+      type: 'Arthrodèse antérieure',
+      date: '12-10-2015 19:45',
+      patient: '1',
+      photos: [{url: 'file://example/dir/pic.jpg', legend: ''}],
+      requiredFields: [
+        {
+          "name": "date",
+          "description": "Date Performed",
+          "type": "date"
+        },
+        {
+          "name": "type",
+          "description": "Type of Procedure",
+          "type": "choicetree"
+        },
+        {
+          "name": "patient",
+          "description": "Patient's Full Name",
+          "type": "text"
+        },
+        {
+          "name": "photos",
+          "description": "Photos",
+          "type": "photos"
+        }
+      ],
+      diagnostic: 'diag',
+      supervision: 'Aidé',
+      senior: 'lalalala',
+      stage: 'hello',
+      comment: 'comment',
+      fields: [
+        {
+          "description": "Diagnostic",
+          "name": "diagnostic",
+          "type": "text"
+        },
+        {
+          "description": "Supervision",
+          "name": "supervision",
+          "type": "choicetree"
+        },
+        {
+          "description": "Senior",
+          "name": "senior",
+          "type": "choicetree"
+        },
+        {
+          "description": "Stage",
+          "name": "stage",
+          "type": "choicetree"
+        },
+        {
+          "description": "Comment",
+          "name": "comment",
+          "type": "textarea"
+        }
+      ]
+    }
+  }]
 };
