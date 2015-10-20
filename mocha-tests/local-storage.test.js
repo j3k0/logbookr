@@ -25,10 +25,6 @@ describe('LocalStorage', function () {
         expect(fn('')).to.be(true);
       });
 
-      it('returns false on safekeep keys', function () {
-        expect(fn(config.safekeepPrefix + 'some-key')).to.be(false);
-      });
-
       it('returns false otherwise', function () {
         expect(fn(config.dataPrefix + 'some-key')).to.be(false);
       });
@@ -41,7 +37,7 @@ describe('LocalStorage', function () {
         var converted = converters.convert(key, item);
 
         it('has only requried keys', function () {
-          expect(converted).to.only.have.keys('key', 'item', 'safekeepKey', 'safekeepItem');
+          expect(converted).to.only.have.keys('key', 'item');
         });
 
         it('all values are strings, null is allowed as item', function () {
@@ -53,23 +49,9 @@ describe('LocalStorage', function () {
           })).to.be(true);
         });
 
-        it('keys are correctly prefixed', function () {
-          expect(converters.startsWith(converted.key, config.dataPrefix)).to.be(true);
-          expect(converters.startsWith(converted.safekeepKey, config.dataPrefix)).to.be(true);
-          expect(converters.startsWith(converted.safekeepKey, config.safekeepPrefix)).to.be(true);
-        });
-
         it('`key` is dataPrefix + key', function () {
           expect(converted.key).to.be(config.dataPrefix + key);
         })
-
-        it('`safekeepKey` is safekeepPrefix + key', function () {
-          expect(converted.safekeepKey).to.be(config.safekeepPrefix + key);
-        });
-
-        it('`safekeepItem` is the same as original', function () {
-          expect(converted.safekeepItem).to.be(item);
-        });
       });
 
       describe('correctly converts…', function () {

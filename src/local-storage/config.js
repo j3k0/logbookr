@@ -5,8 +5,7 @@
     return {
       dataVersion: 2,
       dataPrefix: 'v2.',
-      safekeepPrefix: 'v2.safekeep.' // data from previous versions is moved
-                                     // udner this prefix.
+      convertedKeys: 'v2.converted'
     };
   };
 

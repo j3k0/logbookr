@@ -66,9 +66,7 @@
 
         return {
           key: config.dataPrefix + key,
-          item: convertedItem,
-          safekeepKey: config.safekeepPrefix + key,
-          safekeepItem: item
+          item: convertedItem
         }
       }
     }
