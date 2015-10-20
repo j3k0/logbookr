@@ -5,6 +5,7 @@
     var backbone = require('backbone');
     var converters = require('./converters');
     var config = require('./config');
+    var initialTemplate = require('./initial-template');
     require('backbone.localstorage');
 
     var LS = function (id) {
@@ -30,6 +31,13 @@
         root.localStorage.setItem(converted.safekeepKey, converted.safekeepItem);
         root.localStorage.removeItem(key);
       });
+
+    // If there's no template, init it with default from previous version.
+    if (root.localStorage.getItem(LS.id('Template')) === null) {
+      Object.keys(initialTemplate).forEach(function (name) {
+        root.localStorage.setItem(name, initialTemplate[name]);
+      });
+    }
 
     return LS;
   };
