@@ -13,6 +13,7 @@
   var definition = function (require) {
     var backbone = require('backbone');
     var underscore = require('underscore');
+    var ProcedureModel = require('../models/procedureModel');
     var templateText = require('./text!./editableView.html');
     var tr = require('../tr');
     var debug = require('../debug');
@@ -116,7 +117,7 @@
           return creatingNewProcedure
             ? this.goBack()
             : this._toggleMode(EditableView.modes.SHOW);
-        }.bind(self, self.editView.original && !self.editView.original.collection);
+        }.bind(self, self.editView.original && self.editView.original instanceof ProcedureModel && !self.editView.original.collection);
 
         if (!self.editView.hasUnsavedChanges())
           return whenDiscared();
