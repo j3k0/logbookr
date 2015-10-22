@@ -1,3 +1,5 @@
+var moment = require('moment');
+
 module.exports = {
   ChTr: {
     key: 'ChTr',
@@ -22,7 +24,7 @@ module.exports = {
     item: '{"id":"30b241d9-3294-1e9d-f193-8385a9e34afb","type":"Discectomie simple","date":"19-10-2015 19:52","patient":"deep tree","diagnostic":"","supervision":"Aidé","senior":"","stage":"c","comment":""}',
     converted: {
       id: '30b241d9-3294-1e9d-f193-8385a9e34afb',
-      createdAt: 1445266320000,
+      createdAt: moment('19-10-2015 19:52', 'DD-MM-YYYY HH:mm').valueOf(),
       type: 'Discectomie simple',
       date: '19-10-2015 19:52',
       patient: 'deep tree',
@@ -89,7 +91,7 @@ module.exports = {
     item: '{"id":"4825a7f7-d04c-1cc8-506f-c265d367c549","type":"Arthrodèse antérieure","date":"12-10-2015 19:45","patient":"1","diagnostic":"diag","supervision":"Aidé","senior":"lalalala","stage":"hello","comment":"comment", "picture": "file://example/dir/pic.jpg"}',
     converted: {
       id: '4825a7f7-d04c-1cc8-506f-c265d367c549',
-      createdAt: 1444661100000,
+      createdAt: moment('12-10-2015 19:45', 'DD-MM-YYYY HH:mm').valueOf(),
       type: 'Arthrodèse antérieure',
       date: '12-10-2015 19:45',
       patient: '1',
