@@ -18,7 +18,7 @@
       startsWith: startsWith,
 
       shouldConvert: function (key) {
-        return !key.startsWith(config.dataPrefix);
+        return !startsWith(key, config.dataPrefix);
       },
 
       convert: function (key, item) {
