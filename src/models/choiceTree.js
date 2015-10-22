@@ -1,13 +1,10 @@
 define(function (require) {
-
     var Backbone = require('backbone');
-    var BackboneLS = require('backbone.localstorage');
-    var uuid = require('./uuid');
     var ChoiceModel = require('./choiceModel');
-    // var ChoiceData = require('./choiceData');
+    var LS = require('../local-storage/index');
 
     var ChoiceCollection = Backbone.Collection.extend({
-        localStorage: new Backbone.LocalStorage("ChTr"), // Unique name within your app.
+        localStorage: LS("ChTr"),
         model: ChoiceModel
     });
 

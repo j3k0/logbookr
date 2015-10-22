@@ -10,7 +10,8 @@
 
     return {
       validationError: createError.bind(null, 'ValidationError'),
-      duplicateError: createError.bind(null, 'DuplicateError')
+      duplicateError: createError.bind(null, 'DuplicateError'),
+      cameraError: createError.bind(null, 'CameraError')
     };
   };
 

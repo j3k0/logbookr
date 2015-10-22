@@ -116,8 +116,15 @@
           // If we did, set its name to what it use to be.
           // If we didn't, save it.
           var restorableName = this.collection.descriptionToName(attrs.description);
-          if (restorableName)
+          if (restorableName) {
+            // Replace currently existing with the one.
             attrs.name = restorableName;
+            var replacement = new FieldModel(attrs);
+            var replaceAt = this.collection.indexOf(field);
+            field.destroy();
+            field = replacement;
+            this.collection.add(field, {at: replaceAt});
+          }
           else
             this.collection.setDescriptionToName(attrs.description, field.get('name'));
         }

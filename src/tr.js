@@ -18,7 +18,11 @@
         'procedures.add-procedure': '+ Ajouter une intervention',
 
         // procedureView
-        'procedure.title': 'Nouvelle intervention'
+        'procedure.title': 'Nouvelle intervention',
+
+        // camera errors
+        'camera.no-camera': 'Aucun appareil photo détecté.',
+        'camera.no-access-to-assets': 'Si l\'appareil photo ne fonctionne pas, veuillez aller dans les "Réglages" de votre iPhone/iPad, section "Confidentialité", "Appareil photo" et autoriser AJCR à utiliser l\'appareil.'
       },
 
       'en': {
@@ -85,6 +89,9 @@
         'alert.error.DuplicateError.title': 'Duplicates Detected',
         'alert.error.DuplicateError.text': 'Data must be unique.',
 
+        'alert.errro.CameraError.title': 'Camera Error',
+        'alert.errro.CameraError.text': 'Could not take photo',
+
         'alert.removeProcedure.title': 'Removing Procedure',
         'alert.removeProcedure.text': 'Are you sure you want to remove this procedure?',
         'alert.removeProcedure.confirm': 'Remove',
@@ -103,7 +110,11 @@
 
         'alert.unsavedChanges.title': 'Unsaved Changes',
         'alert.unsavedChanges.text': 'You have made some changes, but have not saved them.',
-        'alert.unsavedChanges.confirm': 'Discard and Proceed'
+        'alert.unsavedChanges.confirm': 'Discard and Proceed',
+
+        // camera errors
+        'camera.no-camera': 'Camera not found.',
+        'camera.no-access-to-assets': 'If the camera does not work, please go to the "Settings" on your iPhone / iPad, section "Privacy", "Camera" and allow AJCR to access your device\'s camera.'
       }
     };
 
