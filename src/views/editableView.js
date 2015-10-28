@@ -74,6 +74,10 @@
         view.render();
         view.delegateEvents();
         view.$controls.show();
+        if (this.mode == EditableView.modes.EDIT)
+          this.$controls.addClass("editmode");
+        else
+          this.$controls.removeClass("editmode");
         return this;
       },
 
