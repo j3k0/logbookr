@@ -24,16 +24,16 @@ define(function (require) {
 
         // Initialize views
         this.views = {
-            procedures: new ProceduresView({
+            procedures: function() { return this._procedures || (this._procedures = new ProceduresView({
                 el: this.mainEl,
                 collection: ProceduresCollection.getInstance(),
                 updateTitle: this.updateTitle,
                 openProcedure: _.bind(this.openProcedure, this),
                 openTemplate: _.bind(this.openTemplate, this),
                 goBack: this.goHome
-            }),
+            }))}.bind(this),
 
-            procedure: new EditableView({
+            procedure: function() { return this._procedure || (this._procedure = new EditableView({
                 el: this.mainEl,
                 goBack: _.bind(this.openProcedures, this),
                 showView: new ProcedureShowView(),
@@ -42,9 +42,9 @@ define(function (require) {
                     updateTitle: this.updateTitle,
                     openChoiceTree: this.pickChoiceTreeOf.bind(this)
                 })
-            }),
+            }))}.bind(this),
 
-            template: new EditableView({
+            template: function() { return this._template || (this._template = new EditableView({
                 el: this.mainEl,
                 goBack: _.bind(this.openProcedures, this),
                 showView: new TemplateShowView({
@@ -54,7 +54,7 @@ define(function (require) {
                     collection: template.getInstance(),
                     updateTitle: this.updateTitle
                 })
-            })
+            }))}.bind(this)
         }
     }
 
@@ -76,7 +76,7 @@ define(function (require) {
             //  - current procedure required fields
             //  - default procedure required fields
             var field = (template.getInstance().get(name) && template.getInstance().get(name).toJSON()) ||
-                (this.views.procedure.model && this.views.procedure.model.fieldInfo(name)) ||
+                (this.views.procedure().model && this.views.procedure().model.fieldInfo(name)) ||
                 new ProcedureModel().fieldInfo(name);
 
             var title = field
@@ -108,21 +108,21 @@ define(function (require) {
     };
 
     Navigation.prototype.openTemplate = function () {
-        this.openEditableView(this.views.template);
+        this.openEditableView(this.views.template());
     };
 
     Navigation.prototype.openProcedure = function (procedure, isNew) {
         var mode = isNew ? EditableView.modes.EDIT : EditableView.modes.SHOW;
-        this.views.procedure.dataSwap(procedure, mode);
-        this.openEditableView(this.views.procedure);
+        this.views.procedure().dataSwap(procedure, mode);
+        this.openEditableView(this.views.procedure());
     };
 
     Navigation.prototype.openProcedures = function () {
-        this.openInMain(this.views.procedures);
+        this.openInMain(this.views.procedures());
     };
 
     Navigation.prototype.mainView = function () {
-        return this.views.procedures;
+        return this.views.procedures();
     };
 
     return Navigation;
