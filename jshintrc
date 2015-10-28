@@ -1,0 +1,6 @@
+{
+    "undef": true,
+    "jquery": true,
+    "browser": true,
+    "predef": ["Camera","CameraPopoverOptions","Kassics","device","define","require","console","StatusBar","Backbone"]
+}
